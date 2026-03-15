@@ -5,11 +5,23 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://configclarity.dev/crontab</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
     <loc>https://configclarity.dev/ssl</loc>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://configclarity.dev/docker</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://configclarity.dev/firewall</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://configclarity.dev/proxy</loc>
     <priority>0.8</priority>
   </url>
 </urlset>
