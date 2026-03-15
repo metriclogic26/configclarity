@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>robots.txt Validator — Audit Crawl Directives & AI Bot Coverage | ConfigClarity</title>
+  <meta name="description" content="Free robots.txt validator. Audit crawl directives, AI bot coverage (GPTBot, ClaudeBot, CCBot), sitemap health and Crawl-delay settings. No signup, runs in your browser.">
+  <meta name="keywords" content="robots.txt validator, robots.txt checker, robots.txt tester, AI bot coverage, GPTBot block, ClaudeBot block, crawl directives checker, sitemap validator">
+  <link rel="canonical" href="https://configclarity.dev/robots">
+  <meta property="og:title" content="robots.txt Validator | ConfigClarity">
+  <meta property="og:description" content="Audit crawl directives, AI bot coverage, and sitemap health. Free, no signup, runs in your browser.">
+  <meta property="og:url" content="https://configclarity.dev/robots">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="robots.txt Validator — ConfigClarity">
+  <meta name="twitter:description" content="Check AI bot coverage, crawl directives and sitemap health. Free tool, nothing leaves your browser.">
+  <script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "robots.txt Validator",
+  "url": "https://configclarity.dev/robots",
+  "applicationCategory": "DeveloperApplication",
+  "operatingSystem": "Any",
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "description": "Audit robots.txt crawl directives, AI bot coverage for GPTBot, ClaudeBot and CCBot, sitemap health and Crawl-delay settings.",
+  "provider": { "@type": "Organization", "name": "ConfigClarity", "url": "https://configclarity.dev" }
+}
+  </script>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap">
+  <style>
+    :root {
+      --bg: #0b0d14;
+      --bg2: #10131f;
+      --bg3: #161924;
+      --border: #1e2236;
+      --purple: #6c63ff;
+      --green: #22c55e;
+      --orange: #f97316;
+      --red: #ef4444;
+      --text: #e2e4f0;
+      --text2: #8a8fb5;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      line-height: 1.5;
+    }
+    .header {
+      padding: 1.5rem 1.5rem 1rem;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .header h1 { margin: 0; font-size: 1.75rem; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+    .header .subtitle { margin: 0.5rem 0 0; color: var(--text2); font-size: 0.95rem; }
+    .tool-switcher {
+      display: flex;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--bg2);
+      border-bottom: 1px solid var(--border);
+      justify-content: center;
+      overflow-x: auto;
+    }
+    .tool-card {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.6rem 1rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      text-decoration: none;
+      color: var(--text2);
+      transition: all 0.15s;
+      min-width: 140px;
+    }
+    .tool-card:hover { border-color: var(--purple); color: var(--text); background: var(--bg3); }
+    .tool-card.active { border-color: var(--purple); background: #2a2650; color: #fff; }
+    .tool-icon { font-size: 1.25rem; }
+    .tool-name { display: block; font-size: 0.8125rem; font-weight: 600; }
+    .tool-desc { display: block; font-size: 0.72rem; color: var(--text2); margin-top: 0.1rem; }
+    .tool-card.active .tool-desc { color: #8b85ff; }
+    @media (max-width: 600px) {
+      .tool-switcher { gap: 0.4rem; padding: 0.5rem; }
+      .tool-card { min-width: unset; }
+      .tool-desc { display: none; }
+    }
+    .main {
+      display: flex;
+      flex-direction: row;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    @media (max-width: 900px) { .main { flex-direction: column; } }
+    .panel-left {
+      width: 40%;
+      min-width: 280px;
+      padding: 1rem 1.25rem;
+      background: var(--bg2);
+      border-right: 1px solid var(--border);
+    }
+    @media (max-width: 900px) { .panel-left { width: 100%; border-right: none; border-bottom: 1px solid var(--border); } }
+    .panel-right {
+      width: 60%;
+      padding: 1rem 1.25rem;
+      background: var(--bg);
+      overflow-y: auto;
+    }
+    @media (max-width: 900px) { .panel-right { width: 100%; } }
+    .input-tabs {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .input-tab {
+      padding: 0.4rem 0.75rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text2);
+      font-size: 0.8125rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .input-tab.active { background: var(--purple); color: #fff; border-color: var(--purple); }
+    .input-tab:hover:not(.active) { border-color: var(--purple); color: var(--text); }
+    .input-panel { display: none; }
+    .input-panel.active { display: block; }
+    .input-wrap, .textarea-wrap { margin-bottom: 1rem; }
+    .input-wrap label, .textarea-wrap label { font-size: 0.875rem; color: var(--text2); display: block; margin-bottom: 0.25rem; }
+    input[type="text"], input[type="url"] {
+      width: 100%;
+      padding: 0.5rem 0.75rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.8125rem;
+    }
+    input:focus { outline: none; border-color: var(--purple); }
+    textarea {
+      width: 100%;
+      min-height: 200px;
+      padding: 0.875rem 1rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      resize: vertical;
+    }
+    textarea::placeholder { color: var(--text2); opacity: 0.6; }
+    textarea:focus { outline: none; border-color: var(--purple); }
+    .button-row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
+    .btn-audit {
+      padding: 0.625rem 1.25rem;
+      background: var(--purple);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-audit:hover { background: #5a52e0; }
+    .btn-audit:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-sample {
+      padding: 0.625rem 1rem;
+      background: transparent;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text2);
+      font-size: 0.875rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .btn-sample:hover { border-color: var(--purple); color: var(--text); }
+    .cors-note {
+      margin-top: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid var(--red);
+      border-radius: 6px;
+      font-size: 0.8125rem;
+      color: var(--red);
+      display: none;
+    }
+    .cors-note.visible { display: block; }
+    .placeholder-msg { color: var(--text2); font-size: 1rem; text-align: center; padding: 2rem; }
+    .health-score-wrap {
+      text-align: center;
+      padding: 1.5rem;
+      margin-bottom: 1rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+    .health-score-num {
+      font-size: 3rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+    .health-score-num.green { color: var(--green); }
+    .health-score-num.orange { color: var(--orange); }
+    .health-score-num.red { color: var(--red); }
+    .health-score-label { font-size: 0.875rem; color: var(--text2); margin-top: 0.25rem; }
+    .audit-section {
+      margin-bottom: 1.5rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .section-title {
+      margin: 0;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border);
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .section-body { padding: 1rem; }
+    .check-card {
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      border-left: 4px solid;
+      background: var(--bg3);
+      font-size: 0.875rem;
+    }
+    .check-card:last-child { margin-bottom: 0; }
+    .check-card.critical { border-left-color: var(--red); }
+    .check-card.warning { border-left-color: var(--orange); }
+    .check-card.info { border-left-color: var(--purple); }
+    .check-card.pass { border-left-color: var(--green); }
+    .severity-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-right: 0.5rem;
+      font-weight: 600;
+    }
+    .severity-badge.critical { background: var(--red); color: #fff; }
+    .severity-badge.warning { background: var(--orange); color: #fff; }
+    .severity-badge.info { background: var(--purple); color: #fff; opacity: 0.9; }
+    .severity-badge.pass { background: var(--green); color: #fff; }
+    .check-title { font-weight: 600; margin-bottom: 0.25rem; }
+    .check-desc { color: var(--text2); font-size: 0.8125rem; margin-bottom: 0.5rem; }
+    .check-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+    .check-actions button {
+      padding: 0.35rem 0.6rem;
+      font-size: 0.75rem;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--text2);
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .check-actions button:hover { border-color: var(--purple); color: var(--text); }
+    .check-learn { margin-top: 0.75rem; padding: 0.75rem; background: var(--bg); border-radius: 6px; font-size: 0.8125rem; display: none; }
+    .check-learn.visible { display: block; }
+    .check-learn p { margin: 0 0 0.5rem; }
+    .check-learn p:last-child { margin-bottom: 0; }
+    .all-clear-section { margin-top: 1rem; }
+    .all-clear-summary {
+      padding: 0.75rem 1rem;
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.875rem;
+      color: var(--green);
+      font-weight: 600;
+    }
+    .all-clear-summary::before { content: "− "; }
+    .all-clear-section.collapsed .all-clear-summary::before { content: "+ "; }
+    .all-clear-list { padding: 0.5rem 0 0 1rem; font-size: 0.8125rem; color: var(--text2); }
+    .all-clear-section.collapsed .all-clear-list { display: none; }
+    .ai-table { width: 100%; border-collapse: collapse; font-size: 0.8125rem; }
+    .ai-table th, .ai-table td { padding: 0.5rem 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
+    .ai-table th { color: var(--text2); font-weight: 600; }
+    .ai-table td:last-child { word-break: break-word; min-width: 80px; }
+    @media (max-width: 480px) {
+      .ai-table { font-size: 0.75rem; }
+    }
+    .ai-action-card {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: rgba(249, 115, 22, 0.1);
+      border: 1px solid var(--orange);
+      border-radius: 8px;
+      font-size: 0.875rem;
+    }
+    .ai-action-card button {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--orange);
+      border: none;
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 0.875rem;
+    }
+    .ai-action-card button:hover { background: #ea580c; }
+    .export-row { display: flex; gap: 0.5rem; margin-bottom: 1rem; flex-wrap: wrap; }
+    .faq { padding: 2rem 1.5rem; border-top: 1px solid var(--border); }
+    .faq-heading { margin: 0 0 1.5rem; font-size: 1.25rem; font-weight: 600; text-align: center; }
+    .faq-list { max-width: 640px; margin: 0 auto; }
+    .faq-item { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0.5rem; overflow: hidden; }
+    .faq-question { padding: 1rem 1.25rem; font-size: 0.9375rem; font-weight: 600; cursor: pointer; list-style: none; }
+    .faq-question::-webkit-details-marker { display: none; }
+    .faq-question::before { content: "+ "; color: var(--purple); }
+    .faq-item[open] .faq-question::before { content: "− "; }
+    .faq-answer { margin: 0; padding: 0 1.25rem 1rem; font-size: 0.875rem; line-height: 1.55; color: var(--text2); }
+    .site-footer { text-align: center; padding: 1.5rem; border-top: 1px solid var(--border); margin-top: 2rem; }
+    .privacy-note { color: var(--text2); font-size: 0.8125rem; margin-bottom: 0.5rem; }
+    .disclaimer-note { color: var(--text2); font-size: 0.75rem; max-width: 680px; margin: 0 auto; line-height: 1.6; }
+    .feedback-btn {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 200;
+      padding: 0.5rem 1rem;
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 0.9375rem;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    .feedback-btn:hover { background: #5a52e0; }
+    .feedback-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 13, 20, 0.8);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 201;
+      padding: 1rem;
+    }
+    .feedback-modal-overlay.visible { display: flex; }
+    .feedback-modal-panel {
+      position: relative;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .feedback-modal-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 2rem;
+      height: 2rem;
+      padding: 0;
+      background: transparent;
+      border: none;
+      color: var(--text);
+      font-size: 1.5rem;
+      cursor: pointer;
+      z-index: 1;
+    }
+    .feedback-modal-panel iframe { display: block; width: 480px; height: 400px; border: none; }
+    .seo-ai-content { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+    .share-toast {
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 201;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      color: #fff;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body>
+  <section class="seo-ai-content" aria-hidden="true">
+  ConfigClarity robots.txt Validator is a free browser-based tool
+  that audits robots.txt files for crawl directive errors, AI bot
+  coverage gaps, and sitemap health issues. It checks whether
+  GPTBot (OpenAI), ClaudeBot (Anthropic), CCBot (Common Crawl),
+  Google-Extended, PerplexityBot, and Bytespider are explicitly
+  addressed. It flags Crawl-delay values above 10 seconds,
+  missing sitemap declarations, Allow and Disallow conflicts,
+  unknown directives, and wildcard path patterns. Results include
+  a health score from 0 to 100 and copy-paste fix snippets for
+  each issue. No signup required. All processing runs in the browser.
+  Nothing is stored or transmitted.
+  </section>
+  <header class="header">
+    <h1>robots.txt Validator</h1>
+    <p class="subtitle">Audit crawl directives, AI bot coverage, and sitemap health</p>
+  </header>
+  <div class="tool-switcher">
+    <a href="/" class="tool-card">
+      <span class="tool-icon">🕐</span>
+      <span class="tool-info">
+        <span class="tool-name">Cron Builder & Visualiser</span>
+        <span class="tool-desc">Visualize job overlaps</span>
+      </span>
+    </a>
+    <a href="/ssl" class="tool-card">
+      <span class="tool-icon">🔒</span>
+      <span class="tool-info">
+        <span class="tool-name">SSL Checker</span>
+        <span class="tool-desc">Check cert expiry</span>
+      </span>
+    </a>
+    <a href="/docker" class="tool-card">
+      <span class="tool-icon">🐳</span>
+      <span class="tool-info">
+        <span class="tool-name">Docker Auditor</span>
+        <span class="tool-desc">Audit compose files</span>
+      </span>
+    </a>
+    <a href="/firewall" class="tool-card">
+      <span class="tool-icon">🛡️</span>
+      <span class="tool-info">
+        <span class="tool-name">Firewall Auditor</span>
+        <span class="tool-desc">Audit UFW rules</span>
+      </span>
+    </a>
+    <a href="/proxy" class="tool-card">
+      <span class="tool-icon">🔀</span>
+      <span class="tool-info">
+        <span class="tool-name">Reverse Proxy Mapper</span>
+        <span class="tool-desc">Map routing & audit</span>
+      </span>
+    </a>
+    <a href="/robots" class="tool-card active">
+      <span class="tool-icon">🤖</span>
+      <span class="tool-info">
+        <span class="tool-name">robots.txt</span>
+        <span class="tool-desc">Audit crawl & AI bots</span>
+      </span>
+    </a>
+  </div>
+
+  <main class="main">
+    <aside class="panel-left">
+      <div class="input-tabs">
+        <button type="button" class="input-tab active" id="tab-url" aria-pressed="true">URL Mode</button>
+        <button type="button" class="input-tab" id="tab-paste" aria-pressed="false">Paste Mode</button>
+      </div>
+      <div id="panel-url" class="input-panel active">
+        <div class="input-wrap">
+          <label for="url-input">robots.txt URL</label>
+          <input type="text" id="url-input" placeholder="https://example.com/robots.txt" aria-label="URL to robots.txt">
+        </div>
+        <p class="cors-note" id="cors-note">CORS blocked — switch to Paste mode and paste the content directly.</p>
+        <div class="button-row">
+          <button type="button" class="btn-audit" id="btn-fetch">Fetch & Audit</button>
+        </div>
+      </div>
+      <div id="panel-paste" class="input-panel">
+        <div class="textarea-wrap">
+          <label for="paste-input">robots.txt content</label>
+          <textarea id="paste-input" placeholder="Paste your robots.txt content here..." aria-label="robots.txt content"></textarea>
+        </div>
+        <div class="button-row">
+          <button type="button" class="btn-audit" id="btn-audit">Audit</button>
+          <button type="button" class="btn-sample" id="btn-sample">Load Example</button>
+          <button type="button" class="btn-sample" id="btn-clear">Clear</button>
+        </div>
+      </div>
+    </aside>
+
+    <section class="panel-right">
+      <p class="placeholder-msg" id="placeholder">Enter a URL or paste your robots.txt, then run the audit.</p>
+      <div id="results" style="display: none;">
+        <div class="health-score-wrap">
+          <div class="health-score-num" id="health-score-num">—</div>
+          <div class="health-score-label">Health score (0–100)</div>
+        </div>
+        <div class="export-row">
+          <button type="button" class="btn-sample" id="btn-copy-report">Copy Report</button>
+          <button type="button" class="btn-sample" id="btn-export-json">Export JSON</button>
+        </div>
+        <div class="audit-section">
+          <h2 class="section-title">Checks</h2>
+          <div class="section-body" id="checks-container"></div>
+          <div class="all-clear-section collapsed" id="all-clear-section">
+            <div class="all-clear-summary" id="all-clear-summary">All clear (0 passed)</div>
+            <div class="all-clear-list" id="all-clear-list"></div>
+          </div>
+        </div>
+        <div class="audit-section">
+          <h2 class="section-title">AI Crawler Coverage</h2>
+          <div class="section-body">
+            <table class="ai-table" id="ai-table">
+              <thead>
+                <tr><th>Bot</th><th>User-agent</th><th>Status</th></tr>
+              </thead>
+              <tbody id="ai-tbody"></tbody>
+            </table>
+            <p style="font-size: 0.75rem; color: var(--text2); margin-top: 0.5rem;">Not mentioned = the bot may crawl freely. Absence is not a block.</p>
+            <div class="ai-action-card" id="ai-action-card" style="display: none;">
+              <strong>AI Crawlers Not Addressed</strong> — Your robots.txt doesn't mention these bots. They may index your content for AI training. Add explicit rules if you want to opt out.
+              <button type="button" id="btn-copy-ai-block">Copy AI Block</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="faq" aria-labelledby="faq-heading">
+    <h2 id="faq-heading" class="faq-heading">Frequently Asked Questions</h2>
+    <div class="faq-list">
+      <details class="faq-item">
+        <summary class="faq-question">Does this fetch my robots.txt live?</summary>
+        <p class="faq-answer">Yes in URL mode. Nothing is stored — fetch happens in your browser.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-question">Why does AI bot coverage matter?</summary>
+        <p class="faq-answer">GPTBot, ClaudeBot, and CCBot index content for AI training. If you haven't explicitly addressed them, they may crawl freely.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-question">Does blocking GPTBot actually stop AI training?</summary>
+        <p class="faq-answer">It signals your preference to OpenAI's crawler. GPTBot has stated it respects robots.txt exclusions for training data. ClaudeBot and Google-Extended also honour explicit blocks. CCBot compliance is less consistent. Blocking in robots.txt is the standard opt-out mechanism but cannot be technically enforced.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-question">What's the file size limit?</summary>
+        <p class="faq-answer">Google recommends robots.txt stay under 500KB. Larger files may be partially ignored.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-question">Does Disallow: / block everything?</summary>
+        <p class="faq-answer">For User-agent: * yes. But individual bots can have their own rules that override the wildcard.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-question">What are unknown directives?</summary>
+        <p class="faq-answer">Lines that aren't part of the robots.txt standard (RFC 9309). Some like Host: are common but not universally supported.</p>
+      </details>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <p class="privacy-note">🔒 We do not store your pasted configs, domains, or IP address. All processing happens entirely in your browser.</p>
+    <p class="disclaimer-note">robots.txt audit results are based on RFC 9309 and Google's published crawler guidelines. Recommendations are for informational purposes only. Search engine behaviour may differ from what robots.txt instructs. Always verify crawl behaviour in Google Search Console. ConfigClarity accepts no liability for indexing changes, ranking impacts, or AI crawler behaviour arising from use of this tool.</p>
+    <p><a href="https://github.com/metriclogic26/configclarity" target="_blank" rel="noopener" style="color: var(--text2); text-decoration: none; font-size: 0.8rem;">View source on GitHub</a></p>
+    <p style="color:#8a8fb5; font-size:0.8rem; margin-top:0.5rem;">
+  Also try 
+  <a href="https://domainpreflight.dev" target="_blank" rel="noopener" 
+     style="color:#8a8fb5;">domainpreflight.dev</a> · 
+  <a href="https://packagefix.dev" target="_blank" rel="noopener" 
+     style="color:#8a8fb5;">packagefix.dev</a>
+</p>
+  </footer>
+
+  <div id="share-toast" class="share-toast" aria-live="polite" hidden>Copied to clipboard</div>
+  <button type="button" class="feedback-btn" id="feedback-btn" aria-label="Send feedback">💬 Feedback</button>
+  <div class="feedback-modal-overlay" id="feedback-modal" role="dialog" aria-modal="true" aria-hidden="true">
+    <div class="feedback-modal-panel" id="feedback-modal-panel">
+      <button type="button" class="feedback-modal-close" id="feedback-modal-close" aria-label="Close">×</button>
+      <iframe src="https://tally.so/embed/Y5Zx15" title="Feedback form" width="480" height="400"></iframe>
+    </div>
+  </div>
+
+  <script>
+  (function () {
+    var SAMPLE = "User-agent: *\nDisallow: /admin/\nDisallow: /private/\nAllow: /public/\nCrawl-delay: 15\n\nUser-agent: Googlebot\nDisallow:\n\nSitemap: http://example.com/sitemap.xml";
+
+    var KNOWN_DIRECTIVES = ['user-agent', 'disallow', 'allow', 'crawl-delay', 'sitemap', 'host'];
+    var AI_BOTS = [
+      { name: 'OpenAI GPTBot', ua: 'GPTBot' },
+      { name: 'Anthropic ClaudeBot', ua: 'ClaudeBot' },
+      { name: 'Common Crawl CCBot', ua: 'CCBot' },
+      { name: 'Google AI Google-Extended', ua: 'Google-Extended' },
+      { name: 'PerplexityBot', ua: 'PerplexityBot' },
+      { name: 'Bytespider', ua: 'Bytespider' }
+    ];
+
+    var CHECK_DEFS = [
+      { id: 'missing_sitemap', title: 'Missing sitemap declaration', severity: 'warning', deduct: 10, fix: 'Sitemap: https://yourdomain.com/sitemap.xml', why: 'Sitemaps help search engines discover your pages. Without one, indexing may be slower or incomplete.', how: 'Add a Sitemap line with the full URL to your sitemap.', example: 'Sitemap: https://example.com/sitemap.xml' },
+      { id: 'sitemap_not_https', title: 'Sitemap URL not HTTPS', severity: 'warning', deduct: 10, fix: 'Replace http:// with https:// in Sitemap line', why: 'HTTPS is recommended for sitemaps and avoids mixed content.', how: 'Change the Sitemap value to use https://.', example: 'Sitemap: https://example.com/sitemap.xml' },
+      { id: 'googlebot_blocked', title: 'Googlebot fully blocked', severity: 'critical', deduct: 25, fix: 'Remove or adjust the Disallow: / under Googlebot', why: 'Blocking Googlebot entirely prevents your site from being indexed by Google.', how: 'Either remove the Googlebot block or change Disallow: / to specific paths.', example: 'User-agent: Googlebot\nAllow: /' },
+      { id: 'all_bots_blocked', title: 'All bots fully blocked', severity: 'critical', deduct: 25, fix: 'Change Disallow: / to specific paths you want blocked', why: 'Disallow: / for User-agent: * blocks all crawlers from your entire site.', how: 'Replace with path-specific rules, e.g. Disallow: /admin/', example: 'User-agent: *\nDisallow: /admin/\nAllow: /' },
+      { id: 'allow_disallow_conflict', title: 'Allow + Disallow conflict', severity: 'warning', deduct: 10, fix: 'Remove the conflicting directive', why: 'Same path in both Allow and Disallow is ambiguous; crawlers may interpret differently.', how: 'Keep only one of the directives for that path.', example: 'Use either Disallow: /api/ or Allow: /api/, not both for the same path.' },
+      { id: 'crawl_delay_high', title: 'Crawl-delay > 10s', severity: 'warning', deduct: 10, fix: 'Crawl-delay: 5 (or remove entirely)', why: 'Very high crawl-delay can slow indexing and is ignored by Google.', how: 'Reduce the value or remove Crawl-delay (many crawlers ignore it).', example: 'Crawl-delay: 5' },
+      { id: 'unknown_directives', title: 'Unknown directives', severity: 'info', deduct: 3, fix: 'Remove unrecognised directives', why: 'Non-standard directives may be ignored or cause parse issues.', how: 'Stick to User-agent, Disallow, Allow, Crawl-delay, Sitemap, Host.', example: 'Remove custom keys.' },
+      { id: 'wildcard_in_path', title: 'Wildcard in path', severity: 'info', deduct: 3, fix: 'Valid but note it may not work in all crawlers', why: 'Wildcards in paths are not universally supported.', how: 'Test with target crawlers or use explicit paths.', example: '/admin* may not work everywhere.' },
+      { id: 'missing_user_agent', title: 'Missing User-agent before rules', severity: 'critical', deduct: 25, fix: 'Add "User-agent: *" before the first rule', why: 'Rules must belong to a User-agent block. Leading Disallow/Allow are invalid.', how: 'Add User-agent: * (or another agent) at the top.', example: 'User-agent: *\nDisallow: /private/' },
+      { id: 'gptbot_not_addressed', title: 'GPTBot not addressed', severity: 'info', deduct: 3, fix: 'Add GPTBot block (see AI bot section)', why: 'OpenAI may crawl for training unless you opt out.', how: 'Add User-agent: GPTBot and Disallow: / to block.', example: 'User-agent: GPTBot\nDisallow: /' },
+      { id: 'claudebot_not_addressed', title: 'ClaudeBot not addressed', severity: 'info', deduct: 3, fix: 'Add ClaudeBot block', why: 'Anthropic may crawl for training unless you opt out.', how: 'Add User-agent: ClaudeBot and Disallow: / to block.', example: 'User-agent: ClaudeBot\nDisallow: /' },
+      { id: 'ccbot_not_addressed', title: 'CCBot not addressed', severity: 'info', deduct: 3, fix: 'Add CCBot block', why: 'Common Crawl may include your site for AI/datasets.', how: 'Add User-agent: CCBot and Disallow: / to block.', example: 'User-agent: CCBot\nDisallow: /' },
+      { id: 'file_size', title: 'File size warning', severity: 'warning', deduct: 10, fix: 'Google may partially ignore files over 500KB', why: 'Google recommends robots.txt under 500KB.', how: 'Split or reduce directives; keep under 500KB.', example: 'Trim or split into logical files if needed.' }
+    ];
+
+    function parseRobots(content) {
+      var lines = content.split(/\r?\n/).map(function (l) { return l.trim(); });
+      var blocks = [];
+      var current = null;
+      var globalSitemaps = [];
+      var firstNonComment = null;
+      var unknownDirectives = [];
+      var i, line, idx, key, val;
+      for (i = 0; i < lines.length; i++) {
+        line = lines[i];
+        if (!line || line.indexOf('#') === 0) continue;
+        idx = line.indexOf(':');
+        if (idx === -1) continue;
+        key = line.slice(0, idx).trim().toLowerCase();
+        val = line.slice(idx + 1).trim();
+        if (key === 'user-agent') {
+          current = { agent: val, disallow: [], allow: [], crawlDelay: null };
+          blocks.push(current);
+          if (!firstNonComment) firstNonComment = 'user-agent';
+        } else if (key === 'sitemap') {
+          globalSitemaps.push(val);
+          if (!firstNonComment) firstNonComment = 'sitemap';
+        } else if (key === 'host') {
+          if (!firstNonComment) firstNonComment = 'host';
+        } else if (current) {
+          if (key === 'disallow') current.disallow.push(val);
+          else if (key === 'allow') current.allow.push(val);
+          else if (key === 'crawl-delay') current.crawlDelay = parseFloat(val, 10) || 0;
+          else if (KNOWN_DIRECTIVES.indexOf(key) === -1) unknownDirectives.push(line);
+        } else {
+          if (key === 'disallow' || key === 'allow') {
+            if (!firstNonComment) firstNonComment = key;
+          }
+          if (KNOWN_DIRECTIVES.indexOf(key) === -1) unknownDirectives.push(line);
+        }
+      }
+      return { blocks: blocks, sitemaps: globalSitemaps, unknownDirectives: unknownDirectives, firstNonComment: firstNonComment, rawLines: lines };
+    }
+
+    function getBlock(blocks, ua) {
+      var uaLower = ua.toLowerCase();
+      for (var i = 0; i < blocks.length; i++) {
+        if (blocks[i].agent.toLowerCase() === uaLower) return blocks[i];
+      }
+      return null;
+    }
+
+    function isFullyBlocked(block) {
+      if (!block) return false;
+      for (var j = 0; j < block.disallow.length; j++) {
+        if (block.disallow[j] === '/') return true;  // only Disallow: / blocks; empty Disallow: means allow
+      }
+      return false;
+    }
+
+    function hasPathConflict(block) {
+      if (!block) return false;
+      var allowSet = {};
+      var disallowSet = {};
+      block.allow.forEach(function (p) { allowSet[p] = true; });
+      block.disallow.forEach(function (p) { disallowSet[p] = true; });
+      for (var k in allowSet) { if (disallowSet[k]) return true; }
+      return false;
+    }
+
+    function hasWildcardInPath(arr) {
+      for (var i = 0; i < arr.length; i++) {
+        if (arr[i].indexOf('*') !== -1) return true;
+      }
+      return false;
+    }
+
+    function runChecks(content, parsed) {
+      var blocks = parsed.blocks;
+      var sitemaps = parsed.sitemaps;
+      var failed = [];
+      var passed = [];
+      var score = 100;
+      var checkIds = {};
+      var blockStar = getBlock(blocks, '*');
+      var blockGooglebot = getBlock(blocks, 'Googlebot');
+      var blockGPT = getBlock(blocks, 'GPTBot');
+      var blockClaude = getBlock(blocks, 'ClaudeBot');
+      var blockCC = getBlock(blocks, 'CCBot');
+
+      if (sitemaps.length === 0) {
+        failed.push({ id: 'missing_sitemap', def: CHECK_DEFS[0] });
+        score -= 10;
+      } else {
+        passed.push(CHECK_DEFS[0].title);
+      }
+      var sitemapHttp = false;
+      for (var s = 0; s < sitemaps.length; s++) {
+        if (sitemaps[s].toLowerCase().indexOf('http://') === 0) {
+          sitemapHttp = true;
+          break;
+        }
+      }
+      if (sitemapHttp) {
+        failed.push({ id: 'sitemap_not_https', def: CHECK_DEFS[1] });
+        score -= 10;
+      } else if (sitemaps.length > 0) {
+        passed.push(CHECK_DEFS[1].title);
+      }
+      if (blockGooglebot && isFullyBlocked(blockGooglebot)) {
+        failed.push({ id: 'googlebot_blocked', def: CHECK_DEFS[2] });
+        score -= 25;
+      } else {
+        passed.push(CHECK_DEFS[2].title);
+      }
+      if (blockStar && isFullyBlocked(blockStar)) {
+        failed.push({ id: 'all_bots_blocked', def: CHECK_DEFS[3] });
+        score -= 25;
+      } else {
+        passed.push(CHECK_DEFS[3].title);
+      }
+      var conflict = false;
+      for (var b = 0; b < blocks.length; b++) {
+        if (hasPathConflict(blocks[b])) { conflict = true; break; }
+      }
+      if (conflict) {
+        failed.push({ id: 'allow_disallow_conflict', def: CHECK_DEFS[4] });
+        score -= 10;
+      } else {
+        passed.push(CHECK_DEFS[4].title);
+      }
+      var highDelay = false;
+      for (b = 0; b < blocks.length; b++) {
+        if (blocks[b].crawlDelay != null && blocks[b].crawlDelay > 10) { highDelay = true; break; }
+      }
+      if (highDelay) {
+        failed.push({ id: 'crawl_delay_high', def: CHECK_DEFS[5] });
+        score -= 10;
+      } else {
+        passed.push(CHECK_DEFS[5].title);
+      }
+      if (parsed.unknownDirectives.length > 0) {
+        failed.push({ id: 'unknown_directives', def: CHECK_DEFS[6], detail: parsed.unknownDirectives.join(', ') });
+        score -= 3;
+      } else {
+        passed.push(CHECK_DEFS[6].title);
+      }
+      var wildcard = false;
+      for (b = 0; b < blocks.length; b++) {
+        if (hasWildcardInPath(blocks[b].disallow) || hasWildcardInPath(blocks[b].allow)) { wildcard = true; break; }
+      }
+      if (wildcard) {
+        failed.push({ id: 'wildcard_in_path', def: CHECK_DEFS[7] });
+        score -= 3;
+      } else {
+        passed.push(CHECK_DEFS[7].title);
+      }
+      if (parsed.firstNonComment && parsed.firstNonComment !== 'user-agent' && parsed.firstNonComment !== 'sitemap' && parsed.firstNonComment !== 'host') {
+        failed.push({ id: 'missing_user_agent', def: CHECK_DEFS[8] });
+        score -= 25;
+      } else {
+        passed.push(CHECK_DEFS[8].title);
+      }
+      if (!blockGPT) {
+        failed.push({ id: 'gptbot_not_addressed', def: CHECK_DEFS[9] });
+        score -= 3;
+      } else {
+        passed.push(CHECK_DEFS[9].title);
+      }
+      if (!blockClaude) {
+        failed.push({ id: 'claudebot_not_addressed', def: CHECK_DEFS[10] });
+        score -= 3;
+      } else {
+        passed.push(CHECK_DEFS[10].title);
+      }
+      if (!blockCC) {
+        failed.push({ id: 'ccbot_not_addressed', def: CHECK_DEFS[11] });
+        score -= 3;
+      } else {
+        passed.push(CHECK_DEFS[11].title);
+      }
+      if (content.length > 500 * 1024) {
+        failed.push({ id: 'file_size', def: CHECK_DEFS[12], detail: (content.length / 1024).toFixed(1) + ' KB' });
+        score -= 10;
+      } else {
+        passed.push(CHECK_DEFS[12].title);
+      }
+      score = Math.max(0, score);
+      return { failed: failed, passed: passed, score: score };
+    }
+
+    function getAIBotStatus(blocks, ua) {
+      var block = getBlock(blocks, ua);
+      if (!block) return { status: 'Not mentioned', mentioned: false };
+      return { status: isFullyBlocked(block) ? 'Blocked' : 'Not blocked', mentioned: true };
+    }
+
+    function renderResults(result, content) {
+      var container = document.getElementById('checks-container');
+      var scoreEl = document.getElementById('health-score-num');
+      var allClearSection = document.getElementById('all-clear-section');
+      var allClearSummary = document.getElementById('all-clear-summary');
+      var allClearList = document.getElementById('all-clear-list');
+      container.innerHTML = '';
+      scoreEl.textContent = result.score;
+      scoreEl.className = 'health-score-num ' + (result.score >= 80 ? 'green' : result.score >= 50 ? 'orange' : 'red');
+      var f, card, badge, title, desc, btnFix, btnLearn, learnDiv;
+      for (var i = 0; i < result.failed.length; i++) {
+        f = result.failed[i];
+        card = document.createElement('div');
+        card.className = 'check-card ' + f.def.severity;
+        badge = '<span class="severity-badge ' + f.def.severity + '">' + f.def.severity + '</span>';
+        title = f.def.title;
+        if (f.detail) title += ' — ' + f.detail;
+        card.innerHTML = '<div class="check-title">' + badge + title + '</div><p class="check-desc">' + (f.def.why || '') + '</p><div class="check-actions"><button type="button" class="btn-copy-fix">Copy Fix ▾</button><button type="button" class="btn-learn">Learn More ▾</button></div><div class="check-learn"><p><strong>Why it matters:</strong> ' + f.def.why + '</p><p><strong>How to fix:</strong> ' + f.def.how + '</p><p><strong>Example:</strong> ' + f.def.example + '</p></div>';
+        container.appendChild(card);
+        btnFix = card.querySelector('.btn-copy-fix');
+        btnLearn = card.querySelector('.btn-learn');
+        learnDiv = card.querySelector('.check-learn');
+        btnFix.addEventListener('click', function (fix, learnEl, btn) {
+          return function () {
+            navigator.clipboard.writeText(fix);
+            showToast('Fix copied');
+          };
+        }(f.def.fix, learnDiv, btnFix));
+        btnLearn.addEventListener('click', function (el) {
+          return function () {
+            el.classList.toggle('visible');
+          };
+        }(learnDiv));
+      }
+      if (result.passed.length > 0) {
+        allClearSection.classList.remove('collapsed');
+        allClearSummary.textContent = 'All clear (' + result.passed.length + ' passed)';
+        allClearList.innerHTML = '<ul style="margin:0;padding-left:1.25rem;">' + result.passed.map(function (p) { return '<li>' + p + '</li>'; }).join('') + '</ul>';
+      } else {
+        allClearSection.classList.add('collapsed');
+      }
+      var parsed = parseRobots(content);
+      var tbody = document.getElementById('ai-tbody');
+      tbody.innerHTML = '';
+      var anyNotMentioned = false;
+      for (var a = 0; a < AI_BOTS.length; a++) {
+        var st = getAIBotStatus(parsed.blocks, AI_BOTS[a].ua);
+        if (!st.mentioned) anyNotMentioned = true;
+        var statusText = st.status === 'Blocked' ? '✅ Blocked' : (st.status === 'Not mentioned' ? '⚠️ Not mentioned' : '⚠️ Not blocked');
+        var tr = document.createElement('tr');
+        tr.innerHTML = '<td>' + AI_BOTS[a].name + '</td><td>' + AI_BOTS[a].ua + '</td><td>' + statusText + '</td>';
+        tbody.appendChild(tr);
+      }
+      document.getElementById('ai-action-card').style.display = anyNotMentioned ? 'block' : 'none';
+      lastResult = result;
+      lastContent = content;
+      lastParsed = parsed;
+    }
+
+    var lastResult, lastContent, lastParsed;
+
+    function showToast(msg) {
+      var t = document.getElementById('share-toast');
+      t.textContent = msg;
+      t.hidden = false;
+      setTimeout(function () { t.hidden = true; }, 2000);
+    }
+
+    function normalizeUrl(url) {
+      url = url.trim();
+      if (!url) return url;
+      if (!/^https?:\/\//i.test(url)) url = 'https://' + url;
+      try {
+        var u = new URL(url);
+        var path = u.pathname.replace(/\/+$/, '') || '';  // strip trailing slash
+        if (!/\/robots\.txt$/i.test(path)) {
+          path = (path === '' ? '/' : path + '/') + 'robots.txt';  // root -> /robots.txt; else /path/robots.txt
+          u.pathname = path;
+        }
+        return u.href;
+      } catch (e) {
+        return url;
+      }
+    }
+
+    document.getElementById('tab-url').addEventListener('click', function () {
+      document.getElementById('panel-url').classList.add('active');
+      document.getElementById('panel-paste').classList.remove('active');
+      this.setAttribute('aria-pressed', 'true');
+      document.getElementById('tab-paste').setAttribute('aria-pressed', 'false');
+    });
+    document.getElementById('tab-paste').addEventListener('click', function () {
+      document.getElementById('panel-paste').classList.add('active');
+      document.getElementById('panel-url').classList.remove('active');
+      this.setAttribute('aria-pressed', 'true');
+      document.getElementById('tab-url').setAttribute('aria-pressed', 'false');
+    });
+
+    document.getElementById('btn-sample').addEventListener('click', function () {
+      document.getElementById('paste-input').value = SAMPLE;
+    });
+
+    document.getElementById('btn-clear').addEventListener('click', function () {
+      document.getElementById('paste-input').value = '';
+      document.getElementById('placeholder').style.display = '';
+      document.getElementById('results').style.display = 'none';
+    });
+
+    document.getElementById('btn-audit').addEventListener('click', function () {
+      var content = document.getElementById('paste-input').value.trim();
+      if (!content) return;
+      document.getElementById('cors-note').classList.remove('visible');
+      var parsed = parseRobots(content);
+      var result = runChecks(content, parsed);
+      document.getElementById('placeholder').style.display = 'none';
+      document.getElementById('results').style.display = 'block';
+      renderResults(result, content);
+    });
+
+    document.getElementById('btn-fetch').addEventListener('click', function () {
+      var url = document.getElementById('url-input').value.trim();
+      if (!url) return;
+      url = normalizeUrl(url);
+      document.getElementById('url-input').value = url;
+      document.getElementById('cors-note').classList.remove('visible');
+      var btn = this;
+      btn.disabled = true;
+      fetch(url, { method: 'GET', mode: 'cors' })
+        .then(function (r) { return r.text(); })
+        .then(function (text) {
+          btn.disabled = false;
+          var parsed = parseRobots(text);
+          var result = runChecks(text, parsed);
+          document.getElementById('placeholder').style.display = 'none';
+          document.getElementById('results').style.display = 'block';
+          renderResults(result, text);
+        })
+        .catch(function () {
+          btn.disabled = false;
+          document.getElementById('cors-note').classList.add('visible');
+        });
+    });
+
+    document.getElementById('btn-copy-report').addEventListener('click', function () {
+      if (!lastResult || !lastContent) return;
+      var lines = ['robots.txt Audit Report', 'Health score: ' + lastResult.score, ''];
+      lastResult.failed.forEach(function (f) {
+        lines.push('[' + f.def.severity.toUpperCase() + '] ' + f.def.title);
+        lines.push('  Fix: ' + f.def.fix);
+        lines.push('');
+      });
+      lines.push('Passed: ' + lastResult.passed.join(', '));
+      navigator.clipboard.writeText(lines.join('\n')).then(function () { showToast('Report copied'); });
+    });
+
+    document.getElementById('btn-export-json').addEventListener('click', function () {
+      if (!lastResult || !lastParsed) return;
+      var out = {
+        score: lastResult.score,
+        failed: lastResult.failed.map(function (f) {
+          return { id: f.id, title: f.def.title, severity: f.def.severity, fix: f.def.fix, detail: f.detail };
+        }),
+        passed: lastResult.passed,
+        aiBots: AI_BOTS.map(function (b) {
+          var st = getAIBotStatus(lastParsed.blocks, b.ua);
+          return { name: b.name, userAgent: b.ua, status: st.status };
+        })
+      };
+      var a = document.createElement('a');
+      a.href = 'data:application/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(out, null, 2));
+      a.download = 'robots-audit.json';
+      a.click();
+    });
+
+    var AI_BLOCK_TEXT = 'User-agent: GPTBot\nDisallow: /\n\nUser-agent: ClaudeBot\nDisallow: /\n\nUser-agent: CCBot\nDisallow: /\n\nUser-agent: Google-Extended\nDisallow: /\n\n';
+    document.getElementById('btn-copy-ai-block').addEventListener('click', function () {
+      navigator.clipboard.writeText(AI_BLOCK_TEXT).then(function () { showToast('AI block copied'); });
+    });
+
+    document.getElementById('all-clear-summary').addEventListener('click', function () {
+      document.getElementById('all-clear-section').classList.toggle('collapsed');
+    });
+
+    var params = new URLSearchParams(window.location.search);
+    var urlParam = params.get('url');
+    if (urlParam) {
+      var normalized = normalizeUrl(urlParam);
+      document.getElementById('url-input').value = normalized;
+      document.getElementById('tab-url').click();
+      document.getElementById('btn-fetch').click();
+    }
+
+    var feedbackBtn = document.getElementById('feedback-btn');
+    var feedbackModal = document.getElementById('feedback-modal');
+    var feedbackClose = document.getElementById('feedback-modal-close');
+    function closeFeedback() {
+      feedbackModal.classList.remove('visible');
+      feedbackModal.setAttribute('aria-hidden', 'true');
+    }
+    if (feedbackBtn) feedbackBtn.addEventListener('click', function () {
+      feedbackModal.classList.add('visible');
+      feedbackModal.setAttribute('aria-hidden', 'false');
+      feedbackClose && feedbackClose.focus();
+    });
+    if (feedbackClose) feedbackClose.addEventListener('click', closeFeedback);
+    if (feedbackModal) {
+      feedbackModal.addEventListener('click', function (e) { if (e.target === feedbackModal) closeFeedback(); });
+      feedbackModal.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeFeedback(); });
+    }
+  })();
+  </script>
+</body>
+</html>

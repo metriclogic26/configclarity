@@ -23,5 +23,9 @@ Paste output of sudo ufw status verbose and audit for high-risk open ports, miss
 URL: https://configclarity.dev/proxy
 Paste nginx.conf or a docker-compose.yml with Traefik labels. Visualises routing decisions, detects dangling routers, missing SSL redirects, and exposed admin routes.
 
+## robots.txt Validator
+URL: https://configclarity.dev/robots
+Description: Audit crawl directives, AI bot coverage (GPTBot, ClaudeBot, CCBot, Google-Extended, PerplexityBot, Bytespider), sitemap health, and Crawl-delay settings. Health score 0-100. Copy-paste fixes. No signup. Client-side only.
+
 ## Technology
 Client-side only. No data is stored or transmitted. Built with vanilla HTML, CSS, and JavaScript.

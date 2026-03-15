@@ -1,8 +1,18 @@
 {
   "redirects": [],
   "rewrites": [
-    { "source": "/", "destination": "/home/index.html" },
-    { "source": "/crontab", "destination": "/index.html" },
-    { "source": "/crontab/", "destination": "/index.html" }
+    { "source": "/",          "destination": "/home/index.html" },
+    { "source": "/crontab",   "destination": "/index.html" },
+    { "source": "/crontab/",  "destination": "/index.html" },
+    { "source": "/ssl",       "destination": "/ssl/index.html" },
+    { "source": "/ssl/",      "destination": "/ssl/index.html" },
+    { "source": "/docker",    "destination": "/docker/index.html" },
+    { "source": "/docker/",   "destination": "/docker/index.html" },
+    { "source": "/firewall",  "destination": "/firewall/index.html" },
+    { "source": "/firewall/", "destination": "/firewall/index.html" },
+    { "source": "/proxy",     "destination": "/proxy/index.html" },
+    { "source": "/proxy/",    "destination": "/proxy/index.html" },
+    { "source": "/robots",    "destination": "/robots/index.html" },
+    { "source": "/robots/",   "destination": "/robots/index.html" }
   ]
 }

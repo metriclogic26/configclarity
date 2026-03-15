@@ -24,4 +24,9 @@
     <loc>https://configclarity.dev/proxy</loc>
     <priority>0.8</priority>
   </url>
+  <url>
+    <loc>https://configclarity.dev/robots</loc>
+    <lastmod>2026-03-15</lastmod>
+    <priority>0.8</priority>
+  </url>
 </urlset>

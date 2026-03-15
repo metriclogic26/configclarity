@@ -117,21 +117,19 @@
     .card-cta:hover {
       background: #5a52e0;
     }
-    .footer {
-      padding: 1rem 1.5rem;
+    .site-footer {
       text-align: center;
-      font-size: 0.8125rem;
-      color: rgba(255, 255, 255, 0.45);
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding: 1.5rem;
+      border-top: 1px solid #1e2236;
+      margin-top: 2rem;
     }
-    .footer p {
-      margin: 0.5rem 0;
-    }
-    .footer-disclaimer {
-      max-width: 56rem;
-      margin-left: auto;
-      margin-right: auto;
-      line-height: 1.45;
+    .privacy-note { color: #8a8fb5; font-size: 0.8125rem; margin-bottom: 0.5rem; }
+    .disclaimer-note {
+      color: #5a5f7a;
+      font-size: 0.75rem;
+      max-width: 680px;
+      margin: 0 auto;
+      line-height: 1.6;
     }
   </style>
 </head>
@@ -198,25 +196,47 @@
         </div>
         <a href="/proxy" class="card-cta">Open Proxy Mapper →</a>
       </article>
+      <article class="card">
+        <span class="card-icon" aria-hidden="true">🤖</span>
+        <h2 class="card-title">robots.txt Validator</h2>
+        <p class="card-desc">Audit crawl directives, AI bot coverage, and sitemap health.</p>
+        <div class="card-tags">
+          <span class="card-tag">robots</span>
+          <span class="card-tag">seo</span>
+          <span class="card-tag">crawling</span>
+        </div>
+        <a href="/robots" class="card-cta">Open robots.txt Validator →</a>
+      </article>
     </div>
   </main>
 
-  <footer class="footer">
-    <p>All tools run in your browser. No data is stored or transmitted.</p>
-    <p class="footer-disclaimer">Provided as is without warranty. For informational purposes only. Always verify configurations independently before deploying to production. ConfigClarity accepts no liability for any damages arising from use of these tools.</p>
-    <p>© 2026 ConfigClarity. All rights reserved.</p>
-    <p><a href="https://github.com/metriclogic26/configclarity"
-   target="_blank"
-   rel="noopener"
-   style="color: var(--text2); text-decoration: none;
-          font-size: 0.8rem;">
-  View source on GitHub
-</a></p>
-    <a href="https://fazier.com" target="_blank">
-  <img src="https://fazier.com/api/v1//public/badges/launch_badges.svg?badge_type=featured&theme=light"
-       width="250"
-       alt="Fazier badge" />
-</a>
+  <footer class="site-footer">
+    <p class="privacy-note">
+      🔒 We do not store your pasted configs, domains, or IP address.
+      All processing happens entirely in your browser.
+    </p>
+    <p class="disclaimer-note">
+      ConfigClarity is provided "as is" without warranty of any kind.
+      This tool is for informational and planning purposes only.
+      Always verify your configurations independently before deploying
+      to production. ConfigClarity accepts no liability for scheduling
+      errors, server downtime, data loss, or any damages arising from
+      use of this tool.
+    </p>
+    <p>
+      <a href="https://github.com/metriclogic26/configclarity"
+         target="_blank" rel="noopener"
+         style="color:#8a8fb5; text-decoration:none; font-size:0.8rem;">
+        View source on GitHub
+      </a>
+    </p>
+    <p style="color:#8a8fb5; font-size:0.8rem; margin-top:0.5rem;">
+  Also try 
+  <a href="https://domainpreflight.dev" target="_blank" rel="noopener" 
+     style="color:#8a8fb5;">domainpreflight.dev</a> · 
+  <a href="https://packagefix.dev" target="_blank" rel="noopener" 
+     style="color:#8a8fb5;">packagefix.dev</a>
+</p>
   </footer>
 </body>
 </html>
