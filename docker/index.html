@@ -1211,10 +1211,11 @@
             card.innerHTML = '<div class="image-tag-service">' +
               escapeHtml(img.service) +
               '<span class="image-tag-badge info">UNVERIFIED</span></div>' +
-              '<div class="image-tag-detail">' + escapeHtml(img.fullImage) +
-              ' — could not reach Docker Hub to verify tag. ' +
-              'Check hub.docker.com/' + escapeHtml(img.namespace) + '/' +
-              escapeHtml(img.repo) + '</div>';
+              '<div class="image-tag-detail">' + escapeHtml(img.fullImage) + 
+              ' — tag check requires server-side lookup (Docker Hub blocks browser requests). ' +
+              '<a href="https://hub.docker.com/r/' + escapeHtml(img.namespace) + '/' + 
+              escapeHtml(img.repo) + '/tags" target="_blank" rel="noopener" ' +
+              'style="color:#6c63ff;">View tags on Docker Hub →</a></div>';
             continue;
           }
 
