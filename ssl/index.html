@@ -478,6 +478,10 @@
     <aside class="panel-left">
       <div class="textarea-wrap">
         <label for="domains-input">Domains (one per line)</label>
+        <p style="font-size:0.75rem;color:#8a8fb5;margin:0 0 0.35rem;">
+          One domain per line — no https:// needed.
+          Checks Certificate Transparency logs for expiry, issuer and CDN detection.
+        </p>
         <textarea id="domains-input" placeholder="example.com&#10;api.example.com&#10;app.example.org" aria-label="Domains to check, one per line"></textarea>
         <p class="cc-restore-notice" id="cc-restore-notice" aria-live="polite" style="display: none; color: #8a8fb5; font-size: 0.75rem; margin: 0.25rem 0 0;"></p>
         <div class="button-row">

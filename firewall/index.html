@@ -460,6 +460,14 @@
     <aside class="panel-left">
       <div class="textarea-wrap">
         <label for="ufw-input">UFW or nftables output</label>
+        <p style="font-size:0.75rem;color:#8a8fb5;margin:0 0 0.35rem;">
+          UFW: run <code style="background:rgba(255,255,255,0.08);
+          padding:0.1rem 0.3rem;border-radius:3px;">
+          sudo ufw status verbose</code> and paste the output.
+          nftables: run <code style="background:rgba(255,255,255,0.08);
+          padding:0.1rem 0.3rem;border-radius:3px;">
+          sudo nft list ruleset</code>. Format is auto-detected.
+        </p>
         <textarea id="ufw-input"
   placeholder="Paste output of:&#10;  sudo ufw status verbose&#10;— or —&#10;  sudo nft list ruleset" aria-label="UFW or nftables output"></textarea>
         <p class="cc-restore-notice" id="cc-restore-notice" aria-live="polite" style="display: none; color: #8a8fb5; font-size: 0.75rem; margin: 0.25rem 0 0;"></p>

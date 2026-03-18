@@ -489,6 +489,11 @@
     <aside class="panel-left">
       <div class="textarea-wrap">
         <label for="config-input">nginx.conf or docker-compose.yml (Traefik labels)</label>
+        <p style="font-size:0.75rem;color:#8a8fb5;margin:0 0 0.35rem;">
+          Paste nginx.conf or docker-compose.yml with Traefik labels.
+          Format is auto-detected. Optionally enter a test URL
+          to see which rule matches it.
+        </p>
         <textarea id="config-input" placeholder="Paste config... (auto-detects nginx vs Traefik)" aria-label="Proxy config"></textarea>
         <p class="cc-restore-notice" id="cc-restore-notice" aria-live="polite" style="display: none; color: #8a8fb5; font-size: 0.75rem; margin: 0.25rem 0 0;"></p>
       </div>

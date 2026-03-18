@@ -503,6 +503,11 @@
     <aside class="panel-left">
       <div class="textarea-wrap">
         <label for="compose-input">docker-compose.yml</label>
+        <p style="font-size:0.75rem;color:#8a8fb5;margin:0 0 0.35rem;">
+          Paste docker-compose.yml. Optionally add your .env below
+          for full variable bridging. Audits healthchecks, secrets,
+          port collisions, image tags and GPU config.
+        </p>
         <textarea id="compose-input" placeholder="version: &#39;3.8&#39;&#10;services:&#10;  app:&#10;    image: myapp&#10;    depends_on:&#10;      db:&#10;        condition: service_healthy" aria-label="Paste docker-compose.yml content"></textarea>
       </div>
       <div class="textarea-wrap">
