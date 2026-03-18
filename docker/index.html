@@ -240,6 +240,28 @@
       font-family: 'JetBrains Mono', monospace;
     }
     .audit-section-body { padding: 1rem; }
+    .nvidia-finding-card {
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      border-left: 4px solid #6b7280;
+      background: rgba(0,0,0,0.2);
+      font-size: 0.875rem;
+    }
+    .nvidia-finding-card:last-child { margin-bottom: 0; }
+    .nvidia-finding-card.critical { border-left-color: #ef4444; }
+    .nvidia-finding-card.warning { border-left-color: #f97316; }
+    .nvidia-finding-card.info { border-left-color: #6c63ff; }
+    .nvidia-finding-title { font-weight: 600; margin-bottom: 0.25rem; }
+    .nvidia-finding-card.critical .nvidia-finding-title { color: #ef4444; }
+    .nvidia-finding-card.warning .nvidia-finding-title { color: #f97316; }
+    .nvidia-finding-card.info .nvidia-finding-title { color: #a5a0ff; }
+    .nvidia-finding-detail {
+      color: #8a8fb5;
+      font-size: 0.8125rem;
+      white-space: pre-wrap;
+      font-family: ui-monospace, monospace;
+    }
     .audit-list { list-style: none; margin: 0; padding: 0; }
     .audit-list li {
       padding: 0.35rem 0;
@@ -553,6 +575,12 @@
             <p class="panel-placeholder">Paste a compose file and click Audit</p>
           </div>
         </div>
+        <div class="audit-section" id="panel-nvidia" style="display:none;">
+          <h2 class="audit-section-title">6. NVIDIA GPU Runtime</h2>
+          <div class="audit-section-body" id="nvidia-body">
+            <p class="panel-placeholder">Paste a compose file and click Audit</p>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -609,13 +637,22 @@
       </details>
       <details class="faq-item">
         <summary class="faq-question">What does the Healthcheck Injector do?</summary>
-        <p class="faq-answer">When healthcheck issues are found, click "Inject Fixes" 
-  to generate a fixed version of your compose file with healthchecks 
-  automatically added for each service that is missing one. Templates are 
-  matched by image name — postgres, mysql, redis, nginx, rabbitmq, 
-  elasticsearch, and mongodb all get the correct production-ready healthcheck 
-  command. Unknown images get a safe default. Copy the result and paste it 
+        <p class="faq-answer">When healthcheck issues are found, click "Inject Fixes"
+  to generate a fixed version of your compose file with healthchecks
+  automatically added for each service that is missing one. Templates are
+  matched by image name — postgres, mysql, redis, nginx, rabbitmq,
+  elasticsearch, and mongodb all get the correct production-ready healthcheck
+  command. Unknown images get a safe default. Copy the result and paste it
   into your project.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-question">Does it detect NVIDIA GPU misconfigurations?</summary>
+        <p class="faq-answer">Yes. If your compose file uses runtime: nvidia,
+  deploy.resources.reservations.devices, or NVIDIA_ environment variables,
+  panel 6 appears with GPU-specific checks: deprecated runtime syntax,
+  missing NVIDIA_VISIBLE_DEVICES, missing driver capabilities,
+  conflicting count and device_ids, and missing nvidia-container-runtime
+  daemon config.</p>
       </details>
     </div>
   </section>
@@ -663,7 +700,7 @@
       const MIN_INTERVAL_SEC = 10;
       const MIN_START_PERIOD_SEC = 10;
 
-      const SAMPLE_COMPOSE = "version: '3.8'\nservices:\n  app:\n    image: myapp\n    depends_on:\n      db:\n        condition: service_healthy\n    environment:\n      - DB_HOST=${DB_HOST}\n      - SECRET_KEY=hardcodedpassword123\n    ports:\n      - \"8080:80\"\n  db:\n    image: postgres:15\n    ports:\n      - \"8080:5432\"\n  redis:\n    image: redis:latest\n  nginx:\n    image: nginx:1.24";
+      const SAMPLE_COMPOSE = "version: '3.8'\nservices:\n  app:\n    image: myapp\n    depends_on:\n      db:\n        condition: service_healthy\n    environment:\n      - DB_HOST=${DB_HOST}\n      - SECRET_KEY=hardcodedpassword123\n    ports:\n      - \"8080:80\"\n  db:\n    image: postgres:15\n    ports:\n      - \"8080:5432\"\n  redis:\n    image: redis:latest\n  nginx:\n    image: nginx:1.24\n  gpu:\n    image: nvidia/cuda:12.0-base\n    runtime: nvidia\n    environment:\n      - NVIDIA_VISIBLE_DEVICES=all";
       const SAMPLE_ENV = "DB_HOST=db\nUNUSED_VAR=something";
 
       const COMPOSE_KEY = 'cc-docker-compose';
@@ -1379,6 +1416,169 @@
         return result.join('\n');
       }
 
+      function auditNvidia(services, composeStr) {
+        var findings = [];
+
+        Object.keys(services).forEach(function (svcName) {
+          var svc = services[svcName];
+          if (!svc) return;
+
+          var deploy = svc.deploy;
+          var runtime = svc.runtime;
+          var environment = svc.environment || [];
+          var envPairs = getServiceEnvPairs(svc);
+
+          var hasNvidiaRuntime = runtime === 'nvidia';
+          var hasDeployGpu = false;
+          var gpuCount = null;
+          var gpuDriver = null;
+
+          if (deploy && deploy.resources &&
+              deploy.resources.reservations &&
+              deploy.resources.reservations.devices) {
+            var devices = deploy.resources.reservations.devices;
+            if (Array.isArray(devices)) {
+              devices.forEach(function (d) {
+                if (d.driver === 'nvidia' ||
+                    (d.capabilities &&
+                     d.capabilities.indexOf('gpu') !== -1)) {
+                  hasDeployGpu = true;
+                  gpuCount = d.count || d.device_ids || 'all';
+                  gpuDriver = d.driver;
+                }
+              });
+            }
+          }
+
+          var nvidiaEnvVars = envPairs.filter(function (p) {
+            return p.key && p.key.toUpperCase().startsWith('NVIDIA_');
+          });
+          var hasNvidiaEnv = nvidiaEnvVars.length > 0;
+
+          var visibleDevices = envPairs.find(function (p) {
+            return p.key === 'NVIDIA_VISIBLE_DEVICES';
+          });
+
+          var driverCaps = envPairs.find(function (p) {
+            return p.key === 'NVIDIA_DRIVER_CAPABILITIES';
+          });
+
+          var isNvidiaService = hasNvidiaRuntime || hasDeployGpu || hasNvidiaEnv;
+          if (!isNvidiaService) return;
+
+          if (hasNvidiaRuntime && !hasDeployGpu) {
+            findings.push({
+              service: svcName,
+              severity: 'warning',
+              title: 'Deprecated runtime: nvidia syntax',
+              detail: 'Service "' + svcName + '" uses runtime: nvidia which is ' +
+                'deprecated in Docker Compose v3. Use deploy.resources.reservations ' +
+                'instead:\n\ndeploy:\n  resources:\n    reservations:\n      devices:\n' +
+                '        - driver: nvidia\n          count: 1\n          ' +
+                'capabilities: [gpu]'
+            });
+          }
+
+          if (hasNvidiaRuntime || hasDeployGpu) {
+            if (!visibleDevices) {
+              findings.push({
+                service: svcName,
+                severity: 'warning',
+                title: 'Missing NVIDIA_VISIBLE_DEVICES',
+                detail: 'Service "' + svcName + '" uses NVIDIA GPU but is missing ' +
+                  'NVIDIA_VISIBLE_DEVICES env var. Without it, no GPUs are exposed ' +
+                  'to the container. Add:\n  - NVIDIA_VISIBLE_DEVICES=all\n' +
+                  '(or specify GPU index: NVIDIA_VISIBLE_DEVICES=0)'
+              });
+            } else if (visibleDevices.value === 'none') {
+              findings.push({
+                service: svcName,
+                severity: 'critical',
+                title: 'NVIDIA_VISIBLE_DEVICES=none blocks GPU access',
+                detail: 'Service "' + svcName + '" has NVIDIA_VISIBLE_DEVICES=none — ' +
+                  'no GPUs will be visible to this container despite GPU runtime ' +
+                  'being configured. Change to "all" or a specific GPU index.'
+              });
+            }
+          }
+
+          if ((hasNvidiaRuntime || hasDeployGpu) && !driverCaps) {
+            findings.push({
+              service: svcName,
+              severity: 'info',
+              title: 'Missing NVIDIA_DRIVER_CAPABILITIES',
+              detail: 'Service "' + svcName + '" uses GPU but NVIDIA_DRIVER_CAPABILITIES ' +
+                'is not set. Defaults to "compute,utility". For ML workloads add:\n' +
+                '  - NVIDIA_DRIVER_CAPABILITIES=compute,utility\n' +
+                'For video encoding add: compute,utility,video'
+            });
+          }
+
+          if (hasDeployGpu && !hasNvidiaRuntime) {
+            findings.push({
+              service: svcName,
+              severity: 'info',
+              title: 'GPU reservation requires nvidia-container-runtime',
+              detail: 'Service "' + svcName + '" reserves GPU devices. Ensure ' +
+                'nvidia-container-runtime is installed and configured as the ' +
+                'default runtime in /etc/docker/daemon.json:\n' +
+                '{\n  "default-runtime": "nvidia",\n  "runtimes": {\n' +
+                '    "nvidia": {\n      "path": "nvidia-container-runtime"\n' +
+                '    }\n  }\n}'
+            });
+          }
+
+          if (deploy && deploy.resources &&
+              deploy.resources.reservations &&
+              deploy.resources.reservations.devices) {
+            var devices2 = deploy.resources.reservations.devices;
+            if (Array.isArray(devices2)) {
+              devices2.forEach(function (d) {
+                if (d.count && d.device_ids) {
+                  findings.push({
+                    service: svcName,
+                    severity: 'critical',
+                    title: 'Conflicting count and device_ids',
+                    detail: 'Service "' + svcName + '" specifies both count and ' +
+                      'device_ids in GPU reservation. Use one or the other:\n' +
+                      'count: 1  # reserve N GPUs\n— or —\n' +
+                      'device_ids: ["0"]  # reserve specific GPU by ID'
+                  });
+                }
+              });
+            }
+          }
+        });
+
+        return findings;
+      }
+
+      function renderNvidia(findings) {
+        var panel = document.getElementById('panel-nvidia');
+        var body = document.getElementById('nvidia-body');
+
+        if (findings.length === 0) {
+          panel.style.display = 'none';
+          return;
+        }
+
+        panel.style.display = 'block';
+        body.innerHTML = '';
+
+        findings.forEach(function (f) {
+          var card = document.createElement('div');
+          card.className = 'nvidia-finding-card ' + f.severity;
+          card.innerHTML =
+            '<div class="nvidia-finding-title">' +
+            escapeHtml(f.service) + ' — ' + escapeHtml(f.title) +
+            '</div>' +
+            '<div class="nvidia-finding-detail">' +
+            escapeHtml(f.detail) +
+            '</div>';
+          body.appendChild(card);
+        });
+      }
+
       function runAudit() {
         parseError.style.display = 'none';
         parseError.textContent = '';
@@ -1415,6 +1615,8 @@
         renderPorts(portList, portAudit.duplicates);
         renderSecrets(secretsScan(services));
         runImageCheck(services);
+        var nvidiaFindings = auditNvidia(services, composeStr);
+        renderNvidia(nvidiaFindings);
 
         auditPlaceholder.style.display = 'none';
         auditResults.style.display = 'block';
@@ -1439,6 +1641,9 @@
         secretsBody.innerHTML = '<p class="panel-placeholder">Paste a compose file and click Audit</p>';
         document.getElementById('images-body').innerHTML =
           '<p class="panel-placeholder">Paste a compose file and click Audit</p>';
+        document.getElementById('nvidia-body').innerHTML =
+          '<p class="panel-placeholder">Paste a compose file and click Audit</p>';
+        document.getElementById('panel-nvidia').style.display = 'none';
         document.getElementById('healthcheck-inject-result').style.display = 'none';
         document.getElementById('healthcheck-inject-code').textContent = '';
         document.getElementById('btn-inject-healthchecks').style.display = 'none';
