@@ -281,6 +281,34 @@
     .secrets-scan-card-var { color: rgba(255, 255, 255, 0.9); margin-bottom: 0.15rem; }
     .secrets-scan-card-value { font-size: 0.8125rem; color: #8a8fb5; font-family: ui-monospace, monospace; margin-bottom: 0.35rem; }
     .secrets-scan-card-suggestion { font-size: 0.8125rem; color: #8a8fb5; }
+    .image-tag-card {
+      padding: 0.75rem 1rem;
+      margin-bottom: 0.5rem;
+      border-radius: 8px;
+      border-left: 4px solid #1e2236;
+      background: rgba(0,0,0,0.2);
+      font-size: 0.875rem;
+    }
+    .image-tag-card:last-child { margin-bottom: 0; }
+    .image-tag-card.outdated { border-left-color: #f97316; }
+    .image-tag-card.latest-tag { border-left-color: #ef4444; }
+    .image-tag-card.ok { border-left-color: #22c55e; }
+    .image-tag-card.loading { border-left-color: #6c63ff; opacity: 0.7; }
+    .image-tag-card.error { border-left-color: #6b7280; }
+    .image-tag-service { font-weight: 600; color: #fff; margin-bottom: 0.25rem; }
+    .image-tag-detail { font-size: 0.8125rem; color: #8a8fb5; }
+    .image-tag-badge {
+      display: inline-block;
+      font-size: 0.7rem;
+      padding: 0.15rem 0.4rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+      font-weight: 600;
+    }
+    .image-tag-badge.warn { background: rgba(249,115,22,0.25); color: #f97316; }
+    .image-tag-badge.crit { background: rgba(239,68,68,0.25); color: #ef4444; }
+    .image-tag-badge.ok { background: rgba(34,197,94,0.25); color: #22c55e; }
+    .image-tag-badge.info { background: rgba(108,99,255,0.25); color: #a5a0ff; }
     .panel-placeholder {
       color: rgba(255, 255, 255, 0.4);
       font-size: 0.875rem;
@@ -483,6 +511,12 @@
           <h2 class="audit-section-title">4. Secrets Scan</h2>
           <div class="audit-section-body" id="secrets-body"><p class="panel-placeholder">Paste a compose file and click Audit</p></div>
         </div>
+        <div class="audit-section" id="panel-images">
+          <h2 class="audit-section-title">5. Image Tag Checker</h2>
+          <div class="audit-section-body" id="images-body">
+            <p class="panel-placeholder">Paste a compose file and click Audit</p>
+          </div>
+        </div>
       </div>
     </section>
   </main>
@@ -527,6 +561,15 @@
       <details class="faq-item">
         <summary class="faq-question">Does it support Docker Swarm or Kubernetes?</summary>
         <p class="faq-answer">This tool is designed for docker-compose.yml files only. It does not support Swarm deploy configs or Kubernetes manifests.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-question">How does the Image Tag Checker work?</summary>
+        <p class="faq-answer">For each image in your compose file, the tool queries the 
+  Docker Hub public API to find the latest available tag and compares it against 
+  your pinned version. It flags services using :latest (unpredictable builds), 
+  outdated tags (newer version available), and rewards digest-pinned images 
+  (most stable). Private registry images are skipped. All requests go directly 
+  from your browser to Docker Hub — no proxy involved.</p>
       </details>
     </div>
   </section>
@@ -574,7 +617,7 @@
       const MIN_INTERVAL_SEC = 10;
       const MIN_START_PERIOD_SEC = 10;
 
-      const SAMPLE_COMPOSE = "version: '3.8'\nservices:\n  app:\n    image: myapp\n    depends_on:\n      db:\n        condition: service_healthy\n    environment:\n      - DB_HOST=${DB_HOST}\n      - SECRET_KEY=hardcodedpassword123\n    ports:\n      - \"8080:80\"\n  db:\n    image: postgres\n    ports:\n      - \"8080:5432\"";
+      const SAMPLE_COMPOSE = "version: '3.8'\nservices:\n  app:\n    image: myapp\n    depends_on:\n      db:\n        condition: service_healthy\n    environment:\n      - DB_HOST=${DB_HOST}\n      - SECRET_KEY=hardcodedpassword123\n    ports:\n      - \"8080:80\"\n  db:\n    image: postgres:15\n    ports:\n      - \"8080:5432\"\n  redis:\n    image: redis:latest\n  nginx:\n    image: nginx:1.24";
       const SAMPLE_ENV = "DB_HOST=db\nUNUSED_VAR=something";
 
       const COMPOSE_KEY = 'cc-docker-compose';
@@ -1024,6 +1067,182 @@
         });
       }
 
+      function extractImages(services) {
+        var images = [];
+        Object.keys(services).forEach(function (svcName) {
+          var img = services[svcName] && services[svcName].image;
+          if (!img || typeof img !== 'string') return;
+          img = img.trim();
+          var tag = 'latest';
+          var name = img;
+
+          // Handle digest format: image@sha256:...
+          if (img.indexOf('@') !== -1) {
+            var atParts = img.split('@');
+            name = atParts[0];
+            tag = atParts[1]; // sha256:abc...
+          } else if (img.indexOf(':') !== -1) {
+            var parts = img.split(':');
+            name = parts[0];
+            tag = parts[1] || 'latest';
+          }
+          // Parse namespace/repo
+          var namespace = 'library';
+          var repo = name;
+          var nameParts = name.split('/');
+          if (nameParts.length >= 2) {
+            namespace = nameParts[0];
+            repo = nameParts.slice(1).join('/');
+          }
+          // Skip local/private images (no dots/ports in name = Docker Hub)
+          var isDockerHub = !name.includes('.') || name.startsWith('docker.io/');
+          if (name.startsWith('docker.io/')) {
+            name = name.replace('docker.io/', '');
+            nameParts = name.split('/');
+            if (nameParts.length >= 2) {
+              namespace = nameParts[0];
+              repo = nameParts.slice(1).join('/');
+            } else {
+              namespace = 'library';
+              repo = name;
+            }
+            isDockerHub = true;
+          }
+          images.push({
+            service: svcName,
+            fullImage: img,
+            namespace: namespace,
+            repo: repo,
+            pinnedTag: tag,
+            isDockerHub: isDockerHub,
+            isLatest: tag === 'latest',
+            isPinned: tag !== 'latest' && !/^sha256:/.test(tag)
+          });
+        });
+        return images;
+      }
+
+      async function fetchLatestTag(namespace, repo) {
+        try {
+          var url = 'https://hub.docker.com/v2/repositories/' +
+                    namespace + '/' + repo +
+                    '/tags?page_size=5&ordering=last_updated';
+          var res = await fetch(url, {
+            headers: { 'Accept': 'application/json' }
+          });
+          if (!res.ok) return null;
+          var data = await res.json();
+          if (!data.results || data.results.length === 0) return null;
+          // Find most recent non-latest stable tag
+          var tags = data.results.map(function (t) { return t.name; });
+          var stableTag = tags.find(function (t) {
+            return t !== 'latest' && !/^(edge|dev|nightly|beta|alpha|rc)/.test(t);
+          });
+          return {
+            latestTag: stableTag || tags[0],
+            allTags: tags
+          };
+        } catch (e) {
+          return null;
+        }
+      }
+
+      async function runImageCheck(services) {
+        var imagesBody = document.getElementById('images-body');
+        var images = extractImages(services);
+
+        if (images.length === 0) {
+          imagesBody.innerHTML = '<p class="audit-ok">✓ No images found in compose file.</p>';
+          return;
+        }
+
+        // Show loading state
+        imagesBody.innerHTML = '';
+        images.forEach(function (img) {
+          var card = document.createElement('div');
+          card.className = 'image-tag-card loading';
+          card.id = 'img-card-' + img.service;
+          card.innerHTML = '<div class="image-tag-service">' + escapeHtml(img.service) +
+            '</div><div class="image-tag-detail">Checking ' +
+            escapeHtml(img.fullImage) + '…</div>';
+          imagesBody.appendChild(card);
+        });
+
+        // Check each image
+        for (var i = 0; i < images.length; i++) {
+          var img = images[i];
+          var card = document.getElementById('img-card-' + img.service);
+
+          if (!img.isDockerHub) {
+            card.className = 'image-tag-card error';
+            card.innerHTML = '<div class="image-tag-service">' +
+              escapeHtml(img.service) + '</div>' +
+              '<div class="image-tag-detail">' + escapeHtml(img.fullImage) +
+              ' — private/custom registry, skipping tag check</div>';
+            continue;
+          }
+
+          if (img.isLatest) {
+            card.className = 'image-tag-card latest-tag';
+            card.innerHTML = '<div class="image-tag-service">' +
+              escapeHtml(img.service) +
+              '<span class="image-tag-badge crit">LATEST TAG</span></div>' +
+              '<div class="image-tag-detail">' + escapeHtml(img.fullImage) +
+              ' — using :latest is unpredictable. Pin to a specific version tag ' +
+              'e.g. ' + escapeHtml(img.repo) + ':1.25 for reproducible builds.</div>';
+            continue;
+          }
+
+          if (/^sha256:/.test(img.pinnedTag)) {
+            card.className = 'image-tag-card ok';
+            card.innerHTML = '<div class="image-tag-service">' +
+              escapeHtml(img.service) +
+              '<span class="image-tag-badge ok">DIGEST PINNED</span></div>' +
+              '<div class="image-tag-detail">' + escapeHtml(img.fullImage) +
+              ' — pinned to digest. Most stable option.</div>';
+            continue;
+          }
+
+          // Fetch latest tag from Docker Hub
+          var result = await fetchLatestTag(img.namespace, img.repo);
+
+          if (!result) {
+            card.className = 'image-tag-card error';
+            card.innerHTML = '<div class="image-tag-service">' +
+              escapeHtml(img.service) +
+              '<span class="image-tag-badge info">UNVERIFIED</span></div>' +
+              '<div class="image-tag-detail">' + escapeHtml(img.fullImage) +
+              ' — could not reach Docker Hub to verify tag. ' +
+              'Check hub.docker.com/' + escapeHtml(img.namespace) + '/' +
+              escapeHtml(img.repo) + '</div>';
+            continue;
+          }
+
+          var latestStable = result.latestTag;
+          var isOutdated = latestStable && latestStable !== img.pinnedTag &&
+                           latestStable !== 'latest';
+
+          if (isOutdated) {
+            card.className = 'image-tag-card outdated';
+            card.innerHTML = '<div class="image-tag-service">' +
+              escapeHtml(img.service) +
+              '<span class="image-tag-badge warn">NEWER TAG</span></div>' +
+              '<div class="image-tag-detail">Pinned: <strong>' +
+              escapeHtml(img.pinnedTag) + '</strong> · ' +
+              'Latest on Docker Hub: <strong>' + escapeHtml(latestStable) +
+              '</strong><br>Update: ' + escapeHtml(img.repo) + ':' +
+              escapeHtml(latestStable) + '</div>';
+          } else {
+            card.className = 'image-tag-card ok';
+            card.innerHTML = '<div class="image-tag-service">' +
+              escapeHtml(img.service) +
+              '<span class="image-tag-badge ok">UP TO DATE</span></div>' +
+              '<div class="image-tag-detail">' + escapeHtml(img.fullImage) +
+              ' — tag matches latest stable on Docker Hub.</div>';
+          }
+        }
+      }
+
       function runAudit() {
         parseError.style.display = 'none';
         parseError.textContent = '';
@@ -1059,6 +1278,7 @@
         renderEnv(envAudit.missing, envAudit.unused, envAudit.used, hardcodedSecrets);
         renderPorts(portList, portAudit.duplicates);
         renderSecrets(secretsScan(services));
+        runImageCheck(services);
 
         auditPlaceholder.style.display = 'none';
         auditResults.style.display = 'block';
@@ -1081,6 +1301,8 @@
         envBody.innerHTML = '<p class="panel-placeholder">Paste a compose file and click Audit</p>';
         portsBody.innerHTML = '<p class="panel-placeholder">Paste a compose file and click Audit</p>';
         secretsBody.innerHTML = '<p class="panel-placeholder">Paste a compose file and click Audit</p>';
+        document.getElementById('images-body').innerHTML =
+          '<p class="panel-placeholder">Paste a compose file and click Audit</p>';
       });
 
       var saveTimer;
