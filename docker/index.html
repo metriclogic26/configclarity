@@ -1124,9 +1124,9 @@
 
       async function fetchLatestTag(namespace, repo) {
         try {
-          var url = 'https://hub.docker.com/v2/repositories/' +
-                    namespace + '/' + repo +
-                    '/tags?page_size=5&ordering=last_updated';
+          var url = 'https://registry.hub.docker.com/v2/repositories/' + 
+                    namespace + '/' + repo + 
+                    '/tags/?page_size=10&ordering=last_updated';
           var res = await fetch(url, {
             headers: { 'Accept': 'application/json' }
           });
