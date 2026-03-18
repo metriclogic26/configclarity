@@ -219,6 +219,25 @@
       font-family: 'JetBrains Mono', monospace;
     }
     .btn-sample:hover { border-color: var(--purple); color: #fff; }
+    .btn-version {
+      padding: 0.35rem 0.75rem;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 6px;
+      color: rgba(255,255,255,0.7);
+      font-size: 0.8125rem;
+      cursor: pointer;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .btn-version.active {
+      background: var(--purple);
+      border-color: var(--purple);
+      color: #fff;
+    }
+    .btn-version:hover:not(.active) {
+      border-color: var(--purple);
+      color: #fff;
+    }
     .share-toast {
       position: fixed;
       bottom: 1.5rem;
@@ -414,6 +433,12 @@
   <header class="header">
     <h1>Reverse Proxy Flow Mapper</h1>
     <p class="subtitle">Paste nginx.conf or Traefik labels. See routing flow and audit findings.</p>
+    <p style="display:inline-block; margin:0.75rem 0 0; 
+   padding:0.35rem 0.85rem; background:rgba(34,197,94,0.12); 
+   border:1px solid rgba(34,197,94,0.4); border-radius:20px; 
+   font-size:0.75rem; color:#22c55e;">
+  🔒 Runs 100% in your browser — your files never leave your device
+</p>
   </header>
   <div class="tool-switcher">
     <a href="/" class="tool-card">
@@ -467,6 +492,17 @@
         <textarea id="config-input" placeholder="Paste config... (auto-detects nginx vs Traefik)" aria-label="Proxy config"></textarea>
         <p class="cc-restore-notice" id="cc-restore-notice" aria-live="polite" style="display: none; color: #8a8fb5; font-size: 0.75rem; margin: 0.25rem 0 0;"></p>
       </div>
+      <div class="input-wrap" id="traefik-version-wrap" style="display:none;">
+        <label>Traefik version</label>
+        <div style="display:flex;gap:0.5rem;">
+          <button type="button" id="btn-v2" class="btn-version active" 
+                  data-version="2">v2</button>
+          <button type="button" id="btn-v3" class="btn-version" 
+                  data-version="3">v3</button>
+        </div>
+        <p id="traefik-version-note" style="font-size:0.75rem;color:#8a8fb5;
+     margin:0.25rem 0 0;"></p>
+      </div>
       <div class="input-wrap">
         <label for="test-url">Test URL <span style="color:#8a8fb5;font-size:0.75rem">(optional)</span></label>
         <input type="text" id="test-url" placeholder="https://example.com/admin" aria-label="URL to test which rule matches">
@@ -475,6 +511,8 @@
         <button type="button" class="btn-audit" id="btn-map" aria-label="Map routing and run audit">Map flow</button>
         <button type="button" class="btn-sample" id="btn-sample-nginx" aria-label="Load sample nginx config">Sample nginx</button>
         <button type="button" class="btn-sample" id="btn-sample-traefik" aria-label="Load sample Traefik compose">Sample Traefik</button>
+        <button type="button" class="btn-sample" id="btn-sample-traefik-v3" 
+                aria-label="Load sample Traefik v3 compose">Sample Traefik v3</button>
         <button type="button" class="btn-sample" id="btn-share-url" aria-label="Copy shareable URL with config">Share URL</button>
         <button type="button" class="btn-sample" id="btn-clear" aria-label="Clear input and results">Clear</button>
       </div>
@@ -537,6 +575,14 @@
       <details class="faq-item">
         <summary class="faq-question">Does this tool send my config anywhere?</summary>
         <p class="faq-answer">No. All parsing and analysis runs entirely in your browser. Your nginx or Traefik config is never sent to or stored on any ConfigClarity server.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-question">What changed between Traefik v2 and v3?</summary>
+        <p class="faq-answer">Traefik v3 removed the sslredirect and sslforcehost header 
+        middlewares — use entrypoint redirections instead. The RemoteAddr() matcher was 
+        replaced by ClientIP(). Routers using the websecure entrypoint now require an 
+        explicit tls=true label. The Headers() matcher now only checks existence; use 
+        HeaderRegexp() to match values.</p>
       </details>
     </div>
   </section>
@@ -615,13 +661,61 @@ server {
     const flowDiagram = document.getElementById('flow-diagram');
     const findingsEl = document.getElementById('audit-findings');
 
+    var traefikVersion = 2;
+
+    function initTraefikVersionToggle() {
+      const btnV2 = document.getElementById('btn-v2');
+      const btnV3 = document.getElementById('btn-v3');
+      const noteEl = document.getElementById('traefik-version-note');
+      if (!btnV2 || !btnV3 || !noteEl) return;
+
+      btnV2.addEventListener('click', function() {
+        traefikVersion = 2;
+        btnV2.classList.add('active');
+        btnV3.classList.remove('active');
+        noteEl.textContent = '';
+        if (configInput.value.trim()) runMap();
+      });
+      btnV3.addEventListener('click', function() {
+        traefikVersion = 3;
+        btnV3.classList.add('active');
+        btnV2.classList.remove('active');
+        noteEl.textContent = 
+          'v3 checks: deprecated middleware syntax, missing TLS config, ClientIP matcher';
+        if (configInput.value.trim()) runMap();
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initTraefikVersionToggle);
+    } else {
+      initTraefikVersionToggle();
+    }
+
     function saveToStorage() {}
     function loadFromStorage() {}
 
     function detectInputType(text) {
       const t = text.trim();
-      if (/traefik\.(http|tcp)/i.test(t) && (/services\s*:/m.test(t) || /traefik\.enable/i.test(t))) return 'traefik';
-      if (/\bserver\s*\{/.test(t) && (/\blisten\s+\d+/.test(t) || /\blocation\s+/.test(t))) return 'nginx';
+      if (/traefik\.(http|tcp)/i.test(t) && (/services\s*:/m.test(t) || /traefik\.enable/i.test(t))) {
+        // Auto-detect v3 signals (do not override manual toggle unless v3 signals are present)
+        var isV3 = /traefik\.http\.middlewares\.[^.]+\.plugin\./i.test(t) ||
+                   /ClientIP\s*\(/i.test(t) ||
+                   /traefik\.version\s*=\s*['"]?3/i.test(t);
+        if (isV3) {
+          traefikVersion = 3;
+          document.getElementById('btn-v3').classList.add('active');
+          document.getElementById('btn-v2').classList.remove('active');
+          document.getElementById('traefik-version-note').textContent = 
+            'v3 detected from labels';
+        }
+        document.getElementById('traefik-version-wrap').style.display = 'block';
+        return 'traefik';
+      }
+      if (/\bserver\s*\{/.test(t) && (/\blisten\s+\d+/.test(t) || /\blocation\s+/.test(t))) {
+        document.getElementById('traefik-version-wrap').style.display = 'none';
+        return 'nginx';
+      }
       return null;
     }
 
@@ -896,6 +990,65 @@ server {
         if (websecure.length > 0 || web.length > 0) {
           add('info', 'SSL path', 'Routers on entrypoint "websecure" use TLS termination. Routers on "web" (only) are plain HTTP. Passthrough would use a separate entrypoint.');
         }
+
+        // V3-specific checks
+        if (traefikVersion === 3) {
+          var rawText = configInput.value;
+
+          // Flag deprecated sslredirect middleware (removed in v3)
+          if (/traefik\.http\.middlewares\.[^.]+\.headers\.sslredirect/i.test(rawText)) {
+            add('critical', 'Deprecated SSL redirect middleware (v3)',
+              'traefik.http.middlewares.*.headers.sslredirect is removed in Traefik v3. ' +
+              'Use an entrypoint redirect instead: set redirections.entryPoint in static config ' +
+              'or use traefik.http.routers.*.middlewares with a redirectscheme middleware.');
+          }
+
+          // Flag sslforcehost (removed in v3)
+          if (/traefik\.http\.middlewares\.[^.]+\.headers\.sslforcehost/i.test(rawText)) {
+            add('critical', 'Deprecated sslforcehost middleware (v3)',
+              'traefik.http.middlewares.*.headers.sslforcehost is removed in Traefik v3. ' +
+              'Use Host() matchers in router rules instead.');
+          }
+
+          // Flag RemoteAddr matcher (replaced by ClientIP in v3)
+          if (/RemoteAddr\s*\(/i.test(rawText)) {
+            add('critical', 'RemoteAddr() matcher removed in v3',
+              'RemoteAddr() is not available in Traefik v3. ' +
+              'Replace with ClientIP() matcher: e.g. ClientIP(`192.168.1.0/24`)');
+          }
+
+          // Flag websecure routers missing tls:true
+          parsed.routers.forEach(function(r) {
+            if (r.entrypoints && r.entrypoints.toLowerCase().indexOf('websecure') !== -1) {
+              var hasTls = new RegExp(
+                'traefik\\.http\\.routers\\.' + r.name + '\\.tls\\s*=\\s*true', 'i'
+              ).test(rawText);
+              if (!hasTls) {
+                add('warning', 'Missing tls=true on websecure router (v3)',
+                  'Router "' + r.name + '" uses entrypoint "websecure" but is missing ' +
+                  'traefik.http.routers.' + r.name + '.tls=true. ' +
+                  'Traefik v3 requires explicit TLS declaration on routers.');
+              }
+            }
+          });
+
+          // Flag old Headers() syntax (v3 changed to HeadersRegexp)
+          if (/Headers\s*\(`[^`]+`,\s*`[^`]+`\)/i.test(rawText)) {
+            add('info', 'Headers() matcher syntax changed in v3',
+              'The Headers() matcher in Traefik v3 only checks for header existence. ' +
+              'To match header values, use HeaderRegexp() instead.');
+          }
+        }
+
+        // V2-specific advisory when using v2 mode
+        if (traefikVersion === 2) {
+          var rawText2 = configInput.value;
+          if (/ClientIP\s*\(/i.test(rawText2)) {
+            add('info', 'ClientIP() matcher is v3 only',
+              'ClientIP() was introduced in Traefik v3. In v2 use RemoteAddr() instead. ' +
+              'Switch to v3 mode above if your setup uses Traefik v3.');
+          }
+        }
       }
 
       return findings;
@@ -983,6 +1136,35 @@ server {
       testUrlInput.value = 'https://grafana.example.com/';
       runMap();
     });
+
+    const SAMPLE_TRAEFIK_V3 = `services:
+  app:
+    image: myapp
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.app.rule=Host(\`app.example.com\`)"
+      - "traefik.http.routers.app.entrypoints=websecure"
+      - "traefik.http.routers.app.tls=true"
+      - "traefik.http.routers.app.tls.certresolver=myresolver"
+  grafana:
+    image: grafana/grafana
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.rule=Host(\`grafana.example.com\`)"
+      - "traefik.http.routers.grafana.entrypoints=websecure"
+      - "traefik.http.routers.grafana.tls=true"
+      - "traefik.http.middlewares.sslheader.headers.sslredirect=true"`;
+    document.getElementById('btn-sample-traefik-v3').addEventListener('click', function() {
+      configInput.value = SAMPLE_TRAEFIK_V3;
+      testUrlInput.value = 'https://grafana.example.com/';
+      traefikVersion = 3;
+      document.getElementById('btn-v3').classList.add('active');
+      document.getElementById('btn-v2').classList.remove('active');
+      document.getElementById('traefik-version-wrap').style.display = 'block';
+      document.getElementById('traefik-version-note').textContent = 
+        'v3 checks active — sslredirect middleware will be flagged';
+      runMap();
+    });
     document.getElementById('btn-clear').addEventListener('click', function () {
       configInput.value = '';
       testUrlInput.value = '';
@@ -990,6 +1172,11 @@ server {
       resultsEl.style.display = 'none';
       flowDiagram.innerHTML = '';
       findingsEl.innerHTML = '';
+      document.getElementById('traefik-version-wrap').style.display = 'none';
+      traefikVersion = 2;
+      document.getElementById('btn-v2').classList.add('active');
+      document.getElementById('btn-v3').classList.remove('active');
+      document.getElementById('traefik-version-note').textContent = '';
     });
     var saveTimer;
     configInput.addEventListener('input', function () {
