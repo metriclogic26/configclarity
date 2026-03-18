@@ -402,8 +402,8 @@
 </head>
 <body>
   <header class="header">
-    <h1>UFW Firewall Auditor — Port & Rule Checker</h1>
-    <p class="subtitle">Paste <code>sudo ufw status verbose</code>. See traffic funnel and audit findings.</p>
+    <h1>Firewall Auditor — UFW & nftables</h1>
+    <p class="subtitle">Paste <code>sudo ufw status verbose</code> or <code>sudo nft list ruleset</code>. See traffic funnel and audit findings.</p>
     <p style="display:inline-block; margin:0.75rem 0 0; 
    padding:0.35rem 0.85rem; background:rgba(34,197,94,0.12); 
    border:1px solid rgba(34,197,94,0.4); border-radius:20px; 
@@ -459,13 +459,15 @@
   <main class="main">
     <aside class="panel-left">
       <div class="textarea-wrap">
-        <label for="ufw-input">UFW status verbose output</label>
-        <textarea id="ufw-input" placeholder="Paste output of: sudo ufw status verbose" aria-label="UFW status verbose output"></textarea>
+        <label for="ufw-input">UFW or nftables output</label>
+        <textarea id="ufw-input"
+  placeholder="Paste output of:&#10;  sudo ufw status verbose&#10;— or —&#10;  sudo nft list ruleset" aria-label="UFW or nftables output"></textarea>
         <p class="cc-restore-notice" id="cc-restore-notice" aria-live="polite" style="display: none; color: #8a8fb5; font-size: 0.75rem; margin: 0.25rem 0 0;"></p>
       </div>
       <div class="button-row">
         <button type="button" class="btn-audit" id="btn-audit" aria-label="Run firewall audit">Audit</button>
         <button type="button" class="btn-sample" id="btn-sample" aria-label="Load sample UFW output">Sample input</button>
+        <button type="button" class="btn-sample" id="btn-sample-nft" aria-label="Load sample nftables output">Sample nftables</button>
         <button type="button" class="btn-sample" id="btn-share-url" aria-label="Copy shareable URL with UFW output">Share URL</button>
         <button type="button" class="btn-sample" id="btn-clear" aria-label="Clear input and results">Clear</button>
       </div>
@@ -529,6 +531,16 @@
         <summary class="faq-question">Does this tool store my firewall rules?</summary>
         <p class="faq-answer">No. All processing happens in your browser. Your UFW output is never sent to or stored on any ConfigClarity server.</p>
       </details>
+      <details class="faq-item">
+        <summary class="faq-question">Does this tool support nftables?</summary>
+        <p class="faq-answer">Yes. Paste the output of
+        <code>sudo nft list ruleset</code> and the tool will
+        auto-detect nftables format. It checks for missing default
+        drop policy on the input chain, high-risk ports open to
+        Anywhere, missing loopback and ct state established rules,
+        and rules without comments. UFW and nftables formats are
+        both supported — the tool detects which one you pasted.</p>
+      </details>
     </div>
   </section>
 
@@ -588,6 +600,292 @@ To                         Action      From
 80/tcp (v6)                ALLOW IN    Anywhere (v6)
 443/tcp (v6)               ALLOW IN    Anywhere (v6)
 `;
+
+    const SAMPLE_NFT = `table inet filter {
+  chain input {
+    type filter hook input priority 0; policy drop;
+    iif lo accept comment "loopback"
+    ct state established,related accept comment "established"
+    tcp dport 22 accept comment "SSH"
+    tcp dport { 80, 443 } accept comment "HTTP/HTTPS"
+    tcp dport 3306 accept comment "MySQL"
+    tcp dport 6379 accept
+  }
+  chain forward {
+    type filter hook forward priority 0; policy drop;
+  }
+  chain output {
+    type filter hook output priority 0; policy accept;
+  }
+}`;
+
+    function detectFirewallType(text) {
+      if (/^\s*table\s+(inet|ip|ip6|arp|bridge)\s+/m.test(text) ||
+          /^\s*chain\s+\w+\s*\{/m.test(text) ||
+          /nft\s+list\s+ruleset/i.test(text)) {
+        return 'nftables';
+      }
+      if (/Status:\s*(active|inactive)/i.test(text) ||
+          /Default:\s*\w+\s*\(incoming\)/i.test(text) ||
+          /^\s*To\s+Action\s+From/im.test(text)) {
+        return 'ufw';
+      }
+      if (/ALLOW|DENY/i.test(text) && /Anywhere/i.test(text)) return 'ufw';
+      if (/\bdport\b|\bsport\b|\baccept\b|\bdrop\b/.test(text)) return 'nftables';
+      return 'ufw';
+    }
+
+    function parseNftOutput(text) {
+      const result = {
+        type: 'nftables',
+        tables: [],
+        chains: [],
+        rules: [],
+        defaultPolicies: {},
+        hasInputChain: false,
+        defaultInputPolicy: null
+      };
+
+      const tableRe = /table\s+(inet|ip|ip6|arp|bridge)\s+(\w+)\s*\{/g;
+      let tm;
+      while ((tm = tableRe.exec(text)) !== null) {
+        result.tables.push({ family: tm[1], name: tm[2] });
+      }
+
+      const chainRe = /chain\s+(\w+)\s*\{([^}]*)\}/gs;
+      let cm;
+      while ((cm = chainRe.exec(text)) !== null) {
+        const chainName = cm[1];
+        const chainBody = cm[2];
+
+        const policyMatch = chainBody.match(
+          /type\s+\w+\s+hook\s+(\w+)\s+priority\s+[\d-]+\s*;\s*policy\s+(\w+)/
+        );
+
+        var hook = null, policy = null;
+        if (policyMatch) {
+          hook = policyMatch[1];
+          policy = policyMatch[2];
+          result.defaultPolicies[hook] = policy;
+          if (hook === 'input') {
+            result.hasInputChain = true;
+            result.defaultInputPolicy = policy;
+          }
+        }
+
+        const ruleLines = chainBody.split('\n');
+        ruleLines.forEach(function (line) {
+          line = line.trim();
+          if (!line || line.startsWith('type ')) return;
+
+          var comment = null;
+          var commentMatch = line.match(/comment\s+"([^"]+)"/);
+          if (commentMatch) comment = commentMatch[1];
+
+          var ports = [];
+          var singlePort = line.match(/(?:tcp|udp)\s+dport\s+(\d+)/);
+          if (singlePort) ports.push(parseInt(singlePort[1]));
+          var portSet = line.match(/(?:tcp|udp)\s+dport\s+\{([^}]+)\}/);
+          if (portSet) {
+            portSet[1].split(',').forEach(function (p) {
+              var n = parseInt(p.trim());
+              if (!isNaN(n)) ports.push(n);
+            });
+          }
+          var portRange = line.match(/(?:tcp|udp)\s+dport\s+(\d+)-(\d+)/);
+          var portRangeData = portRange ?
+            { start: parseInt(portRange[1]), end: parseInt(portRange[2]) } : null;
+
+          var action = null;
+          if (/\baccept\b/.test(line)) action = 'accept';
+          else if (/\bdrop\b/.test(line)) action = 'drop';
+          else if (/\breject\b/.test(line)) action = 'reject';
+          else if (/\bmasquerade\b/.test(line)) action = 'masquerade';
+
+          var srcMatch = line.match(/ip\s+saddr\s+(\S+)/);
+          var src = srcMatch ? srcMatch[1] : 'Anywhere';
+
+          var proto = 'tcp';
+          if (/\budp\b/.test(line)) proto = 'udp';
+
+          if (ports.length > 0 || portRangeData) {
+            var targetPorts = ports.length > 0 ? ports :
+              [portRangeData.start];
+            targetPorts.forEach(function (port) {
+              result.rules.push({
+                chain: chainName,
+                hook: hook,
+                port: String(port),
+                portNum: port,
+                proto: proto,
+                action: action,
+                src: src,
+                comment: comment,
+                raw: line,
+                isV6: false,
+                portRange: portRangeData
+              });
+            });
+          } else if (action) {
+            result.rules.push({
+              chain: chainName,
+              hook: hook,
+              port: null,
+              portNum: null,
+              proto: proto,
+              action: action,
+              src: src,
+              comment: comment,
+              raw: line,
+              isV6: false
+            });
+          }
+        });
+
+        result.chains.push({ name: chainName, hook: hook, policy: policy });
+      }
+
+      return result;
+    }
+
+    function runNftAuditChecks(parsed) {
+      const findings = [];
+      function add(id, severity, title, detail) {
+        findings.push({ id: id, severity: severity, title: title, detail: detail });
+      }
+
+      if (!parsed.hasInputChain) {
+        add('no-input-chain', 'critical', 'No input chain found',
+          'No input chain detected in ruleset. All incoming traffic ' +
+          'may be unfiltered.');
+      } else if (parsed.defaultInputPolicy === 'accept') {
+        add('no-default-drop', 'critical', 'Input chain policy is accept',
+          'The input chain default policy is "accept". Change to "drop" ' +
+          'for default-deny: type filter hook input priority 0; policy drop;');
+      } else if (parsed.defaultInputPolicy === 'drop') {
+        add('default-drop-ok', 'ok', 'Default drop policy on input chain',
+          'Input chain uses policy drop. Good default-deny posture.');
+      }
+
+      const portRules = parsed.rules.filter(function (r) {
+        return r.portNum !== null;
+      });
+
+      portRules.forEach(function (r) {
+        if (HIGH_RISK_PORTS.indexOf(r.portNum) !== -1 &&
+            r.action === 'accept' &&
+            r.src === 'Anywhere') {
+          add('high-risk-' + r.port, 'critical',
+            'High-risk port open to Anywhere',
+            'Port ' + r.port + ' (' + describePort(r.portNum) + ') ' +
+            'accepts from any source. Consider restricting with: ' +
+            'ip saddr <trusted-ip> tcp dport ' + r.port + ' accept');
+        }
+      });
+
+      const noComment = portRules.filter(function (r) {
+        return !r.comment && r.action === 'accept';
+      });
+      if (noComment.length > 0) {
+        const examples = noComment.slice(0, 3)
+          .map(function (r) { return 'port ' + r.port; }).join(', ');
+        add('no-comments', 'info', 'Rules without comments',
+          noComment.length + ' rule(s) have no comment. Add comments ' +
+          'for documentation: tcp dport 22 accept comment "SSH admin". ' +
+          'Examples: ' + examples);
+      }
+
+      const hasLoopback = parsed.rules.some(function (r) {
+        return /\biif\s+lo\b/.test(r.raw) || /loopback/i.test(r.comment || '');
+      });
+      if (!hasLoopback && parsed.hasInputChain) {
+        add('no-loopback', 'warning', 'No loopback interface rule',
+          'No loopback (lo) accept rule found. Add: ' +
+          'iif lo accept comment "loopback" — required for local services.');
+      }
+
+      const hasEstablished = parsed.rules.some(function (r) {
+        return /ct\s+state\s+.*established/.test(r.raw);
+      });
+      if (!hasEstablished && parsed.hasInputChain) {
+        add('no-established', 'warning', 'No established/related rule',
+          'No "ct state established,related accept" rule found. Without ' +
+          'this, return traffic for outbound connections will be dropped. ' +
+          'Add: ct state established,related accept');
+      }
+
+      var forwardPolicy = parsed.defaultPolicies['forward'];
+      if (forwardPolicy && forwardPolicy !== 'drop') {
+        add('forward-not-drop', 'warning', 'Forward chain policy is not drop',
+          'Forward chain policy is "' + forwardPolicy + '". Unless this ' +
+          'server is a router, set to drop: ' +
+          'type filter hook forward priority 0; policy drop;');
+      }
+
+      return findings;
+    }
+
+    function renderNftFunnel(parsed) {
+      funnelEl.innerHTML = '';
+      const portRules = parsed.rules.filter(function (r) {
+        return r.portNum !== null && r.chain;
+      });
+
+      if (portRules.length === 0) {
+        funnelEl.innerHTML =
+          '<p style="color:#8a8fb5;font-size:0.8125rem;">' +
+          'No port-specific rules found in ruleset.</p>';
+        return;
+      }
+
+      const col1 = document.createElement('div');
+      col1.className = 'funnel-col';
+      col1.innerHTML = '<div class="funnel-col-title">Source</div>';
+      const body1 = document.createElement('div');
+      body1.className = 'funnel-col-body';
+
+      const col2 = document.createElement('div');
+      col2.className = 'funnel-col';
+      col2.innerHTML = '<div class="funnel-col-title">Port</div>';
+      const body2 = document.createElement('div');
+      body2.className = 'funnel-col-body';
+
+      const col3 = document.createElement('div');
+      col3.className = 'funnel-col';
+      col3.innerHTML = '<div class="funnel-col-title">Decision</div>';
+      const body3 = document.createElement('div');
+      body3.className = 'funnel-col-body';
+
+      portRules.forEach(function (r) {
+        const n1 = document.createElement('div');
+        n1.className = 'funnel-node source';
+        n1.textContent = r.src;
+        body1.appendChild(n1);
+
+        const n2 = document.createElement('div');
+        n2.className = 'funnel-node port';
+        n2.textContent = r.proto + '/' + r.port +
+          (r.comment ? ' (' + r.comment + ')' : '');
+        body2.appendChild(n2);
+
+        const n3 = document.createElement('div');
+        n3.className = 'funnel-flow';
+        const actionEl = document.createElement('span');
+        actionEl.className = 'funnel-node ' +
+          (r.action === 'accept' ? 'allow' : 'deny');
+        actionEl.textContent = r.action === 'accept' ? 'Accept' :
+          (r.action || 'drop');
+        n3.appendChild(actionEl);
+        body3.appendChild(n3);
+      });
+
+      col1.appendChild(body1);
+      col2.appendChild(body2);
+      col3.appendChild(body3);
+      funnelEl.appendChild(col1);
+      funnelEl.appendChild(col2);
+      funnelEl.appendChild(col3);
+    }
 
     const UFW_KEY = 'cc-firewall-ufw';
     const input = document.getElementById('ufw-input');
@@ -882,20 +1180,59 @@ To                         Action      From
         resultsEl.style.display = 'none';
         return;
       }
-      const parsed = parseUfwOutput(text);
+
+      const fwType = detectFirewallType(text);
       placeholder.style.display = 'none';
       resultsEl.style.display = 'block';
-      if (parsed.statusInactive || parsed.unparseable) {
-        funnelEl.innerHTML = '';
+
+      if (fwType === 'nftables') {
+        const parsed = parseNftOutput(text);
+        renderNftFunnel(parsed);
+        findingsEl.innerHTML = '';
+        const findings = runNftAuditChecks(parsed);
+        const badge = document.createElement('div');
+        badge.style.cssText = 'font-size:0.75rem;color:#a5a0ff;' +
+          'margin-bottom:0.75rem;padding:0.25rem 0.5rem;' +
+          'background:rgba(108,99,255,0.15);border-radius:4px;' +
+          'display:inline-block;';
+        badge.textContent = '⚡ nftables ruleset detected';
+        findingsEl.appendChild(badge);
+
+        const dedup = new Map();
+        findings.forEach(function (f) { dedup.set(f.id, f); });
+        Array.from(dedup.values()).forEach(function (f) {
+          const card = document.createElement('div');
+          card.className = 'finding-card ' + f.severity;
+          card.innerHTML = '<div class="finding-title">' +
+            escapeHtml(f.title) + '</div>' +
+            '<div class="finding-detail">' +
+            escapeHtml(f.detail) + '</div>';
+          findingsEl.appendChild(card);
+        });
+        if (findings.length === 0) {
+          const p = document.createElement('p');
+          p.className = 'audit-ok-msg';
+          p.textContent = 'No issues flagged.';
+          findingsEl.appendChild(p);
+        }
       } else {
-        renderFunnel(parsed);
+        const parsed = parseUfwOutput(text);
+        if (parsed.statusInactive || parsed.unparseable) {
+          funnelEl.innerHTML = '';
+        } else {
+          renderFunnel(parsed);
+        }
+        renderFindings(parsed);
       }
-      renderFindings(parsed);
     }
 
     btnAudit.addEventListener('click', runAudit);
     btnSample.addEventListener('click', function () {
       input.value = SAMPLE_INPUT;
+      runAudit();
+    });
+    document.getElementById('btn-sample-nft').addEventListener('click', function () {
+      input.value = SAMPLE_NFT;
       runAudit();
     });
     document.getElementById('btn-clear').addEventListener('click', function () {
@@ -991,6 +1328,7 @@ To                         Action      From
   firewall rules for security issues. Detect high-risk open ports like SSH, MySQL, Redis and
   MongoDB exposed to Anywhere. Check for missing default-deny incoming policy. Find conflicting
   ALLOW and DENY rules. Identify IPv4 and IPv6 mismatches. Linux UFW rule checker and validator.
+  Also supports nftables ruleset audit via sudo nft list ruleset.
   Free firewall audit tool with no signup required. All processing is client-side.
 </div>
 </body>
