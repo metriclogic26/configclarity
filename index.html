@@ -3828,7 +3828,7 @@ api-check     */30 * * * *`;
       <div id="panel-paste" class="tab-panel" role="tabpanel" hidden>
         <div class="textarea-wrap">
           <label for="cron-input">Cron jobs (one per line)</label>
-          <textarea id="cron-input" placeholder="# Format 1: job_name cron_expression&#10;# Format 2: standard crontab (expression command)&#10;backup */15 * * * *&#10;*/15 * * * * /usr/bin/backup.sh" aria-label="Paste cron jobs: job name and expression, or standard crontab (minute hour day month weekday command)"></textarea>
+          <textarea id="cron-input" placeholder="# Format 1 — name + expression&#10;backup        0 2 * * *&#10;health-ping   */5 * * * *&#10;db-clean      */15 * * * *&#10;&#10;# Format 2 — standard crontab&#10;0 2 * * * /usr/bin/backup.sh&#10;*/5 * * * * /usr/bin/health-ping.sh&#10;&#10;# Tip: paste your crontab -l output directly" aria-label="Paste cron jobs: job name and expression, or standard crontab (minute hour day month weekday command)"></textarea>
         <p class="cc-restore-notice" id="cc-restore-notice" aria-live="polite" style="display: none; color: #8a8fb5; font-size: 0.75rem; margin: 0.25rem 0 0;"></p>
         <p class="cron-input-ignored-note" id="cron-ignored-note" aria-live="polite" style="display: none;"></p>
         <details class="quick-examples">
