@@ -293,6 +293,18 @@
     .ssl-warning-msg { color: #f97316; font-size: 0.8125rem; margin-top: 0.25rem; }
     .ssl-wildcard-note { color: rgba(255, 255, 255, 0.55); font-style: italic; }
     .ssl-expired-badge { display: inline-block; background: #f43f5e; color: #fff; font-size: 0.7rem; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 4px; margin-right: 0.35rem; }
+    .ssl-200day-badge {
+      display: inline-block;
+      background: rgba(249,115,22,0.2);
+      border: 1px solid rgba(249,115,22,0.4);
+      color: #f97316;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      margin-top: 0.35rem;
+      display: block;
+    }
     .ssl-security-headers { margin-top: 1rem; padding-top: 0.75rem; border-top: 1px solid rgba(255, 255, 255, 0.08); }
     .ssl-security-headers-title { font-size: 0.8125rem; font-weight: 600; color: rgba(255, 255, 255, 0.9); margin: 0 0 0.5rem 0; }
     .ssl-security-headers-cors { font-size: 0.75rem; color: #8a8fb5; margin: 0; }
@@ -487,6 +499,10 @@
             <span><span class="dot orange" aria-hidden="true"></span> &lt; 30 days</span>
             <span><span class="dot green" aria-hidden="true"></span> Safe</span>
             <span><span class="dot err" aria-hidden="true"></span> Error</span>
+            <span>
+              <span class="dot" style="background:#f97316" aria-hidden="true"></span> 
+              &gt;200 day cert
+            </span>
           </div>
           <div class="ssl-results-actions" id="ssl-results-actions">
             <button type="button" class="btn-share" id="btn-export-png" aria-label="Download SSL report as PNG">📷 Export PNG</button>
@@ -529,7 +545,11 @@
       </details>
       <details class="faq-item">
         <summary class="faq-question">How is the 200-day SSL limit relevant?</summary>
-        <p class="faq-answer">From March 2026, publicly trusted SSL certificates are capped at 200 days. This tool flags any cert with more than 200 days remaining as potentially issued before the new rules took effect.</p>
+        <p class="faq-answer">Apple proposed reducing the maximum SSL certificate validity to 200 days 
+  by 2027, with a phased reduction starting in 2026 (47-day cap by 2027). 
+  This tool flags any cert whose total validity period exceeds 200 days — 
+  these were issued under the old 398-day rules and will need replacement 
+  at next renewal.</p>
       </details>
       <details class="faq-item">
         <summary class="faq-question">Does this tool store my domain names?</summary>
@@ -588,6 +608,7 @@
       const RED_DAYS = 7;
       const ORANGE_DAYS = 30;
       const CORS_PROXY = 'https://api.allorigins.win/raw?url=';
+      const MAX_VALIDITY_DAYS = 200;
 
       const input = document.getElementById('domains-input');
       const btnVisualize = document.getElementById('btn-visualize');
@@ -711,12 +732,19 @@
                 parentCerts.sort(function (a, b) { return new Date(b.not_before) - new Date(a.not_before); });
                 var bestParent = parentCerts[0];
                 var daysRemainingParent = Math.floor((new Date(bestParent.not_after) - now) / 86400000);
+                var totalValidityDaysParent = Math.floor(
+                  (new Date(bestParent.not_after) - new Date(bestParent.not_before)) / 86400000
+                );
+                var exceeds200DaysParent = totalValidityDaysParent > MAX_VALIDITY_DAYS;
                 return {
                   domain: domain,
                   commonName: bestParent.common_name,
                   issuer: bestParent.issuer_name || bestParent.issuer_ca_id,
                   notAfter: new Date(bestParent.not_after).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+                  notBefore: new Date(bestParent.not_before).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
                   daysRemaining: daysRemainingParent,
+                  totalValidityDays: totalValidityDaysParent,
+                  exceeds200Days: exceeds200DaysParent,
                   error: null,
                   status: statusFromDays(daysRemainingParent),
                   wildcardNote: bestParent.common_name
@@ -760,13 +788,20 @@
           }
 
           const daysRemaining = Math.floor((new Date(best.not_after) - now) / 86400000);
+          const totalValidityDays = Math.floor(
+            (new Date(best.not_after) - new Date(best.not_before)) / 86400000
+          );
+          const exceeds200Days = totalValidityDays > MAX_VALIDITY_DAYS;
 
           return {
             domain: domain,
             commonName: best.common_name,
             issuer: best.issuer_name || best.issuer_ca_id,
             notAfter: new Date(best.not_after).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+            notBefore: new Date(best.not_before).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
             daysRemaining: daysRemaining,
+            totalValidityDays: totalValidityDays,
+            exceeds200Days: exceeds200Days,
             error: null,
             status: statusFromDays(daysRemaining)
           };
@@ -802,7 +837,12 @@
             '<span>Common Name: ' + escapeHtml(r.commonName) + '</span>' +
             (r.wildcardNote ? '<span class="ssl-wildcard-note">(covered by ' + escapeHtml(r.wildcardNote) + ' wildcard)</span>' : '') +
             '<span>Issuer: ' + escapeHtml(r.issuer) + '</span>' +
-            (notAfterFormatted ? '<span>Expires: ' + escapeHtml(notAfterFormatted) + '</span>' : '') + barHtml;
+            (notAfterFormatted ? '<span>Expires: ' + escapeHtml(notAfterFormatted) + '</span>' : '') +
+            (r.exceeds200Days ?
+              '<span class="ssl-200day-badge">⚠ ' + r.totalValidityDays +
+              '-day validity exceeds new 200-day cap — cert issued before ' +
+              'March 2026 rules. Will need replacement at next renewal.</span>' : '') +
+            barHtml;
         }
         card.innerHTML = '<div class="ssl-card-domain">' + escapeHtml(r.domain) + '</div><div class="ssl-card-meta">' + meta + '</div>';
         if (r.securityHeaders) {
