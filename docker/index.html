@@ -314,6 +314,11 @@
       font-size: 0.875rem;
       margin: 0;
     }
+    .healthcheck-templates {
+      margin-top: 0.5rem;
+      font-size: 0.8125rem;
+      color: #8a8fb5;
+    }
     .faq { padding: 2rem 1.5rem; border-top: 1px solid rgba(255, 255, 255, 0.08); }
     .faq-heading { margin: 0 0 1.5rem; font-size: 1.25rem; font-weight: 600; color: #fff; text-align: center; }
     .faq-list { max-width: 640px; margin: 0 auto; }
@@ -496,8 +501,39 @@
       <p class="audit-placeholder" id="audit-placeholder" style="display: none;">Paste your compose file and click Audit to see results.</p>
       <div id="audit-results">
         <div class="audit-section" id="panel-healthcheck">
-          <h2 class="audit-section-title">1. Healthcheck completeness</h2>
+          <h2 class="audit-section-title" style="display:flex;align-items:center;
+   justify-content:space-between;">
+  1. Healthcheck completeness
+  <button type="button" id="btn-inject-healthchecks" 
+          style="display:none;padding:0.25rem 0.6rem;font-size:0.75rem;
+                 background:#6c63ff;border:none;border-radius:4px;
+                 color:#fff;cursor:pointer;font-family:inherit;">
+    ⚡ Inject Fixes
+  </button>
+</h2>
           <div class="audit-section-body" id="healthcheck-body"><p class="panel-placeholder">Paste a compose file and click Audit</p></div>
+          <div id="healthcheck-inject-result" style="display:none;margin-top:0.75rem;
+     padding:0.75rem;background:#0f1117;border-radius:6px;
+     border:1px solid rgba(108,99,255,0.3);">
+  <div style="display:flex;align-items:center;justify-content:space-between;
+       margin-bottom:0.5rem;">
+    <span style="font-size:0.8125rem;color:#8a8fb5;">
+      Fixed docker-compose.yml — paste this into your project
+    </span>
+    <button type="button" id="btn-copy-injected" 
+            style="padding:0.25rem 0.6rem;font-size:0.75rem;
+                   background:transparent;border:1px solid rgba(255,255,255,0.25);
+                   border-radius:4px;color:#e2e4f0;cursor:pointer;
+                   font-family:inherit;">
+      Copy
+    </button>
+  </div>
+  <pre id="healthcheck-inject-code" 
+       style="margin:0;font-size:0.75rem;color:#e2e4f0;
+              white-space:pre-wrap;word-break:break-all;
+              font-family:ui-monospace,monospace;
+              max-height:400px;overflow-y:auto;"></pre>
+</div>
         </div>
         <div class="audit-section" id="panel-env">
           <h2 class="audit-section-title">2. Env var bridge map</h2>
@@ -570,6 +606,16 @@
   outdated tags (newer version available), and rewards digest-pinned images 
   (most stable). Private registry images are skipped. All requests go directly 
   from your browser to Docker Hub — no proxy involved.</p>
+      </details>
+      <details class="faq-item">
+        <summary class="faq-question">What does the Healthcheck Injector do?</summary>
+        <p class="faq-answer">When healthcheck issues are found, click "Inject Fixes" 
+  to generate a fixed version of your compose file with healthchecks 
+  automatically added for each service that is missing one. Templates are 
+  matched by image name — postgres, mysql, redis, nginx, rabbitmq, 
+  elasticsearch, and mongodb all get the correct production-ready healthcheck 
+  command. Unknown images get a safe default. Copy the result and paste it 
+  into your project.</p>
       </details>
     </div>
   </section>
@@ -944,6 +990,12 @@
       }
 
       function renderHealthcheck(issues) {
+        var injectBtn = document.getElementById('btn-inject-healthchecks');
+        var injectResult = document.getElementById('healthcheck-inject-result');
+
+        if (injectBtn) injectBtn.style.display = 'none';
+        if (injectResult) injectResult.style.display = 'none';
+
         if (issues.length === 0) {
           healthcheckBody.innerHTML = '<p class="audit-ok">✓ No healthcheck issues found.</p>';
           return;
@@ -957,6 +1009,10 @@
         });
         healthcheckBody.innerHTML = '';
         healthcheckBody.appendChild(ul);
+
+        if (issues.length > 0 && injectBtn) {
+          injectBtn.style.display = 'block';
+        }
       }
 
       function renderEnv(missing, unused, used, hardcoded) {
@@ -1244,6 +1300,85 @@
         }
       }
 
+      var HEALTHCHECK_TEMPLATES = {
+        'postgres': 'test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-postgres}"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n      start_period: 10s',
+        'mysql': 'test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n      start_period: 10s',
+        'mariadb': 'test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n      start_period: 10s',
+        'redis': 'test: ["CMD", "redis-cli", "ping"]\n      interval: 10s\n      timeout: 3s\n      retries: 5\n      start_period: 5s',
+        'mongo': 'test: ["CMD", "mongosh", "--eval", "db.adminCommand(\\\'ping\\\')"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n      start_period: 10s',
+        'mongodb': 'test: ["CMD", "mongosh", "--eval", "db.adminCommand(\\\'ping\\\')"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n      start_period: 10s',
+        'nginx': 'test: ["CMD", "curl", "-f", "http://localhost/"]\n      interval: 10s\n      timeout: 3s\n      retries: 3\n      start_period: 5s',
+        'rabbitmq': 'test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]\n      interval: 10s\n      timeout: 5s\n      retries: 5\n      start_period: 15s',
+        'elasticsearch': 'test: ["CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1"]\n      interval: 15s\n      timeout: 10s\n      retries: 5\n      start_period: 30s',
+        'default': 'test: ["CMD-SHELL", "exit 0"]\n      interval: 10s\n      timeout: 5s\n      retries: 3\n      start_period: 10s'
+      };
+
+      function getHealthcheckTemplate(image) {
+        if (!image) return HEALTHCHECK_TEMPLATES['default'];
+        var imgLower = image.toLowerCase().split(':')[0].split('/').pop();
+        for (var key in HEALTHCHECK_TEMPLATES) {
+          if (key !== 'default' && imgLower.indexOf(key) !== -1) {
+            return HEALTHCHECK_TEMPLATES[key];
+          }
+        }
+        return HEALTHCHECK_TEMPLATES['default'];
+      }
+
+      function injectHealthchecks(composeStr, services) {
+        var lines = composeStr.split('\n');
+        var result = [];
+        var serviceNames = Object.keys(services);
+        var servicesNeedingHealthcheck = {};
+
+        // Find services missing healthchecks
+        serviceNames.forEach(function (svcName) {
+          if (!hasHealthcheck(services[svcName])) {
+            servicesNeedingHealthcheck[svcName] = services[svcName];
+          }
+        });
+
+        if (Object.keys(servicesNeedingHealthcheck).length === 0) {
+          return null; // nothing to inject
+        }
+
+        // Simple injection — parse line by line and insert after image: line
+        var currentService = null;
+        var indentLevel = '';
+        var injected = {};
+
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          result.push(line);
+
+          // Detect service name (2-space or 4-space indent + name + colon)
+          var svcMatch = line.match(/^( {2}|\t)([a-zA-Z0-9_-]+)\s*:\s*$/);
+          if (svcMatch) {
+            currentService = svcMatch[2];
+            indentLevel = svcMatch[1] + svcMatch[1]; // double indent for properties
+          }
+
+          // After image: line for services needing healthcheck, inject
+          if (currentService &&
+              servicesNeedingHealthcheck[currentService] &&
+              !injected[currentService]) {
+            var imgMatch = line.match(/^(\s+)image:\s*(.+)$/);
+            if (imgMatch) {
+              var indent = imgMatch[1];
+              var imageVal = imgMatch[2].trim().replace(/['"]/g, '');
+              var template = getHealthcheckTemplate(imageVal);
+              var templateLines = template.split('\n');
+              result.push(indent + 'healthcheck:');
+              templateLines.forEach(function (tl) {
+                result.push(indent + '  ' + tl.trim());
+              });
+              injected[currentService] = true;
+            }
+          }
+        }
+
+        return result.join('\n');
+      }
+
       function runAudit() {
         parseError.style.display = 'none';
         parseError.textContent = '';
@@ -1304,7 +1439,37 @@
         secretsBody.innerHTML = '<p class="panel-placeholder">Paste a compose file and click Audit</p>';
         document.getElementById('images-body').innerHTML =
           '<p class="panel-placeholder">Paste a compose file and click Audit</p>';
+        document.getElementById('healthcheck-inject-result').style.display = 'none';
+        document.getElementById('healthcheck-inject-code').textContent = '';
+        document.getElementById('btn-inject-healthchecks').style.display = 'none';
       });
+
+      document.getElementById('btn-inject-healthchecks')
+        .addEventListener('click', function() {
+          var composeStr = composeInput.value.trim();
+          if (!composeStr) return;
+          var compose;
+          try { compose = parseCompose(composeStr); } catch(e) { return; }
+          var services = getServices(compose);
+          var injected = injectHealthchecks(composeStr, services);
+          if (!injected) return;
+          var resultEl = document.getElementById('healthcheck-inject-result');
+          var codeEl = document.getElementById('healthcheck-inject-code');
+          codeEl.textContent = injected;
+          resultEl.style.display = 'block';
+          resultEl.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        });
+
+      document.getElementById('btn-copy-injected')
+        .addEventListener('click', function() {
+          var codeEl = document.getElementById('healthcheck-inject-code');
+          if (!codeEl.textContent) return;
+          var btn = this;
+          navigator.clipboard.writeText(codeEl.textContent).then(function() {
+            btn.textContent = 'Copied!';
+            setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+          });
+        });
 
       var saveTimer;
       function debouncedSave() {
