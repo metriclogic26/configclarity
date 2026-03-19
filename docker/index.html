@@ -1555,6 +1555,29 @@
           }
         });
 
+        // Check 6: Raw devices: GPU binding (old-style syntax)
+        Object.keys(services).forEach(function (svcName) {
+          var svc = services[svcName];
+          if (!svc || !svc.devices) return;
+          var devices = Array.isArray(svc.devices) ? svc.devices : [];
+          var gpuBindings = devices.filter(function (d) {
+            var binding = typeof d === 'string' ? d : '';
+            return /nvidia|gpu/i.test(binding) || /\/dev\/nvidia/i.test(binding);
+          });
+          if (gpuBindings.length > 0) {
+            findings.push({
+              service: svcName,
+              severity: 'warning',
+              title: 'Old-style GPU binding via devices:',
+              detail: 'Service "' + svcName + '" uses raw device bindings:\n' +
+                gpuBindings.join('\n') + '\n\nThis syntax bypasses ' +
+                'nvidia-container-runtime and may not work on all hosts. ' +
+                'Migrate to:\n\ndeploy:\n  resources:\n    reservations:\n' +
+                '      devices:\n        - driver: nvidia\n          count: 1\n' +
+                '          capabilities: [gpu]'
+            });
+          }
+        });
         return findings;
       }
 
