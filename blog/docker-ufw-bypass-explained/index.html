@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker Bypasses UFW. Here's Why — and How to Fix It. — ConfigClarity</title>
+  <meta name="description" content="Docker's iptables rules bypass UFW's deny rules, exposing container ports to the internet. Why this happens, how to verify it, and three ways to fix it.">
+  <meta name="keywords" content="docker ufw bypass, docker firewall bypass, ufw docker not blocking, docker iptables ufw">
+  <link rel="canonical" href="https://configclarity.dev/blog/docker-ufw-bypass-explained/">
+  <meta property="og:title" content="Docker Bypasses UFW. Here's Why — and How to Fix It.">
+  <meta property="og:description" content="Docker's iptables rules bypass UFW's deny rules, exposing container ports to the internet. Why this happens, how to verify it, and three ways to fix it.">
+  <meta property="og:url" content="https://configclarity.dev/blog/docker-ufw-bypass-explained/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Docker Bypasses UFW. Here's Why — and How to Fix It.",
+    "description": "Docker's iptables rules bypass UFW's deny rules, exposing container ports to the internet. Why this happens, how to verify it, and three ways to fix it.",
+    "url": "https://configclarity.dev/blog/docker-ufw-bypass-explained/",
+    "datePublished": "2026-03-23",
+    "dateModified": "2026-03-23",
+    "author": {"@type": "Organization", "name": "MetricLogic", "url": "https://metriclogic.dev"},
+    "publisher": {"@type": "Organization", "name": "ConfigClarity", "url": "https://configclarity.dev"},
+    "isPartOf": {"@type": "Blog", "name": "ConfigClarity Blog", "url": "https://configclarity.dev/blog/"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
+    {"@type":"ListItem","position":3,"name":"Docker Bypasses UFW. Here's Why — and How to Fix It.","item":"https://configclarity.dev/blog/docker-ufw-bypass-explained/"}
+  ]}
+  </script>
+  
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.8; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; }
+      .header-nav a { color: var(--muted); }
+      .hero { max-width: 720px; margin: 0 auto; padding: 3rem 2rem 1.5rem; }
+      .hero-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+      .hero-tag { background: rgba(108,99,255,.15); color: var(--purple); padding: 0.15rem 0.6rem; border-radius: 4px; }
+      h1 { font-size: 1.75rem; font-weight: 700; line-height: 1.35; margin-bottom: 1rem; }
+      .lede { font-size: 1rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.75; }
+      .content { max-width: 720px; margin: 0 auto; padding: 0 2rem 4rem; }
+      h2 { font-size: 1.15rem; font-weight: 700; margin: 2.5rem 0 0.75rem; color: var(--text); }
+      h3 { font-size: 0.95rem; font-weight: 700; margin: 1.75rem 0 0.5rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.1rem; }
+      strong { color: var(--text); }
+      pre { background: #0d0f1a; border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; font-size: 0.78rem; overflow-x: auto; margin: 1rem 0 1.5rem; line-height: 1.7; }
+      code { background: #1e2130; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.82rem; color: var(--text); }
+      .callout { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.1rem 1.4rem; margin: 1.5rem 0; font-size: 0.875rem; }
+      .callout.warn { border-color: var(--orange); }
+      .callout.danger { border-color: var(--red); }
+      .callout.good { border-color: var(--green); }
+      .callout p { margin-bottom: 0; }
+      .cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.5rem; margin: 2.5rem 0; text-align: center; }
+      .cta p { color: var(--text); font-size: 0.875rem; margin-bottom: 0.75rem; }
+      .cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.5rem 1.25rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; text-decoration: none; }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 720px; margin: 0 auto; font-size: 0.75rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .divider { border: none; border-top: 1px solid #2a2d3d; margin: 2rem 0; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; }
+      @media (max-width: 600px) { h1 { font-size: 1.4rem; } .hero, .content { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › Docker Bypasses UFW. Here's Why — and How to Fix It.</div>
+  <div class="hero">
+    <div class="hero-meta">
+      <span>2026-03-23</span>
+      <span>·</span>
+      <span class="hero-tag">Docker</span><span class="hero-tag">UFW</span><span class="hero-tag">Security</span><span class="hero-tag">Linux</span>
+    </div>
+    <h1>Docker Bypasses UFW. Here's Why — and How to Fix It.</h1>
+    <p class="lede">UFW is active. You added a deny rule for your database port. You checked — it's there. Your Redis is still open to the internet. Here's what's actually happening.</p>
+  </div>
+  <div class="content">
+    
+<p>I've seen this exact situation play out dozens of times. Someone sets up a Docker server, installs UFW, adds a deny rule for their database port, checks <code>ufw status</code>, sees "Status: active" and the deny rule listed, and assumes they're protected.</p>
+
+<p>Then they run a port scan from an external machine and their Redis instance is wide open.</p>
+
+<p>This isn't a bug. It's how Docker works. But it trips up almost everyone the first time — and sometimes the second time too.</p>
+
+<h2>What UFW actually does (and doesn't do)</h2>
+
+<p>UFW manages Linux's iptables rules. Specifically, it manages the <strong>INPUT chain</strong> — the chain that handles traffic coming into the host machine itself.</p>
+
+<p>Here's the problem: Docker doesn't use the INPUT chain for container traffic. It uses the <strong>FORWARD chain</strong> and a custom <strong>DOCKER chain</strong> it creates itself. Traffic destined for a container gets routed through FORWARD before it ever reaches INPUT.</p>
+
+<p>So when you run <code>ufw deny 6379</code>, you're blocking direct connections to port 6379 on the host. But when Docker maps a container's Redis port to <code>0.0.0.0:6379</code>, that traffic flows through the DOCKER chain — and UFW never sees it.</p>
+
+<div class="callout danger">
+  <p><strong>The result:</strong> Your UFW rules look correct. Your Redis port is open to the internet anyway.</p>
+</div>
+
+<h2>How to actually see the problem</h2>
+
+<p>Run this:</p>
+
+<pre>sudo iptables -L DOCKER --line-numbers</pre>
+
+<p>You'll see ACCEPT rules that Docker added. Every port-mapped container gets one. These rules run before your UFW INPUT rules ever fire.</p>
+
+<p>Now run:</p>
+
+<pre>sudo iptables -L FORWARD | grep DOCKER</pre>
+
+<p>Docker inserts itself into the FORWARD chain too. It's thorough about this.</p>
+
+<h2>The fixes — pick one</h2>
+
+<h3>Option 1: Bind to 127.0.0.1 (cleanest, recommended)</h3>
+
+<p>Instead of letting Docker bind to all interfaces, tell it to bind only to localhost. Traffic then only reaches the container via your reverse proxy, not directly from the internet.</p>
+
+<p>In <code>docker-compose.yml</code>:</p>
+
+<pre># Before — exposed to internet:
+ports:
+  - "6379:6379"
+
+# After — localhost only:
+ports:
+  - "127.0.0.1:6379:6379"</pre>
+
+<p>This works because Docker's iptables rules only forward traffic from the bound interface. If it's bound to 127.0.0.1, external traffic never triggers the forwarding rule.</p>
+
+<h3>Option 2: DOCKER-USER chain rules</h3>
+
+<p>Docker reserves a chain called DOCKER-USER specifically for user-defined rules that run before Docker's own rules. Rules you add here actually stick.</p>
+
+<pre>sudo iptables -I DOCKER-USER -p tcp --dport 6379 -j DROP
+sudo iptables -I DOCKER-USER -p tcp --dport 6379 -s 127.0.0.1 -j ACCEPT</pre>
+
+<p>The catch: these rules don't survive a reboot unless you persist them with <code>iptables-persistent</code>.</p>
+
+<pre>sudo apt install iptables-persistent
+sudo netfilter-persistent save</pre>
+
+<h3>Option 3: Internal Docker networks (for container-to-container traffic)</h3>
+
+<p>If you just need containers to talk to each other without exposing ports to the host, don't publish ports at all. Use Docker's internal networking:</p>
+
+<pre>services:
+  app:
+    networks:
+      - internal
+  redis:
+    networks:
+      - internal
+    # No ports: block at all
+
+networks:
+  internal:
+    internal: true</pre>
+
+<p>With <code>internal: true</code>, the network has no external connectivity. Containers can reach each other by service name, but nothing outside the Docker network can reach them.</p>
+
+<h2>How to verify you're actually protected</h2>
+
+<p>Don't trust <code>ufw status</code> alone. Run a real test from outside:</p>
+
+<pre># From another machine (replace with your server IP):
+nc -zv YOUR_SERVER_IP 6379
+
+# Or use nmap:
+nmap -p 6379 YOUR_SERVER_IP</pre>
+
+<p>If the port is closed, you're done. If it's open, you have the bypass problem.</p>
+
+<div class="callout good">
+  <p><strong>Quick check:</strong> Paste your <code>ufw status verbose</code> output into the <a href="/firewall/">ConfigClarity Firewall Auditor</a>. It flags Docker bypass risk and shows which ports are potentially exposed despite your UFW rules.</p>
+</div>
+
+<h2>Why this happens on fresh installs</h2>
+
+<p>The default Docker install modifies iptables without asking. The default UFW install doesn't know about Docker. Neither tool warns you about the conflict. So you end up with two systems that both appear to be working correctly but are silently fighting each other.</p>
+
+<p>The fix is a one-line change to your docker-compose.yml. Do it for every service that doesn't need to be publicly accessible — databases, caches, internal APIs, anything behind a reverse proxy.</p>
+
+<div class="cta">
+  <p>Paste your <code>ufw status verbose</code> output and get an instant audit of your firewall rules — Docker bypass detection included.</p>
+  <a href="/firewall/">Open Firewall Auditor →</a>
+</div>
+
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

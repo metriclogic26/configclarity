@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSL Certificate Monitoring: Why 30 Days Is Too Late — ConfigClarity</title>
+  <meta name="description" content="Why monitoring SSL expiry at 30 days misses broken renewal pipelines. The 200-day rule, CDN cert traps, and a simple bash script to catch expiry before it becomes an outage.">
+  <meta name="keywords" content="ssl certificate monitoring, ssl expiry monitoring, lets encrypt renewal check, ssl cert expiry alert, certificate monitoring linux">
+  <link rel="canonical" href="https://configclarity.dev/blog/ssl-certificate-monitoring-guide/">
+  <meta property="og:title" content="SSL Certificate Monitoring: Why 30 Days Is Too Late">
+  <meta property="og:description" content="Why monitoring SSL expiry at 30 days misses broken renewal pipelines. The 200-day rule, CDN cert traps, and a simple bash script to catch expiry before it becomes an outage.">
+  <meta property="og:url" content="https://configclarity.dev/blog/ssl-certificate-monitoring-guide/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "SSL Certificate Monitoring: Why 30 Days Is Too Late",
+    "description": "Why monitoring SSL expiry at 30 days misses broken renewal pipelines. The 200-day rule, CDN cert traps, and a simple bash script to catch expiry before it becomes an outage.",
+    "url": "https://configclarity.dev/blog/ssl-certificate-monitoring-guide/",
+    "datePublished": "2026-03-23",
+    "dateModified": "2026-03-23",
+    "author": {"@type": "Organization", "name": "MetricLogic", "url": "https://metriclogic.dev"},
+    "publisher": {"@type": "Organization", "name": "ConfigClarity", "url": "https://configclarity.dev"},
+    "isPartOf": {"@type": "Blog", "name": "ConfigClarity Blog", "url": "https://configclarity.dev/blog/"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
+    {"@type":"ListItem","position":3,"name":"SSL Certificate Monitoring: Why 30 Days Is Too Late","item":"https://configclarity.dev/blog/ssl-certificate-monitoring-guide/"}
+  ]}
+  </script>
+  
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.8; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; }
+      .header-nav a { color: var(--muted); }
+      .hero { max-width: 720px; margin: 0 auto; padding: 3rem 2rem 1.5rem; }
+      .hero-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+      .hero-tag { background: rgba(108,99,255,.15); color: var(--purple); padding: 0.15rem 0.6rem; border-radius: 4px; }
+      h1 { font-size: 1.75rem; font-weight: 700; line-height: 1.35; margin-bottom: 1rem; }
+      .lede { font-size: 1rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.75; }
+      .content { max-width: 720px; margin: 0 auto; padding: 0 2rem 4rem; }
+      h2 { font-size: 1.15rem; font-weight: 700; margin: 2.5rem 0 0.75rem; color: var(--text); }
+      h3 { font-size: 0.95rem; font-weight: 700; margin: 1.75rem 0 0.5rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.1rem; }
+      strong { color: var(--text); }
+      pre { background: #0d0f1a; border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; font-size: 0.78rem; overflow-x: auto; margin: 1rem 0 1.5rem; line-height: 1.7; }
+      code { background: #1e2130; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.82rem; color: var(--text); }
+      .callout { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.1rem 1.4rem; margin: 1.5rem 0; font-size: 0.875rem; }
+      .callout.warn { border-color: var(--orange); }
+      .callout.danger { border-color: var(--red); }
+      .callout.good { border-color: var(--green); }
+      .callout p { margin-bottom: 0; }
+      .cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.5rem; margin: 2.5rem 0; text-align: center; }
+      .cta p { color: var(--text); font-size: 0.875rem; margin-bottom: 0.75rem; }
+      .cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.5rem 1.25rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; text-decoration: none; }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 720px; margin: 0 auto; font-size: 0.75rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .divider { border: none; border-top: 1px solid #2a2d3d; margin: 2rem 0; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; }
+      @media (max-width: 600px) { h1 { font-size: 1.4rem; } .hero, .content { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › SSL Certificate Monitoring: Why 30 Days Is Too Late</div>
+  <div class="hero">
+    <div class="hero-meta">
+      <span>2026-03-23</span>
+      <span>·</span>
+      <span class="hero-tag">SSL</span><span class="hero-tag">Monitoring</span><span class="hero-tag">Let's Encrypt</span><span class="hero-tag">DevOps</span>
+    </div>
+    <h1>SSL Certificate Monitoring: Why 30 Days Is Too Late</h1>
+    <p class="lede">The standard advice is to alert when your SSL cert has 30 days left. That's too late. By then your renewal pipeline has already been broken for two months and you just didn't know yet.</p>
+  </div>
+  <div class="content">
+    
+<p>SSL certificate expiry is one of the most preventable causes of outages. The date is embedded in the certificate itself. You can check it months in advance. There's no surprise — just a failure to look.</p>
+
+<p>And yet it keeps happening, because most setups have a monitoring gap somewhere: the renewal cron job that silently failed, the CDN cert that's separate from the origin cert, the domain someone forgot was still pointing at a server.</p>
+
+<p>Here's how to actually monitor it.</p>
+
+<h2>The 200-day rule</h2>
+
+<p>Most guides say to alert at 30 days. That's too late. Here's why:</p>
+
+<p>Let's Encrypt certificates expire every 90 days. They're designed to auto-renew at 60 days remaining. If auto-renewal breaks the day after issuance, you have 89 days of silent failure before the 30-day alert fires.</p>
+
+<p>Check at 200 days. If something is expiring in under 200 days and it shouldn't be — your renewal pipeline is broken and you have time to fix it before anything actually breaks.</p>
+
+<div class="callout warn">
+  <p>The 30-day alert is for catching emergencies. The 200-day check is for catching broken renewal pipelines while you still have runway.</p>
+</div>
+
+<h2>The CDN trap</h2>
+
+<p>If your site is behind Cloudflare, Fastly, or any other CDN, you have two certificates:</p>
+
+<ol style="padding-left:1.5rem;font-size:0.875rem;color:var(--muted);line-height:2;">
+  <li>The CDN's certificate — the one your visitors see</li>
+  <li>Your origin certificate — the one between the CDN and your server</li>
+</ol>
+
+<p>Most monitoring tools check from the outside. They see the CDN cert — which is usually auto-managed and fine. The origin cert can be expiring unnoticed behind the CDN's edge.</p>
+
+<p>Check your origin cert directly:</p>
+
+<pre>openssl s_client -connect YOUR_SERVER_IP:443 -servername yourdomain.com 2>/dev/null |   openssl x509 -noout -dates</pre>
+
+<p>And check what the CDN is serving to visitors:</p>
+
+<pre>openssl s_client -connect yourdomain.com:443 2>/dev/null |   openssl x509 -noout -dates</pre>
+
+<p>Both should have comfortable expiry dates. The origin cert is the one that breaks silently.</p>
+
+<h2>A simple monitoring script</h2>
+
+<p>This checks a list of domains and emails you if anything expires within 200 days:</p>
+
+<pre>#!/bin/bash
+# /usr/local/bin/check-ssl.sh
+DOMAINS=("yourdomain.com" "api.yourdomain.com" "app.yourdomain.com")
+ALERT_DAYS=200
+EMAIL="you@yourdomain.com"
+
+for domain in "${DOMAINS[@]}"; do
+  expiry=$(openssl s_client -connect "$domain:443" -servername "$domain" 2>/dev/null |     openssl x509 -noout -enddate 2>/dev/null | cut -d= -f2)
+
+  if [ -z "$expiry" ]; then
+    echo "WARN: $domain — could not fetch cert" | mail -s "SSL Check: $domain" "$EMAIL"
+    continue
+  fi
+
+  expiry_epoch=$(date -d "$expiry" +%s 2>/dev/null || date -jf "%b %e %T %Y %Z" "$expiry" +%s)
+  now_epoch=$(date +%s)
+  days_left=$(( (expiry_epoch - now_epoch) / 86400 ))
+
+  if [ "$days_left" -lt "$ALERT_DAYS" ]; then
+    echo "$domain expires in $days_left days ($expiry)" |       mail -s "SSL expiry warning: $domain ($days_left days)" "$EMAIL"
+  fi
+done</pre>
+
+<p>Add to cron to run weekly:</p>
+
+<pre>0 9 * * 1 flock -n /tmp/ssl-check.lock /usr/local/bin/check-ssl.sh</pre>
+
+<h2>Checking multiple domains at once</h2>
+
+<p>If you manage more than a few domains, the command-line approach gets unwieldy. The ConfigClarity SSL Checker takes a list of domains, fetches their certificates via crt.sh, and flags anything expiring within 200 days — along with a note for CDN-fronted domains where the cert ownership is ambiguous.</p>
+
+<h2>The renewal pipeline audit</h2>
+
+<p>If you're using certbot, verify the renewal is actually working:</p>
+
+<pre># Test renewal without actually renewing:
+certbot renew --dry-run
+
+# Check the certbot timer is active (systemd):
+systemctl status certbot.timer
+
+# Check the renewal log:
+cat /var/log/letsencrypt/letsencrypt.log | grep -E "Cert not|renewed|error"</pre>
+
+<p>A common failure mode: the certbot renewal works fine for a year, then a server migration or DNS change breaks the ACME challenge. The renewal silently fails. You find out 89 days later when the 30-day alert fires. By then you're under pressure.</p>
+
+<p>Run <code>certbot renew --dry-run</code> monthly. Add it to cron. It takes 10 seconds and tells you immediately if something is broken.</p>
+
+<div class="callout good">
+  <p>The ConfigClarity SSL Checker flags certificates expiring within 200 days — not the standard 30. Paste a list of domains and get expiry status, CDN detection, and chain validation in one pass.</p>
+</div>
+
+<div class="cta">
+  <p>Check multiple domains at once — expiry dates, CDN detection, certificate chain, and 200-day early warnings.</p>
+  <a href="/ssl/">Open SSL Checker →</a>
+</div>
+
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

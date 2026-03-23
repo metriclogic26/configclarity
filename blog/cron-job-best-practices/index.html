@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cron Job Best Practices That Actually Matter — ConfigClarity</title>
+  <meta name="description" content="flock safety, staggered scheduling, output logging, PATH issues — the cron patterns that prevent silent failures and data corruption on Linux servers.">
+  <meta name="keywords" content="cron job best practices, cron flock safety, cron logging, cron PATH issue, linux cron tips">
+  <link rel="canonical" href="https://configclarity.dev/blog/cron-job-best-practices/">
+  <meta property="og:title" content="Cron Job Best Practices That Actually Matter">
+  <meta property="og:description" content="flock safety, staggered scheduling, output logging, PATH issues — the cron patterns that prevent silent failures and data corruption on Linux servers.">
+  <meta property="og:url" content="https://configclarity.dev/blog/cron-job-best-practices/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Cron Job Best Practices That Actually Matter",
+    "description": "flock safety, staggered scheduling, output logging, PATH issues — the cron patterns that prevent silent failures and data corruption on Linux servers.",
+    "url": "https://configclarity.dev/blog/cron-job-best-practices/",
+    "datePublished": "2026-03-23",
+    "dateModified": "2026-03-23",
+    "author": {"@type": "Organization", "name": "MetricLogic", "url": "https://metriclogic.dev"},
+    "publisher": {"@type": "Organization", "name": "ConfigClarity", "url": "https://configclarity.dev"},
+    "isPartOf": {"@type": "Blog", "name": "ConfigClarity Blog", "url": "https://configclarity.dev/blog/"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
+    {"@type":"ListItem","position":3,"name":"Cron Job Best Practices That Actually Matter","item":"https://configclarity.dev/blog/cron-job-best-practices/"}
+  ]}
+  </script>
+  
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.8; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; }
+      .header-nav a { color: var(--muted); }
+      .hero { max-width: 720px; margin: 0 auto; padding: 3rem 2rem 1.5rem; }
+      .hero-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+      .hero-tag { background: rgba(108,99,255,.15); color: var(--purple); padding: 0.15rem 0.6rem; border-radius: 4px; }
+      h1 { font-size: 1.75rem; font-weight: 700; line-height: 1.35; margin-bottom: 1rem; }
+      .lede { font-size: 1rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.75; }
+      .content { max-width: 720px; margin: 0 auto; padding: 0 2rem 4rem; }
+      h2 { font-size: 1.15rem; font-weight: 700; margin: 2.5rem 0 0.75rem; color: var(--text); }
+      h3 { font-size: 0.95rem; font-weight: 700; margin: 1.75rem 0 0.5rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.1rem; }
+      strong { color: var(--text); }
+      pre { background: #0d0f1a; border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; font-size: 0.78rem; overflow-x: auto; margin: 1rem 0 1.5rem; line-height: 1.7; }
+      code { background: #1e2130; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.82rem; color: var(--text); }
+      .callout { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.1rem 1.4rem; margin: 1.5rem 0; font-size: 0.875rem; }
+      .callout.warn { border-color: var(--orange); }
+      .callout.danger { border-color: var(--red); }
+      .callout.good { border-color: var(--green); }
+      .callout p { margin-bottom: 0; }
+      .cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.5rem; margin: 2.5rem 0; text-align: center; }
+      .cta p { color: var(--text); font-size: 0.875rem; margin-bottom: 0.75rem; }
+      .cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.5rem 1.25rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; text-decoration: none; }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 720px; margin: 0 auto; font-size: 0.75rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .divider { border: none; border-top: 1px solid #2a2d3d; margin: 2rem 0; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; }
+      @media (max-width: 600px) { h1 { font-size: 1.4rem; } .hero, .content { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › Cron Job Best Practices That Actually Matter</div>
+  <div class="hero">
+    <div class="hero-meta">
+      <span>2026-03-23</span>
+      <span>·</span>
+      <span class="hero-tag">Cron</span><span class="hero-tag">Linux</span><span class="hero-tag">DevOps</span>
+    </div>
+    <h1>Cron Job Best Practices That Actually Matter</h1>
+    <p class="lede">Most cron problems are invisible. The job appears to run. The logs are empty. The output was silently discarded. And nobody notices until the backup that should have been running for three weeks simply isn't there.</p>
+  </div>
+  <div class="content">
+    
+<p>Most cron jobs are set up once and never touched again. That's fine when they're simple. It stops being fine when you have six of them all running at midnight, one of them silently failing for three weeks, and nobody notices until the backup you needed doesn't exist.</p>
+
+<p>Here are the patterns that actually matter — things I've seen go wrong on real servers.</p>
+
+<h2>Schedule them so they don't pile up</h2>
+
+<p>The instinct is to run things at midnight or at the top of the hour. Everyone does this. The result is a server that idles all day then spikes at 00:00 when five jobs hit simultaneously.</p>
+
+<p>Spread them out. Not by much — even five minutes apart makes a difference:</p>
+
+<pre># Bad — everything at midnight:
+0 0 * * * /usr/local/bin/backup.sh
+0 0 * * * /usr/local/bin/cleanup.sh
+0 0 * * * /usr/local/bin/report.sh
+
+# Better — staggered:
+0 0 * * *  /usr/local/bin/backup.sh
+5 0 * * *  /usr/local/bin/cleanup.sh
+15 0 * * * /usr/local/bin/report.sh</pre>
+
+<p>The backup job finishes before cleanup starts. The disk I/O from the backup doesn't compete with cleanup's I/O. Simple.</p>
+
+<h2>Use flock — always</h2>
+
+<p>A cron job scheduled to run every 5 minutes that sometimes takes 7 minutes will eventually run twice at the same time. This is not hypothetical. It will happen.</p>
+
+<p>When it does, two instances of your script will be writing to the same files, hitting the same database, or sending the same emails twice.</p>
+
+<pre># Wrap any job that shouldn't run concurrently:
+*/5 * * * * flock -n /tmp/sync.lock /usr/local/bin/sync.sh</pre>
+
+<p><code>flock -n</code> means non-blocking — if the lock is already held (previous run still going), the new invocation exits immediately without doing anything. No error, no data corruption, no duplicate emails.</p>
+
+<p>The lock file is just a regular file. It doesn't need to exist before you run the command. And when the process exits — even if it crashes — the kernel releases the lock automatically. No cleanup required.</p>
+
+<div class="callout">
+  <p>Use a unique lock file per job. <code>/tmp/sync.lock</code> and <code>/tmp/backup.lock</code> — not both using <code>/tmp/job.lock</code>.</p>
+</div>
+
+<h2>Capture output or you'll never know it failed</h2>
+
+<p>By default, cron emails output to the local root mailbox. On most servers, nobody reads that. So when your job starts failing, the errors disappear into a mailbox that hasn't been opened in two years.</p>
+
+<p>Two options — pick one:</p>
+
+<pre># Option 1: Log to a file with timestamps:
+0 2 * * * /usr/local/bin/backup.sh >> /var/log/backup.log 2>&1
+
+# Option 2: Silence successful runs, keep errors visible (my preference):
+0 2 * * * /usr/local/bin/backup.sh 2>/var/log/backup-errors.log</pre>
+
+<p>Then set up log rotation so these files don't grow forever:</p>
+
+<pre># /etc/logrotate.d/backup
+/var/log/backup.log {
+    daily
+    rotate 14
+    compress
+    missingok
+    notifempty
+}</pre>
+
+<h2>Set the PATH explicitly</h2>
+
+<p>Cron runs with a stripped-down environment. The PATH is minimal — usually just <code>/usr/bin:/bin</code>. If your script calls anything in <code>/usr/local/bin</code> or uses a tool installed via npm or pip, it won't be found.</p>
+
+<p>The fix is either to use absolute paths everywhere in your scripts, or to set PATH at the top of your crontab:</p>
+
+<pre># At the top of crontab -e:
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# Now your jobs can call things in /usr/local/bin:
+0 3 * * * certbot renew --quiet</pre>
+
+<h2>Test before you rely on it</h2>
+
+<p>The most common cron debugging mistake is editing the crontab and waiting to see if the job runs at the scheduled time. You might be waiting hours.</p>
+
+<p>Test it now:</p>
+
+<pre># Run exactly what cron would run, in a minimal environment:
+env -i HOME=/root PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin /usr/local/bin/your-script.sh</pre>
+
+<p>The <code>env -i</code> strips your current environment variables. If the script works in your shell but fails here, you've found your problem — usually a missing PATH entry or an environment variable your script assumed would exist.</p>
+
+<h2>@reboot jobs need special care</h2>
+
+<p>Jobs with <code>@reboot</code> run once when the system starts. They run before most services are ready — before your database is up, before your network is fully configured, before your mounted drives are necessarily mounted.</p>
+
+<pre># Add a sleep to let things settle first:
+@reboot sleep 30 && /usr/local/bin/start-service.sh</pre>
+
+<p>30 seconds is usually enough for a standard VPS. If your startup script depends on a database, add a proper wait loop instead:</p>
+
+<pre>@reboot sleep 10 && until pg_isready; do sleep 2; done && /usr/local/bin/start-service.sh</pre>
+
+<div class="cta">
+  <p>Paste your crontab output to visualise every job on a 24-hour timeline — see overlaps, collision risks, and get flock-safe versions of all your jobs.</p>
+  <a href="/">Open Cron Visualiser →</a>
+</div>
+
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

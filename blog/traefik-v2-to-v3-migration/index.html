@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Traefik v2 to v3 Migration: What Actually Broke and How to Fix It — ConfigClarity</title>
+  <meta name="description" content="Traefik v3 breaking changes explained: Docker network requirements, removed allowEmptyServices, deprecated v1 labels, and the static config changes that cause startup failures.">
+  <meta name="keywords" content="traefik v2 to v3 migration, traefik v3 breaking changes, traefik v3 docker labels, traefik upgrade guide">
+  <link rel="canonical" href="https://configclarity.dev/blog/traefik-v2-to-v3-migration/">
+  <meta property="og:title" content="Traefik v2 to v3 Migration: What Actually Broke and How to Fix It">
+  <meta property="og:description" content="Traefik v3 breaking changes explained: Docker network requirements, removed allowEmptyServices, deprecated v1 labels, and the static config changes that cause startup failures.">
+  <meta property="og:url" content="https://configclarity.dev/blog/traefik-v2-to-v3-migration/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Traefik v2 to v3 Migration: What Actually Broke and How to Fix It",
+    "description": "Traefik v3 breaking changes explained: Docker network requirements, removed allowEmptyServices, deprecated v1 labels, and the static config changes that cause startup failures.",
+    "url": "https://configclarity.dev/blog/traefik-v2-to-v3-migration/",
+    "datePublished": "2026-03-23",
+    "dateModified": "2026-03-23",
+    "author": {"@type": "Organization", "name": "MetricLogic", "url": "https://metriclogic.dev"},
+    "publisher": {"@type": "Organization", "name": "ConfigClarity", "url": "https://configclarity.dev"},
+    "isPartOf": {"@type": "Blog", "name": "ConfigClarity Blog", "url": "https://configclarity.dev/blog/"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
+    {"@type":"ListItem","position":3,"name":"Traefik v2 to v3 Migration: What Actually Broke and How to Fix It","item":"https://configclarity.dev/blog/traefik-v2-to-v3-migration/"}
+  ]}
+  </script>
+  
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.8; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; }
+      .header-nav a { color: var(--muted); }
+      .hero { max-width: 720px; margin: 0 auto; padding: 3rem 2rem 1.5rem; }
+      .hero-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+      .hero-tag { background: rgba(108,99,255,.15); color: var(--purple); padding: 0.15rem 0.6rem; border-radius: 4px; }
+      h1 { font-size: 1.75rem; font-weight: 700; line-height: 1.35; margin-bottom: 1rem; }
+      .lede { font-size: 1rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.75; }
+      .content { max-width: 720px; margin: 0 auto; padding: 0 2rem 4rem; }
+      h2 { font-size: 1.15rem; font-weight: 700; margin: 2.5rem 0 0.75rem; color: var(--text); }
+      h3 { font-size: 0.95rem; font-weight: 700; margin: 1.75rem 0 0.5rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.1rem; }
+      strong { color: var(--text); }
+      pre { background: #0d0f1a; border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; font-size: 0.78rem; overflow-x: auto; margin: 1rem 0 1.5rem; line-height: 1.7; }
+      code { background: #1e2130; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.82rem; color: var(--text); }
+      .callout { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.1rem 1.4rem; margin: 1.5rem 0; font-size: 0.875rem; }
+      .callout.warn { border-color: var(--orange); }
+      .callout.danger { border-color: var(--red); }
+      .callout.good { border-color: var(--green); }
+      .callout p { margin-bottom: 0; }
+      .cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.5rem; margin: 2.5rem 0; text-align: center; }
+      .cta p { color: var(--text); font-size: 0.875rem; margin-bottom: 0.75rem; }
+      .cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.5rem 1.25rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; text-decoration: none; }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 720px; margin: 0 auto; font-size: 0.75rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .divider { border: none; border-top: 1px solid #2a2d3d; margin: 2rem 0; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; }
+      @media (max-width: 600px) { h1 { font-size: 1.4rem; } .hero, .content { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › Traefik v2 to v3 Migration: What Actually Broke and How to Fix It</div>
+  <div class="hero">
+    <div class="hero-meta">
+      <span>2026-03-23</span>
+      <span>·</span>
+      <span class="hero-tag">Traefik</span><span class="hero-tag">Docker</span><span class="hero-tag">Reverse Proxy</span><span class="hero-tag">Migration</span>
+    </div>
+    <h1>Traefik v2 to v3 Migration: What Actually Broke and How to Fix It</h1>
+    <p class="lede">Traefik v3 didn't rewrite everything — but what it did change breaks quietly. Routes stop working, no obvious error, and the label you've had in your compose file for two years just silently does nothing now.</p>
+  </div>
+  <div class="content">
+    
+<p>Traefik v3 shipped with breaking changes to its label syntax. If you upgraded without reading the migration guide — and many people did — your routes stopped working and the error messages weren't particularly helpful about why.</p>
+
+<p>Here's a practical guide to what changed and what to update.</p>
+
+<h2>What actually broke</h2>
+
+<p>The core routing label syntax stayed the same. What changed was a set of specific features, middleware names, and some default behaviours. The two things that break the most setups:</p>
+
+<p><strong>1. Docker provider changes</strong> — In v3, the Docker provider requires explicit network configuration if Traefik and your containers are on different Docker networks. In v2 it would figure this out automatically more often. In v3 it doesn't.</p>
+
+<p><strong>2. allowEmptyServices removed</strong> — In v2 you could set <code>allowEmptyServices: true</code> to let Traefik start even when backends were down. This option was removed in v3. If you had it in your static config, Traefik v3 silently ignores it and may behave differently.</p>
+
+<h2>The label syntax that still works</h2>
+
+<p>Good news first — the core routing labels are identical between v2 and v3:</p>
+
+<pre># These work in both v2 and v3:
+traefik.enable=true
+traefik.http.routers.myapp.rule=Host(`app.example.com`)
+traefik.http.routers.myapp.tls.certresolver=letsencrypt
+traefik.http.services.myapp.loadbalancer.server.port=3000</pre>
+
+<p>If your setup only uses basic routing with TLS, you might not have anything to update.</p>
+
+<h2>Old labels that no longer work</h2>
+
+<p>These are Traefik v1 labels that some people were still using in v2 (where they were deprecated but worked). In v3 they do nothing:</p>
+
+<pre># These are dead in v3 — remove them:
+traefik.frontend.rule=Host:app.example.com     # v1 style
+traefik.backend=myapp                           # v1 style
+traefik.port=3000                               # v1 style
+traefik.frontend.entryPoints=https             # v1 style</pre>
+
+<p>If you see these in your compose files, they're silently doing nothing. Replace with the v2/v3 style:</p>
+
+<pre># Equivalent v3 labels:
+traefik.enable=true
+traefik.http.routers.myapp.rule=Host(`app.example.com`)
+traefik.http.routers.myapp.entrypoints=websecure
+traefik.http.services.myapp.loadbalancer.server.port=3000</pre>
+
+<h2>Middleware names changed</h2>
+
+<p>Several built-in middleware types were renamed in v3. The most commonly used one:</p>
+
+<pre># v2 — redirect to HTTPS:
+traefik.http.middlewares.redirect-https.redirectscheme.scheme=https
+traefik.http.middlewares.redirect-https.redirectscheme.permanent=true
+
+# v3 — same thing, same syntax (this one didn't change):
+traefik.http.middlewares.redirect-https.redirectscheme.scheme=https
+traefik.http.middlewares.redirect-https.redirectscheme.permanent=true</pre>
+
+<p>The middleware syntax itself is mostly unchanged. What changed is that some middleware options that were implicit in v2 need to be explicit in v3. Check the Traefik v3 migration guide for the full list if you're using rate limiting, circuit breakers, or IP allowlisting middleware.</p>
+
+<h2>The Docker network problem</h2>
+
+<p>This is what actually breaks most setups. In v2, if Traefik and your container were both on the default bridge network, Traefik could usually reach the container. In v3 the Docker provider is stricter about network attachment.</p>
+
+<p>The fix is to put Traefik and all routed containers on a shared external network:</p>
+
+<pre># docker-compose.yml (Traefik service):
+services:
+  traefik:
+    image: traefik:v3
+    networks:
+      - traefik-public
+    ports:
+      - "80:80"
+      - "443:443"
+
+networks:
+  traefik-public:
+    external: true</pre>
+
+<pre># docker-compose.yml (application service):
+services:
+  myapp:
+    image: myapp:latest
+    networks:
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.myapp.rule=Host(`app.example.com`)"
+      - "traefik.docker.network=traefik-public"  # Tell Traefik which network to use
+
+networks:
+  traefik-public:
+    external: true</pre>
+
+<p>Create the network once:</p>
+
+<pre>docker network create traefik-public</pre>
+
+<h2>Checking your labels before you upgrade</h2>
+
+<p>Paste your docker-compose.yml into the ConfigClarity Reverse Proxy Mapper. It detects Traefik v1 label patterns and generates the exact v3 replacements — including the network configuration fix.</p>
+
+<h2>The static config changes</h2>
+
+<p>If you're using a <code>traefik.yml</code> static config file rather than CLI flags, a few options moved:</p>
+
+<pre># v2 static config:
+providers:
+  docker:
+    exposedByDefault: false
+    swarmMode: false
+
+# v3 static config (swarmMode moved to swarm provider):
+providers:
+  docker:
+    exposedByDefault: false
+  swarm:           # separate provider now
+    exposedByDefault: false</pre>
+
+<p>Most single-node setups don't use Swarm, so this doesn't apply. But if you had <code>swarmMode: false</code> in your Docker provider config, remove it — it'll cause a startup error in v3.</p>
+
+<div class="cta">
+  <p>Paste your docker-compose.yml or nginx.conf to detect Traefik v1 label patterns and get exact v3 replacements.</p>
+  <a href="/proxy/">Open Reverse Proxy Mapper →</a>
+</div>
+
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

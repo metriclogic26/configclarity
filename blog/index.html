@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConfigClarity Blog — Linux, Docker, SSL, DevOps</title>
+  <meta name="description" content="Practical guides for Linux server management, Docker security, SSL monitoring, cron jobs, and DevOps. Written for sysadmins, not academics.">
+  <meta name="keywords" content="linux server blog, docker security guide, ssl monitoring, devops blog, sysadmin tips">
+  <link rel="canonical" href="https://configclarity.dev/blog/">
+  <meta property="og:title" content="ConfigClarity Blog">
+  <meta property="og:description" content="Practical guides for Linux server management, Docker, SSL, and DevOps.">
+  <meta property="og:url" content="https://configclarity.dev/blog/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Blog",
+    "name":"ConfigClarity Blog",
+    "url":"https://configclarity.dev/blog/",
+    "description":"Practical guides for Linux server management, Docker security, SSL monitoring, and DevOps.",
+    "author":{"@type":"Organization","name":"MetricLogic","url":"https://metriclogic.dev"}
+  }
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.8; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; }
+      .header-nav a { color: var(--muted); }
+      .hero { max-width: 720px; margin: 0 auto; padding: 3rem 2rem 1.5rem; }
+      .hero-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+      .hero-tag { background: rgba(108,99,255,.15); color: var(--purple); padding: 0.15rem 0.6rem; border-radius: 4px; }
+      h1 { font-size: 1.75rem; font-weight: 700; line-height: 1.35; margin-bottom: 1rem; }
+      .lede { font-size: 1rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.75; }
+      .content { max-width: 720px; margin: 0 auto; padding: 0 2rem 4rem; }
+      h2 { font-size: 1.15rem; font-weight: 700; margin: 2.5rem 0 0.75rem; color: var(--text); }
+      h3 { font-size: 0.95rem; font-weight: 700; margin: 1.75rem 0 0.5rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.1rem; }
+      strong { color: var(--text); }
+      pre { background: #0d0f1a; border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; font-size: 0.78rem; overflow-x: auto; margin: 1rem 0 1.5rem; line-height: 1.7; }
+      code { background: #1e2130; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.82rem; color: var(--text); }
+      .callout { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.1rem 1.4rem; margin: 1.5rem 0; font-size: 0.875rem; }
+      .callout.warn { border-color: var(--orange); }
+      .callout.danger { border-color: var(--red); }
+      .callout.good { border-color: var(--green); }
+      .callout p { margin-bottom: 0; }
+      .cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.5rem; margin: 2.5rem 0; text-align: center; }
+      .cta p { color: var(--text); font-size: 0.875rem; margin-bottom: 0.75rem; }
+      .cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.5rem 1.25rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; text-decoration: none; }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 720px; margin: 0 auto; font-size: 0.75rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .divider { border: none; border-top: 1px solid #2a2d3d; margin: 2rem 0; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; }
+      @media (max-width: 600px) { h1 { font-size: 1.4rem; } .hero, .content { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+
+  <div style="max-width:720px;margin:0 auto;padding:2rem;">
+    <div style="font-size:0.75rem;color:var(--muted);margin-bottom:1.5rem;"><a href="/" style="color:var(--muted);">ConfigClarity</a> › Blog</div>
+    <h1 style="font-size:1.6rem;font-weight:700;margin-bottom:0.5rem;">Blog</h1>
+    <p style="color:var(--muted);font-size:0.875rem;margin-bottom:2rem;">Practical guides for Linux server management, Docker security, SSL monitoring, and DevOps. Written for sysadmins, not academics.</p>
+    <a href="/blog/docker-ufw-bypass-explained/" style="display:block;background:var(--bg2);border:1px solid #2a2d3d;border-radius:8px;padding:1.5rem;margin-bottom:1rem;text-decoration:none;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">2026-03-23 &nbsp;·&nbsp; <span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Docker</span>&nbsp;<span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">UFW</span>&nbsp;<span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Security</span></div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;line-height:1.4;">Docker Bypasses UFW. Here's Why — and How to Fix It.</div>
+      <div style="font-size:0.82rem;color:var(--muted);">UFW is active. You added a deny rule. Your Redis is still open. Here's what's actually happening and three ways to fix it.</div>
+    </a>
+    <a href="/blog/cron-job-best-practices/" style="display:block;background:var(--bg2);border:1px solid #2a2d3d;border-radius:8px;padding:1.5rem;margin-bottom:1rem;text-decoration:none;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">2026-03-23 &nbsp;·&nbsp; <span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Cron</span>&nbsp;<span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Linux</span>&nbsp;<span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">DevOps</span></div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;line-height:1.4;">Cron Job Best Practices That Actually Matter</div>
+      <div style="font-size:0.82rem;color:var(--muted);">flock safety, staggered scheduling, output logging, PATH issues — the patterns that prevent silent failures.</div>
+    </a>
+    <a href="/blog/ssl-certificate-monitoring-guide/" style="display:block;background:var(--bg2);border:1px solid #2a2d3d;border-radius:8px;padding:1.5rem;margin-bottom:1rem;text-decoration:none;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">2026-03-23 &nbsp;·&nbsp; <span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">SSL</span>&nbsp;<span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Monitoring</span>&nbsp;<span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">DevOps</span></div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;line-height:1.4;">SSL Certificate Monitoring: Why 30 Days Is Too Late</div>
+      <div style="font-size:0.82rem;color:var(--muted);">The 200-day rule, CDN cert traps, and a simple bash script to catch expiry before it becomes an outage.</div>
+    </a>
+    <a href="/blog/ollama-server-security/" style="display:block;background:var(--bg2);border:1px solid #2a2d3d;border-radius:8px;padding:1.5rem;margin-bottom:1rem;text-decoration:none;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">2026-03-23 &nbsp;·&nbsp; <span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Ollama</span>&nbsp;<span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Security</span>&nbsp;<span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Self-hosted</span></div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;line-height:1.4;">Securing an Ollama Server: Don't Leave Your GPU Open to the Internet</div>
+      <div style="font-size:0.82rem;color:var(--muted);">Ollama binds to 0.0.0.0 by default. How to lock it down with localhost binding, Nginx auth, and Docker port safety.</div>
+    </a>
+    <a href="/blog/traefik-v2-to-v3-migration/" style="display:block;background:var(--bg2);border:1px solid #2a2d3d;border-radius:8px;padding:1.5rem;margin-bottom:1rem;text-decoration:none;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">2026-03-23 &nbsp;·&nbsp; <span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Traefik</span>&nbsp;<span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Docker</span>&nbsp;<span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Migration</span></div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;line-height:1.4;">Traefik v2 to v3 Migration: What Actually Broke</div>
+      <div style="font-size:0.82rem;color:var(--muted);">Docker network requirements, removed options, deprecated v1 labels, and the static config changes that cause startup failures.</div>
+    </a>
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

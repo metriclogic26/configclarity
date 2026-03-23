@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Securing an Ollama Server: Don't Leave Your GPU Open to the Internet — ConfigClarity</title>
+  <meta name="description" content="Ollama binds to 0.0.0.0 by default, exposing your local LLM to the internet. How to lock it down with localhost binding, Nginx auth, and Docker port safety.">
+  <meta name="keywords" content="ollama server security, ollama public access, ollama nginx reverse proxy, ollama docker security, secure ollama server">
+  <link rel="canonical" href="https://configclarity.dev/blog/ollama-server-security/">
+  <meta property="og:title" content="Securing an Ollama Server: Don't Leave Your GPU Open to the Internet">
+  <meta property="og:description" content="Ollama binds to 0.0.0.0 by default, exposing your local LLM to the internet. How to lock it down with localhost binding, Nginx auth, and Docker port safety.">
+  <meta property="og:url" content="https://configclarity.dev/blog/ollama-server-security/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Securing an Ollama Server: Don't Leave Your GPU Open to the Internet",
+    "description": "Ollama binds to 0.0.0.0 by default, exposing your local LLM to the internet. How to lock it down with localhost binding, Nginx auth, and Docker port safety.",
+    "url": "https://configclarity.dev/blog/ollama-server-security/",
+    "datePublished": "2026-03-23",
+    "dateModified": "2026-03-23",
+    "author": {"@type": "Organization", "name": "MetricLogic", "url": "https://metriclogic.dev"},
+    "publisher": {"@type": "Organization", "name": "ConfigClarity", "url": "https://configclarity.dev"},
+    "isPartOf": {"@type": "Blog", "name": "ConfigClarity Blog", "url": "https://configclarity.dev/blog/"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
+    {"@type":"ListItem","position":3,"name":"Securing an Ollama Server: Don't Leave Your GPU Open to the Internet","item":"https://configclarity.dev/blog/ollama-server-security/"}
+  ]}
+  </script>
+  
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.8; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; }
+      .header-nav a { color: var(--muted); }
+      .hero { max-width: 720px; margin: 0 auto; padding: 3rem 2rem 1.5rem; }
+      .hero-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 1rem; display: flex; gap: 1rem; flex-wrap: wrap; }
+      .hero-tag { background: rgba(108,99,255,.15); color: var(--purple); padding: 0.15rem 0.6rem; border-radius: 4px; }
+      h1 { font-size: 1.75rem; font-weight: 700; line-height: 1.35; margin-bottom: 1rem; }
+      .lede { font-size: 1rem; color: var(--muted); margin-bottom: 2rem; line-height: 1.75; }
+      .content { max-width: 720px; margin: 0 auto; padding: 0 2rem 4rem; }
+      h2 { font-size: 1.15rem; font-weight: 700; margin: 2.5rem 0 0.75rem; color: var(--text); }
+      h3 { font-size: 0.95rem; font-weight: 700; margin: 1.75rem 0 0.5rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.1rem; }
+      strong { color: var(--text); }
+      pre { background: #0d0f1a; border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; font-size: 0.78rem; overflow-x: auto; margin: 1rem 0 1.5rem; line-height: 1.7; }
+      code { background: #1e2130; padding: 0.1rem 0.4rem; border-radius: 3px; font-size: 0.82rem; color: var(--text); }
+      .callout { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.1rem 1.4rem; margin: 1.5rem 0; font-size: 0.875rem; }
+      .callout.warn { border-color: var(--orange); }
+      .callout.danger { border-color: var(--red); }
+      .callout.good { border-color: var(--green); }
+      .callout p { margin-bottom: 0; }
+      .cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.5rem; margin: 2.5rem 0; text-align: center; }
+      .cta p { color: var(--text); font-size: 0.875rem; margin-bottom: 0.75rem; }
+      .cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.5rem 1.25rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; text-decoration: none; }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 720px; margin: 0 auto; font-size: 0.75rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .divider { border: none; border-top: 1px solid #2a2d3d; margin: 2rem 0; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; }
+      @media (max-width: 600px) { h1 { font-size: 1.4rem; } .hero, .content { padding-left: 1.25rem; padding-right: 1.25rem; } }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › Securing an Ollama Server: Don't Leave Your GPU Open to the Internet</div>
+  <div class="hero">
+    <div class="hero-meta">
+      <span>2026-03-23</span>
+      <span>·</span>
+      <span class="hero-tag">Ollama</span><span class="hero-tag">Security</span><span class="hero-tag">Self-hosted</span><span class="hero-tag">Linux</span>
+    </div>
+    <h1>Securing an Ollama Server: Don't Leave Your GPU Open to the Internet</h1>
+    <p class="lede">Ollama's default install is great for local development. It's terrible for a server. Port 11434 is open, there's no authentication, and exposed instances show up in Shodan. Here's how to fix it in 10 minutes.</p>
+  </div>
+  <div class="content">
+    
+<p>Ollama has made it genuinely easy to run large language models on your own hardware. A few commands and you have a local API serving Llama, Mistral, or whatever model fits your VRAM. The problem is that the default setup is wide open, and most guides don't mention this.</p>
+
+<p>Here's what you need to lock down before you put an Ollama server anywhere near the internet.</p>
+
+<h2>Ollama binds to 0.0.0.0 by default</h2>
+
+<p>Out of the box, Ollama listens on <code>0.0.0.0:11434</code>. That means every network interface — including whatever public IP your VPS has. Anyone who can reach port 11434 can make requests to your model.</p>
+
+<p>This isn't theoretical. Exposed Ollama instances show up in Shodan searches. People use them for free inference. Your expensive GPU hours, someone else's prompts.</p>
+
+<p>Check if yours is exposed right now:</p>
+
+<pre>curl http://YOUR_SERVER_IP:11434/api/tags</pre>
+
+<p>If you get a JSON response listing your models, it's publicly accessible.</p>
+
+<h2>Fix 1: Bind to localhost only</h2>
+
+<p>The simplest fix is to tell Ollama to only listen on the loopback interface:</p>
+
+<pre># In your ollama systemd service override:
+sudo systemctl edit ollama.service
+
+# Add:
+[Service]
+Environment="OLLAMA_HOST=127.0.0.1"</pre>
+
+<pre>sudo systemctl daemon-reload
+sudo systemctl restart ollama</pre>
+
+<p>Now Ollama only accepts connections from the same machine. Your applications on the same server can still reach it at <code>http://localhost:11434</code>, but nothing external can.</p>
+
+<h2>Fix 2: Put it behind Nginx with authentication</h2>
+
+<p>If you need to access Ollama from other machines — a development laptop, another server — run it behind Nginx with HTTP basic auth. Don't expose the Ollama port directly.</p>
+
+<pre># /etc/nginx/sites-available/ollama
+server {
+    listen 443 ssl;
+    server_name ollama.yourdomain.com;
+
+    ssl_certificate /etc/letsencrypt/live/ollama.yourdomain.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/ollama.yourdomain.com/privkey.pem;
+
+    auth_basic "Ollama";
+    auth_basic_user_file /etc/nginx/.ollama-htpasswd;
+
+    location / {
+        proxy_pass http://127.0.0.1:11434;
+        proxy_set_header Host $host;
+        proxy_read_timeout 300s;  # Models can take a while to respond
+    }
+}</pre>
+
+<pre># Generate the password file:
+sudo htpasswd -c /etc/nginx/.ollama-htpasswd yourusername</pre>
+
+<p>Set a long timeout. Model inference takes time, and nothing is more frustrating than a 60-second nginx timeout killing a response that was 30 seconds from finishing.</p>
+
+<h2>Fix 3: UFW rules (but watch out for Docker)</h2>
+
+<p>If you're running Ollama directly (not in Docker), UFW will protect it:</p>
+
+<pre>sudo ufw deny 11434</pre>
+
+<p>If you're running Ollama in a Docker container with a published port — see the Docker UFW bypass issue. Your <code>ufw deny</code> rule won't help. Bind to 127.0.0.1 in the container's port mapping instead:</p>
+
+<pre># docker-compose.yml
+services:
+  ollama:
+    image: ollama/ollama
+    ports:
+      - "127.0.0.1:11434:11434"  # Not 0.0.0.0:11434:11434</pre>
+
+<h2>Rate limiting if you expose it</h2>
+
+<p>If you're running a shared Ollama instance for a team, add rate limiting at the Nginx level to prevent any single user from monopolising the GPU:</p>
+
+<pre># In nginx.conf, add a rate limit zone:
+limit_req_zone $binary_remote_addr zone=ollama:10m rate=10r/m;
+
+# In the server block:
+location /api/generate {
+    limit_req zone=ollama burst=5 nodelay;
+    proxy_pass http://127.0.0.1:11434;
+    proxy_read_timeout 300s;
+}</pre>
+
+<p>10 requests per minute per IP with a burst of 5 is a reasonable starting point for a team of 5–10 people. Adjust based on your usage.</p>
+
+<h2>Model storage and disk</h2>
+
+<p>Models are large. Llama 3 8B is about 5GB. Mistral 7B is similar. If you're pulling multiple models, your disk fills up faster than you'd expect.</p>
+
+<pre># Check disk usage:
+du -sh ~/.ollama/models/
+
+# Or if running as a service:
+du -sh /usr/share/ollama/.ollama/models/</pre>
+
+<p>Set up a low-disk alert before this becomes a problem. When the disk fills, the server stops accepting writes. That usually means your Ollama service silently fails to pull updates and your logs stop rotating.</p>
+
+<div class="cta">
+  <p>Running Ollama in Docker? Check your firewall rules — Docker port mappings bypass UFW by default. Paste your ufw status output to get an instant audit.</p>
+  <a href="/firewall/">Open Firewall Auditor →</a>
+</div>
+
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>
