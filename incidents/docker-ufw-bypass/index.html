@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Docker UFW Bypass: How Exposed Containers Lead to Server Compromise — ConfigClarity</title>
+  <meta name="description" content="How the Docker UFW bypass misconfiguration exposes databases and services to the internet despite active firewall rules. Real attack patterns and the exact fix.">
+  <meta name="keywords" content="docker ufw bypass incident, docker firewall bypass breach, redis exposed docker, docker port exposed internet">
+  <link rel="canonical" href="https://configclarity.dev/incidents/docker-ufw-bypass/">
+  <meta property="og:title" content="Docker UFW Bypass: How Exposed Containers Lead to Server Compromise">
+  <meta property="og:description" content="How the Docker UFW bypass misconfiguration exposes databases and services to the internet despite active firewall rules. Real attack patterns and the exact fix.">
+  <meta property="og:url" content="https://configclarity.dev/incidents/docker-ufw-bypass/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle",
+    "headline":"Docker UFW Bypass: How Exposed Containers Lead to Server Compromise",
+    "url":"https://configclarity.dev/incidents/docker-ufw-bypass/",
+    "description":"How the Docker UFW bypass misconfiguration exposes databases and services to the internet despite active firewall rules. Real attack patterns and the exact fix.",
+    "datePublished":"2026-03-22",
+    "author":{"@type":"Organization","name":"MetricLogic","url":"https://metriclogic.dev"},
+    "publisher":{"@type":"Organization","name":"ConfigClarity","url":"https://configclarity.dev"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Incident Reports","item":"https://configclarity.dev/incidents/"},
+    {"@type":"ListItem","position":3,"name":"Docker UFW Bypass: How Exposed Containers Lead to Server Compromise","item":"https://configclarity.dev/incidents/docker-ufw-bypass/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.8; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:720px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .hero { max-width:720px; margin:0 auto; padding:3rem 2rem 1.5rem; }
+      .hero-meta { font-size:0.75rem; color:var(--muted); margin-bottom:1rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+      .hero-tag { background:rgba(239,68,68,.15); color:var(--red); padding:0.15rem 0.6rem; border-radius:4px; font-size:0.72rem; }
+      .hero-tag.orange { background:rgba(249,115,22,.15); color:var(--orange); }
+      h1 { font-size:1.7rem; font-weight:700; line-height:1.35; margin-bottom:1rem; }
+      .lede { font-size:1rem; color:var(--muted); margin-bottom:2rem; line-height:1.75; }
+      .content { max-width:720px; margin:0 auto; padding:0 2rem 4rem; }
+      h2 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1.1rem; }
+      strong { color:var(--text); }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; font-size:0.78rem; overflow-x:auto; margin:1rem 0 1.5rem; line-height:1.7; color:var(--text); }
+      code { background:#1e2130; padding:0.1rem 0.4rem; border-radius:3px; font-size:0.82rem; color:var(--text); }
+      .incident-box { background:var(--bg2); border-left:3px solid var(--red); border-radius:0 8px 8px 0; padding:1.1rem 1.5rem; margin:1.5rem 0; }
+      .incident-box .label { font-size:0.7rem; color:var(--red); text-transform:uppercase; letter-spacing:.06em; margin-bottom:0.5rem; }
+      .incident-box p { margin-bottom:0.5rem; font-size:0.875rem; color:var(--text); }
+      .incident-box p:last-child { margin-bottom:0; }
+      .fix-box { background:var(--bg2); border-left:3px solid var(--green); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.5rem 0; }
+      .fix-box .label { font-size:0.7rem; color:var(--green); text-transform:uppercase; letter-spacing:.06em; margin-bottom:0.4rem; }
+      .timeline { border-left:2px solid #2a2d3d; padding-left:1.5rem; margin:1.5rem 0; }
+      .timeline-item { margin-bottom:1.25rem; position:relative; }
+      .timeline-item::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--purple); position:absolute; left:-1.9rem; top:0.35rem; }
+      .timeline-item .time { font-size:0.72rem; color:var(--muted); margin-bottom:0.25rem; }
+      .timeline-item .event { font-size:0.875rem; color:var(--text); }
+      .faq-item { margin-bottom:1.4rem; }
+      .faq-q { font-size:0.9rem; font-weight:600; margin-bottom:0.35rem; }
+      .faq-a { font-size:0.84rem; color:var(--muted); }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.5rem; margin:2.5rem 0; text-align:center; }
+      .cta p { color:var(--text); font-size:0.875rem; margin-bottom:0.75rem; }
+      .cta-row { display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.5rem 1.25rem; border-radius:6px; font-size:0.82rem; font-weight:700; }
+      .cta a.sec { background:transparent; border:1px solid var(--purple); color:var(--purple); }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/incidents/">Incidents</a> › Docker UFW Bypass: How Exposed Containers Lead to Server Compromise</div>
+  <div class="hero">
+    <div class="hero-meta"><span>2026-03-22</span> · <span class="hero-tag">Security Incident</span><span class="hero-tag">Docker</span><span class="hero-tag orange">UFW</span></div>
+    <h1>Docker UFW Bypass: How Exposed Containers Lead to Server Compromise</h1>
+    <p class="lede">UFW is active. The deny rule is listed. The Redis port is open to the internet anyway. This is how the Docker UFW bypass leads from misconfiguration to compromised server — and how to verify you're not currently affected.</p>
+  </div>
+  <div class="content">
+    
+<p>The Docker UFW bypass is not a theoretical vulnerability. It's a misconfiguration that has exposed production databases, Redis instances, and internal APIs to the public internet thousands of times — on servers whose owners believed their firewall was protecting them.</p>
+
+<h2>How it happens</h2>
+
+<p>Linux packet routing evaluates iptables chains in order: <strong>PREROUTING → DOCKER → FORWARD → INPUT</strong>. UFW manages the INPUT chain. When a packet arrives destined for a Docker container port, Docker's rules in the FORWARD chain accept it before the packet ever reaches UFW's INPUT rules.</p>
+
+<p>The result: a developer runs <code>ufw deny 6379</code> to block Redis. They check <code>ufw status</code> and see the deny rule listed. They assume they're protected. Their Redis instance is publicly accessible anyway — through the DOCKER chain that UFW never touches.</p>
+
+<h2>Documented exposure patterns</h2>
+
+<div class="incident-box">
+  <div class="label">Pattern 1 — Database exposure</div>
+  <p>Redis (:6379), MongoDB (:27017), PostgreSQL (:5432), and MySQL (:3306) bound to <code>0.0.0.0</code> via Docker port mappings are consistently found by Shodan scans. Unauthenticated Redis instances in particular have been used for cryptomining by scanning for port 6379 and issuing CONFIG SET commands to write SSH keys to <code>~/.ssh/authorized_keys</code>.</p>
+</div>
+
+<div class="incident-box">
+  <div class="label">Pattern 2 — Internal API exposure</div>
+  <p>Internal services (admin panels, metrics endpoints, internal APIs) deployed in Docker with <code>ports: "PORT:PORT"</code> and no authentication, intended to be "protected by the firewall", are accessible from the public internet. The firewall appears active. The service is reachable.</p>
+</div>
+
+<div class="incident-box">
+  <div class="label">Pattern 3 — AI inference endpoint exposure</div>
+  <p>Ollama and other local LLM servers running in Docker with <code>ports: "11434:11434"</code> are discoverable via Shodan on port 11434. Exposed instances allow anyone to run inference on the host's hardware at no cost to the attacker.</p>
+</div>
+
+<h2>The attack timeline</h2>
+
+<div class="timeline">
+  <div class="timeline-item">
+    <div class="time">Day 0</div>
+    <div class="event">Developer deploys Docker service with <code>ports: "6379:6379"</code>. Adds <code>ufw deny 6379</code>. Checks status — looks protected.</div>
+  </div>
+  <div class="timeline-item">
+    <div class="time">Day 0–3</div>
+    <div class="event">Automated Shodan-style scanners discover port 6379 open on the server's public IP. Add to target list.</div>
+  </div>
+  <div class="timeline-item">
+    <div class="time">Day 1–14</div>
+    <div class="event">Unauthenticated Redis receives CONFIG SET commands. Attacker writes SSH key to root's authorized_keys or sets up a cron job to download and execute a cryptominer.</div>
+  </div>
+  <div class="timeline-item">
+    <div class="time">Day 14+</div>
+    <div class="event">Owner notices CPU spike, unusual outbound traffic, or VPS provider flags the account for abuse. By this point the server has been running a miner for days or weeks.</div>
+  </div>
+</div>
+
+<h2>Verification — check right now</h2>
+
+<pre># From another machine (mobile data, NOT your home network):
+curl http://YOUR_SERVER_IP:6379
+nc -zv YOUR_SERVER_IP 6379
+
+# Or from the server itself — check what Docker exposed:
+sudo iptables -L DOCKER --line-numbers | grep ACCEPT</pre>
+
+<h2>The fix</h2>
+
+<div class="fix-box">
+  <div class="label">Bind container ports to localhost only</div>
+  <pre># Before — exposed to internet:
+ports:
+  - "6379:6379"
+
+# After — localhost only:
+ports:
+  - "127.0.0.1:6379:6379"</pre>
+</div>
+
+<div class="fix-box">
+  <div class="label">Or use DOCKER-USER chain for server-wide protection</div>
+  <pre>sudo iptables -I DOCKER-USER -j DROP
+sudo iptables -I DOCKER-USER -s 127.0.0.1 -j ACCEPT
+sudo apt install iptables-persistent && sudo netfilter-persistent save</pre>
+</div>
+
+<h2>Related</h2>
+<ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);line-height:2.2;">
+  <li><a href="/glossary/docker-ufw-bypass/">What is Docker UFW bypass?</a></li>
+  <li><a href="/fix/docker/ufw-bypass/">Docker UFW bypass fix guide</a></li>
+  <li><a href="/fix/ufw/docker-bypass/">UFW Docker bypass fix guide</a></li>
+  <li><a href="/blog/docker-ufw-bypass-explained/">Docker bypasses UFW — explained</a></li>
+</ul>
+
+    <div class="cta">
+      <p>Paste your ufw status verbose output to detect Docker bypass risk and exposed ports on your server.</p>
+      <div class="cta-row"><a href="/firewall/">Firewall Auditor →</a></div>
+    </div>
+  </div>
+  <footer>
+    <p><a href="/incidents/">Incident Reports</a> &nbsp;·&nbsp;
+    <a href="/fix/">Fix Guides</a> &nbsp;·&nbsp; <a href="/glossary/">Glossary</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic</a></p>
+  </footer>
+</body>
+</html>

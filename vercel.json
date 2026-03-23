@@ -1915,6 +1915,38 @@
     {
       "source": "/blog/openclaw-server-audit",
       "destination": "/blog/openclaw-server-audit/index.html"
+    },
+    {
+      "source": "/incidents/",
+      "destination": "/incidents/index.html"
+    },
+    {
+      "source": "/incidents",
+      "destination": "/incidents/index.html"
+    },
+    {
+      "source": "/incidents/docker-ufw-bypass/",
+      "destination": "/incidents/docker-ufw-bypass/index.html"
+    },
+    {
+      "source": "/incidents/docker-ufw-bypass",
+      "destination": "/incidents/docker-ufw-bypass/index.html"
+    },
+    {
+      "source": "/incidents/ssl-expiry-outages/",
+      "destination": "/incidents/ssl-expiry-outages/index.html"
+    },
+    {
+      "source": "/incidents/ssl-expiry-outages",
+      "destination": "/incidents/ssl-expiry-outages/index.html"
+    },
+    {
+      "source": "/incidents/docker-secrets-exposed/",
+      "destination": "/incidents/docker-secrets-exposed/index.html"
+    },
+    {
+      "source": "/incidents/docker-secrets-exposed",
+      "destination": "/incidents/docker-secrets-exposed/index.html"
     }
   ]
 }

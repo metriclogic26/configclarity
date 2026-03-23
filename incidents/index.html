@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Security Incident Reports — ConfigClarity</title>
+  <meta name="description" content="Documented security incidents caused by Docker misconfigurations, SSL certificate expiry, and hardcoded credentials. Real patterns with exact fixes.">
+  <meta name="keywords" content="docker security incident, ssl expiry outage, docker credentials exposed, server misconfiguration breach">
+  <link rel="canonical" href="https://configclarity.dev/incidents/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"CollectionPage",
+    "name":"Security Incident Reports — ConfigClarity",
+    "url":"https://configclarity.dev/incidents/",
+    "description":"Documented security incidents caused by Docker misconfigurations, SSL expiry, and hardcoded credentials."
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Incident Reports","item":"https://configclarity.dev/incidents/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.8; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:720px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .hero { max-width:720px; margin:0 auto; padding:3rem 2rem 1.5rem; }
+      .hero-meta { font-size:0.75rem; color:var(--muted); margin-bottom:1rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+      .hero-tag { background:rgba(239,68,68,.15); color:var(--red); padding:0.15rem 0.6rem; border-radius:4px; font-size:0.72rem; }
+      .hero-tag.orange { background:rgba(249,115,22,.15); color:var(--orange); }
+      h1 { font-size:1.7rem; font-weight:700; line-height:1.35; margin-bottom:1rem; }
+      .lede { font-size:1rem; color:var(--muted); margin-bottom:2rem; line-height:1.75; }
+      .content { max-width:720px; margin:0 auto; padding:0 2rem 4rem; }
+      h2 { font-size:1.1rem; font-weight:700; margin:2.5rem 0 0.75rem; }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1.1rem; }
+      strong { color:var(--text); }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; font-size:0.78rem; overflow-x:auto; margin:1rem 0 1.5rem; line-height:1.7; color:var(--text); }
+      code { background:#1e2130; padding:0.1rem 0.4rem; border-radius:3px; font-size:0.82rem; color:var(--text); }
+      .incident-box { background:var(--bg2); border-left:3px solid var(--red); border-radius:0 8px 8px 0; padding:1.1rem 1.5rem; margin:1.5rem 0; }
+      .incident-box .label { font-size:0.7rem; color:var(--red); text-transform:uppercase; letter-spacing:.06em; margin-bottom:0.5rem; }
+      .incident-box p { margin-bottom:0.5rem; font-size:0.875rem; color:var(--text); }
+      .incident-box p:last-child { margin-bottom:0; }
+      .fix-box { background:var(--bg2); border-left:3px solid var(--green); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.5rem 0; }
+      .fix-box .label { font-size:0.7rem; color:var(--green); text-transform:uppercase; letter-spacing:.06em; margin-bottom:0.4rem; }
+      .timeline { border-left:2px solid #2a2d3d; padding-left:1.5rem; margin:1.5rem 0; }
+      .timeline-item { margin-bottom:1.25rem; position:relative; }
+      .timeline-item::before { content:""; width:8px; height:8px; border-radius:50%; background:var(--purple); position:absolute; left:-1.9rem; top:0.35rem; }
+      .timeline-item .time { font-size:0.72rem; color:var(--muted); margin-bottom:0.25rem; }
+      .timeline-item .event { font-size:0.875rem; color:var(--text); }
+      .faq-item { margin-bottom:1.4rem; }
+      .faq-q { font-size:0.9rem; font-weight:600; margin-bottom:0.35rem; }
+      .faq-a { font-size:0.84rem; color:var(--muted); }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.5rem; margin:2.5rem 0; text-align:center; }
+      .cta p { color:var(--text); font-size:0.875rem; margin-bottom:0.75rem; }
+      .cta-row { display:flex; gap:0.75rem; justify-content:center; flex-wrap:wrap; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.5rem 1.25rem; border-radius:6px; font-size:0.82rem; font-weight:700; }
+      .cta a.sec { background:transparent; border:1px solid var(--purple); color:var(--purple); }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+  <div style="max-width:720px;margin:0 auto;padding:2rem;">
+    <div style="font-size:0.78rem;color:var(--muted);margin-bottom:1.5rem;"><a href="/" style="color:var(--muted);">ConfigClarity</a> › Incident Reports</div>
+    <h1 style="font-size:1.6rem;font-weight:700;margin-bottom:0.75rem;">Security Incident Reports</h1>
+    <p style="color:var(--muted);font-size:0.875rem;margin-bottom:2rem;">Documented cases where Docker misconfigurations, SSL expiry, and hardcoded credentials caused real breaches and outages — with the exact fixes that would have prevented each one.</p>
+    <a href="/incidents/docker-ufw-bypass/" style="display:block;background:var(--bg2);border:1px solid #2a2d3d;border-radius:8px;padding:1.5rem;margin-bottom:1rem;text-decoration:none;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">2026-03-22 &nbsp;·&nbsp; <span style="background:rgba(239,68,68,.15);color:var(--red);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Security</span>&nbsp;<span style="background:rgba(239,68,68,.15);color:var(--red);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Docker</span></div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;line-height:1.4;">Docker UFW Bypass: How Exposed Containers Lead to Server Compromise</div>
+      <div style="font-size:0.82rem;color:var(--muted);">How the Docker UFW bypass misconfiguration exposes databases to the internet despite active firewall rules.</div>
+    </a>
+    <a href="/incidents/ssl-expiry-outages/" style="display:block;background:var(--bg2);border:1px solid #2a2d3d;border-radius:8px;padding:1.5rem;margin-bottom:1rem;text-decoration:none;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">2026-03-22 &nbsp;·&nbsp; <span style="background:rgba(239,68,68,.15);color:var(--red);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Security</span>&nbsp;<span style="background:rgba(239,68,68,.15);color:var(--red);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">SSL</span></div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;line-height:1.4;">SSL Certificate Expiry Outages: Microsoft, Ericsson, Spotify</div>
+      <div style="font-size:0.82rem;color:var(--muted);">Documented SSL expiry outages and the monitoring gap they all shared.</div>
+    </a>
+    <a href="/incidents/docker-secrets-exposed/" style="display:block;background:var(--bg2);border:1px solid #2a2d3d;border-radius:8px;padding:1.5rem;margin-bottom:1rem;text-decoration:none;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">2026-03-22 &nbsp;·&nbsp; <span style="background:rgba(239,68,68,.15);color:var(--red);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Security</span>&nbsp;<span style="background:rgba(239,68,68,.15);color:var(--red);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Docker</span></div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;line-height:1.4;">Hardcoded Secrets in Docker Compose: How Credentials End Up on GitHub</div>
+      <div style="font-size:0.82rem;color:var(--muted);">How database passwords end up hardcoded in public repos and exploited within hours.</div>
+    </a>
+  </div>
+  <footer>
+    <p><a href="/incidents/">Incident Reports</a> &nbsp;·&nbsp;
+    <a href="/fix/">Fix Guides</a> &nbsp;·&nbsp; <a href="/glossary/">Glossary</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic</a></p>
+  </footer>
+</body>
+</html>
