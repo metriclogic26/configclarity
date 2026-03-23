@@ -14,7 +14,7 @@
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Nginx's default upload size limit?","acceptedAnswer":{"@type":"Answer","text":"Nginx's default client_max_body_size is 1MB (1m). Any request body larger than this is rejected with 413. Set it to 0 to disable the limit entirely, though this is not recommended on public-facing servers."}},
-{"@type":"Question","name":'Does client_max_body_size affect JSON API requests?',"acceptedAnswer":{"@type":"Answer","text":'Yes. Large JSON payloads — bulk API requests, batch data imports — are also subject to client_max_body_size. If your API returns 413 on large POST requests, increase this value in the relevant location or server block.'}}]}
+{"@type":"Question","name":"Does client_max_body_size affect JSON API requests?","acceptedAnswer":{"@type":"Answer","text":"Yes. Large JSON payloads — bulk API requests, batch data imports — are also subject to client_max_body_size. If your API returns 413 on large POST requests, increase this value in the relevant location or server block."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

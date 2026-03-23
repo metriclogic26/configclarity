@@ -21,9 +21,9 @@
   }
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Are robots.txt directives case-sensitive?',"acceptedAnswer":{"@type":"Answer","text":'The paths in Disallow and Allow directives are case-sensitive. Googlebot treats /Admin/ and /admin/ as different paths. The directives themselves (User-agent, Disallow, Allow) are case-insensitive.'}},
-{"@type":"Question","name":'Does capitalisation matter for User-agent in robots.txt?',"acceptedAnswer":{"@type":"Answer","text":'No. User-agent, Disallow, Allow, Crawl-delay, and Sitemap directives are case-insensitive. User-agent: Googlebot, USER-AGENT: Googlebot, and user-agent: googlebot are all equivalent.'}},
-{"@type":"Question","name":"How do I check the actual case of my site's URLs?","acceptedAnswer":{"@type":"Answer","text":'Run curl -sI https://yourdomain.com/YOURPATH/ and check the Location header in the response. If the server redirects to a lowercase URL, use that lowercase path in robots.txt.'}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Are robots.txt directives case-sensitive?","acceptedAnswer":{"@type":"Answer","text":"The paths in Disallow and Allow directives are case-sensitive. Googlebot treats /Admin/ and /admin/ as different paths. The directives themselves (User-agent, Disallow, Allow) are case-insensitive."}},
+{"@type":"Question","name":"Does capitalisation matter for User-agent in robots.txt?","acceptedAnswer":{"@type":"Answer","text":"No. User-agent, Disallow, Allow, Crawl-delay, and Sitemap directives are case-insensitive. User-agent: Googlebot, USER-AGENT: Googlebot, and user-agent: googlebot are all equivalent."}},
+{"@type":"Question","name":"How do I check the actual case of my site's URLs?","acceptedAnswer":{"@type":"Answer","text":"Run curl -sI https://yourdomain.com/YOURPATH/ and check the Location header in the response. If the server redirects to a lowercase URL, use that lowercase path in robots.txt."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

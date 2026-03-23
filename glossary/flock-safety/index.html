@@ -29,9 +29,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":'What happens if a flock-protected job crashes?',"acceptedAnswer":{"@type":"Answer","text":'If the script crashes, the lock file remains but the file descriptor lock is released automatically by the kernel when the process exits. The next cron invocation can acquire the lock normally. Stale lock files in /tmp/ do not prevent re-execution.'}},
-{"@type":"Question","name":'Should I use flock -n or flock -w?',"acceptedAnswer":{"@type":"Answer","text":'Use <code>flock -n</code> (non-blocking) for jobs that should skip if already running — backups, report generation, cleanup scripts. Use <code>flock -w TIMEOUT</code> for jobs that should wait — database migrations, deployment scripts where you want the next run to proceed once the current run finishes.'}},
-{"@type":"Question","name":'How do I add flock safety to all my cron jobs?',"acceptedAnswer":{"@type":"Answer","text":"ConfigClarity's Cron Visualiser has a flock safety toggle. After analysing your crontab, enable flock safety to generate flock-wrapped versions of all your jobs with unique lock file names."}}]
+    "mainEntity": [{"@type":"Question","name":"What happens if a flock-protected job crashes?","acceptedAnswer":{"@type":"Answer","text":"If the script crashes, the lock file remains but the file descriptor lock is released automatically by the kernel when the process exits. The next cron invocation can acquire the lock normally. Stale lock files in /tmp/ do not prevent re-execution."}},
+{"@type":"Question","name":"Should I use flock -n or flock -w?","acceptedAnswer":{"@type":"Answer","text":"Use <code>flock -n</code> (non-blocking) for jobs that should skip if already running — backups, report generation, cleanup scripts. Use <code>flock -w TIMEOUT</code> for jobs that should wait — database migrations, deployment scripts where you want the next run to proceed once the current run finishes."}},
+{"@type":"Question","name":"How do I add flock safety to all my cron jobs?","acceptedAnswer":{"@type":"Answer","text":"ConfigClarity's Cron Visualiser has a flock safety toggle. After analysing your crontab, enable flock safety to generate flock-wrapped versions of all your jobs with unique lock file names."}}]
   }
   </script>
   <script type="application/ld+json">

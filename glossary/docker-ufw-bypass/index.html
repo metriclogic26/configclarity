@@ -29,9 +29,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":'Does UFW protect Docker containers?',"acceptedAnswer":{"@type":"Answer","text":'No. UFW manages the Linux INPUT chain. Docker containers use the FORWARD chain, which UFW does not control by default. Docker ports are accessible from the internet even if UFW has no allow rule for them.'}},
-{"@type":"Question","name":'How do I check if Docker is bypassing UFW?',"acceptedAnswer":{"@type":"Answer","text":'Run: <code>sudo iptables -L DOCKER --line-numbers</code>. Any ACCEPT rules in that chain bypass UFW. You can also use the ConfigClarity Firewall Auditor — paste your <code>ufw status verbose</code> output and it will flag Docker bypass risk.'}},
-{"@type":"Question","name":'What is the safest Docker port binding?',"acceptedAnswer":{"@type":"Answer","text":'Bind to <code>127.0.0.1</code>: use <code>127.0.0.1:8080:80</code> in docker-compose.yml. This exposes the port only on the loopback interface, accessible via Nginx reverse proxy but not directly from the internet.'}}]
+    "mainEntity": [{"@type":"Question","name":"Does UFW protect Docker containers?","acceptedAnswer":{"@type":"Answer","text":"No. UFW manages the Linux INPUT chain. Docker containers use the FORWARD chain, which UFW does not control by default. Docker ports are accessible from the internet even if UFW has no allow rule for them."}},
+{"@type":"Question","name":"How do I check if Docker is bypassing UFW?","acceptedAnswer":{"@type":"Answer","text":"Run: <code>sudo iptables -L DOCKER --line-numbers</code>. Any ACCEPT rules in that chain bypass UFW. You can also use the ConfigClarity Firewall Auditor — paste your <code>ufw status verbose</code> output and it will flag Docker bypass risk."}},
+{"@type":"Question","name":"What is the safest Docker port binding?","acceptedAnswer":{"@type":"Answer","text":"Bind to <code>127.0.0.1</code>: use <code>127.0.0.1:8080:80</code> in docker-compose.yml. This exposes the port only on the loopback interface, accessible via Nginx reverse proxy but not directly from the internet."}}]
   }
   </script>
   <script type="application/ld+json">

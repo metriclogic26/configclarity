@@ -21,9 +21,9 @@
   }
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Should I block /wp-admin/ in robots.txt?',"acceptedAnswer":{"@type":"Answer","text":'Yes. /wp-admin/ should be disallowed — it should never appear in search results and is a common target for brute force attacks. However, /wp-includes/ and /wp-content/ should be allowed so Googlebot can load WordPress assets for rendering.'}},
-{"@type":"Question","name":'How do I check if Googlebot can render my pages?',"acceptedAnswer":{"@type":"Answer","text":"Use Google Search Console's URL Inspection tool → 'Test Live URL' → View rendered page. GSC shows exactly what Googlebot sees when rendering your page and reports any blocked resources."}},
-{"@type":"Question","name":'Does blocking JS in robots.txt save crawl budget?',"acceptedAnswer":{"@type":"Answer","text":'No longer a valid strategy. Crawl budget savings from blocking assets are negligible, while the rendering penalty (Google seeing a broken page) is significant. Allow all rendering resources and control indexing with noindex meta tags or canonical tags instead.'}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Should I block /wp-admin/ in robots.txt?","acceptedAnswer":{"@type":"Answer","text":"Yes. /wp-admin/ should be disallowed — it should never appear in search results and is a common target for brute force attacks. However, /wp-includes/ and /wp-content/ should be allowed so Googlebot can load WordPress assets for rendering."}},
+{"@type":"Question","name":"How do I check if Googlebot can render my pages?","acceptedAnswer":{"@type":"Answer","text":"Use Google Search Console's URL Inspection tool → 'Test Live URL' → View rendered page. GSC shows exactly what Googlebot sees when rendering your page and reports any blocked resources."}},
+{"@type":"Question","name":"Does blocking JS in robots.txt save crawl budget?","acceptedAnswer":{"@type":"Answer","text":"No longer a valid strategy. Crawl budget savings from blocking assets are negligible, while the rendering penalty (Google seeing a broken page) is significant. Allow all rendering resources and control indexing with noindex meta tags or canonical tags instead."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

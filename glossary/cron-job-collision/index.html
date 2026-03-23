@@ -29,9 +29,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":'How do I detect overlapping cron jobs?',"acceptedAnswer":{"@type":"Answer","text":"Paste your <code>crontab -l</code> output into ConfigClarity's Cron Visualiser. It renders a 24-hour timeline showing every job's execution window and flags overlapping windows in red with a collision report."}},
-{"@type":"Question","name":'What is flock safety for cron jobs?',"acceptedAnswer":{"@type":"Answer","text":'flock safety means wrapping your cron command with <code>flock -n /tmp/jobname.lock command</code>. If the previous run is still executing when the next scheduled run starts, the new invocation exits immediately instead of running concurrently.'}},
-{"@type":"Question","name":'Why do all my cron jobs run at midnight?',"acceptedAnswer":{"@type":"Answer","text":"It's the most common default. When a task is set up with no specific time in mind, developers often choose <code>0 0 * * *</code>. When multiple tasks pile up at the same minute, the server CPU and I/O spike simultaneously. Spread jobs across off-peak minutes — 0:05, 0:15, 0:30, 0:45."}}]
+    "mainEntity": [{"@type":"Question","name":"How do I detect overlapping cron jobs?","acceptedAnswer":{"@type":"Answer","text":"Paste your <code>crontab -l</code> output into ConfigClarity's Cron Visualiser. It renders a 24-hour timeline showing every job's execution window and flags overlapping windows in red with a collision report."}},
+{"@type":"Question","name":"What is flock safety for cron jobs?","acceptedAnswer":{"@type":"Answer","text":"flock safety means wrapping your cron command with <code>flock -n /tmp/jobname.lock command</code>. If the previous run is still executing when the next scheduled run starts, the new invocation exits immediately instead of running concurrently."}},
+{"@type":"Question","name":"Why do all my cron jobs run at midnight?","acceptedAnswer":{"@type":"Answer","text":"It's the most common default. When a task is set up with no specific time in mind, developers often choose <code>0 0 * * *</code>. When multiple tasks pile up at the same minute, the server CPU and I/O spike simultaneously. Spread jobs across off-peak minutes — 0:05, 0:15, 0:30, 0:45."}}]
   }
   </script>
   <script type="application/ld+json">

@@ -14,7 +14,7 @@
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Traefik's default response timeout?","acceptedAnswer":{"@type":"Answer","text":"Traefik's default readTimeout is 60 seconds. For services that need longer — AI model inference, video processing, large exports — increase it in the serversTransport section of your static traefik.yml config."}},
-{"@type":"Question","name":'How do I diagnose if the timeout is in Traefik or the backend?',"acceptedAnswer":{"@type":"Answer","text":"Check Traefik's access log for the duration field. If requests are being cut off at exactly 60 seconds, the timeout is in Traefik. If they vary, the backend is genuinely slow."}}]}
+{"@type":"Question","name":"How do I diagnose if the timeout is in Traefik or the backend?","acceptedAnswer":{"@type":"Answer","text":"Check Traefik's access log for the duration field. If requests are being cut off at exactly 60 seconds, the timeout is in Traefik. If they vary, the backend is genuinely slow."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

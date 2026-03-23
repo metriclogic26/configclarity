@@ -29,9 +29,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":'What does 0.0.0.0 port binding mean?',"acceptedAnswer":{"@type":"Answer","text":"A service bound to 0.0.0.0 listens on all network interfaces — loopback, private LAN, and public internet. Any machine that can reach the server's public IP on that port can connect to the service."}},
-{"@type":"Question","name":'How do I check what ports are bound to 0.0.0.0?',"acceptedAnswer":{"@type":"Answer","text":"Run: <code>ss -tlnp</code> or <code>netstat -tlnp</code>. Look for <code>0.0.0.0:PORT</code> in the Local Address column. For Docker containers, run <code>docker ps --format 'table {{.Ports}}'</code>."}},
-{"@type":"Question","name":'Should databases ever bind to 0.0.0.0?',"acceptedAnswer":{"@type":"Answer","text":'Almost never. Databases like Redis, PostgreSQL, and MongoDB should bind to <code>127.0.0.1</code> or a private network interface. Public exposure of database ports is one of the most common causes of data breaches on VPS servers.'}}]
+    "mainEntity": [{"@type":"Question","name":"What does 0.0.0.0 port binding mean?","acceptedAnswer":{"@type":"Answer","text":"A service bound to 0.0.0.0 listens on all network interfaces — loopback, private LAN, and public internet. Any machine that can reach the server's public IP on that port can connect to the service."}},
+{"@type":"Question","name":"How do I check what ports are bound to 0.0.0.0?","acceptedAnswer":{"@type":"Answer","text":"Run: <code>ss -tlnp</code> or <code>netstat -tlnp</code>. Look for <code>0.0.0.0:PORT</code> in the Local Address column. For Docker containers, run <code>docker ps --format 'table {{.Ports}}'</code>."}},
+{"@type":"Question","name":"Should databases ever bind to 0.0.0.0?","acceptedAnswer":{"@type":"Answer","text":"Almost never. Databases like Redis, PostgreSQL, and MongoDB should bind to <code>127.0.0.1</code> or a private network interface. Public exposure of database ports is one of the most common causes of data breaches on VPS servers."}}]
   }
   </script>
   <script type="application/ld+json">

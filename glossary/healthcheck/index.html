@@ -29,9 +29,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":'What happens if a container has no healthcheck?',"acceptedAnswer":{"@type":"Answer","text":"Docker reports the container status as 'running' regardless of whether the application is functioning. Dependent services start immediately without waiting for the container to be ready. Orchestrators cannot detect application failures — only process crashes."}},
-{"@type":"Question","name":'What is a good healthcheck command for a web service?',"acceptedAnswer":{"@type":"Answer","text":'For HTTP services: <code>["CMD", "curl", "-f", "http://localhost:PORT/health"]</code>. For services without curl: <code>["CMD-SHELL", "wget -q --spider http://localhost:PORT/health || exit 1"]</code>. For databases: use the database\'s own health tool — <code>["CMD", "pg_isready", "-U", "postgres"]</code> for PostgreSQL.'}},
-{"@type":"Question","name":'How do I check if my containers have healthchecks configured?',"acceptedAnswer":{"@type":"Answer","text":"Paste your docker-compose.yml into ConfigClarity's Docker Auditor. It flags every service missing a healthcheck definition and generates a suggested healthcheck command based on the detected service type."}}]
+    "mainEntity": [{"@type":"Question","name":"What happens if a container has no healthcheck?","acceptedAnswer":{"@type":"Answer","text":"Docker reports the container status as 'running' regardless of whether the application is functioning. Dependent services start immediately without waiting for the container to be ready. Orchestrators cannot detect application failures — only process crashes."}},
+{"@type":"Question","name":"What is a good healthcheck command for a web service?","acceptedAnswer":{"@type":"Answer","text":"For HTTP services: <code>["CMD", "curl", "-f", "http://localhost:PORT/health"]</code>. For services without curl: <code>["CMD-SHELL", "wget -q --spider http://localhost:PORT/health || exit 1"]</code>. For databases: use the database\"s own health tool — <code>["CMD", "pg_isready", "-U", "postgres"]</code> for PostgreSQL.'}},
+{"@type":"Question","name":"How do I check if my containers have healthchecks configured?","acceptedAnswer":{"@type":"Answer","text":"Paste your docker-compose.yml into ConfigClarity's Docker Auditor. It flags every service missing a healthcheck definition and generates a suggested healthcheck command based on the detected service type."}}]
   }
   </script>
   <script type="application/ld+json">

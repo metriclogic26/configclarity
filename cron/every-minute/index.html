@@ -18,8 +18,8 @@
     "datePublished":"2026-03-22"}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Is * * * * * the most frequent cron can run?',"acceptedAnswer":{"@type":"Answer","text":"Yes. Cron's minimum resolution is one minute. For sub-minute scheduling, use a process manager like systemd timers with AccuracySec=1s, or a dedicated job queue like Sidekiq or Celery."}},
-{"@type":"Question","name":'Why does my every-minute job sometimes run twice?',"acceptedAnswer":{"@type":"Answer","text":"If the job takes over 60 seconds and you don't have flock safety, a second instance starts before the first finishes. Wrap with flock -n /tmp/job.lock to prevent concurrent runs."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Is * * * * * the most frequent cron can run?","acceptedAnswer":{"@type":"Answer","text":"Yes. Cron's minimum resolution is one minute. For sub-minute scheduling, use a process manager like systemd timers with AccuracySec=1s, or a dedicated job queue like Sidekiq or Celery."}},
+{"@type":"Question","name":"Why does my every-minute job sometimes run twice?","acceptedAnswer":{"@type":"Answer","text":"If the job takes over 60 seconds and you don't have flock safety, a second instance starts before the first finishes. Wrap with flock -n /tmp/job.lock to prevent concurrent runs."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

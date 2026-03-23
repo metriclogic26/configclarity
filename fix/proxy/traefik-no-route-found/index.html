@@ -13,8 +13,8 @@
     "author":{"@type":"Organization","name":"MetricLogic"}}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Why does Traefik show the router in the dashboard but still return 404?',"acceptedAnswer":{"@type":"Answer","text":"A router visible in the dashboard but returning 404 usually means the service has no healthy backends. The container is stopped, on the wrong network, or the port label is wrong. Check traefik.http.services.NAME.loadbalancer.server.port matches your container's actual listening port."}},
-{"@type":"Question","name":'Does Traefik auto-detect containers without traefik.enable?',"acceptedAnswer":{"@type":"Answer","text":"Only if you set exposedByDefault: true in Traefik's Docker provider config. The recommended default is exposedByDefault: false, which requires explicit traefik.enable=true on every container you want proxied."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does Traefik show the router in the dashboard but still return 404?","acceptedAnswer":{"@type":"Answer","text":"A router visible in the dashboard but returning 404 usually means the service has no healthy backends. The container is stopped, on the wrong network, or the port label is wrong. Check traefik.http.services.NAME.loadbalancer.server.port matches your container's actual listening port."}},
+{"@type":"Question","name":"Does Traefik auto-detect containers without traefik.enable?","acceptedAnswer":{"@type":"Answer","text":"Only if you set exposedByDefault: true in Traefik's Docker provider config. The recommended default is exposedByDefault: false, which requires explicit traefik.enable=true on every container you want proxied."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

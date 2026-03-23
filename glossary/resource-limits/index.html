@@ -29,9 +29,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":"What happens if I don't set memory limits on Docker containers?","acceptedAnswer":{"@type":"Answer","text":'A container with a memory leak or runaway process can consume all available RAM on the host. The Linux OOM killer will then terminate processes — often killing other containers or system services rather than the container at fault.'}},
-{"@type":"Question","name":'How do I set resource limits in docker-compose.yml?',"acceptedAnswer":{"@type":"Answer","text":"In Compose v3 with Swarm: use <code>deploy.resources.limits</code>. Without Swarm, use the Compose v2 format: <code>mem_limit: 512m</code> and <code>cpus: '0.5'</code> at the service level. ConfigClarity's Docker Auditor flags services with no resource limits defined."}},
-{"@type":"Question","name":'What is a good starting memory limit for a web service?',"acceptedAnswer":{"@type":"Answer","text":'Start conservative — 256m to 512m for small services, 1g to 2g for larger applications. Monitor with <code>docker stats</code> under normal load and adjust. The OOM risk of setting limits too low is lower than the availability risk of not setting them.'}}]
+    "mainEntity": [{"@type":"Question","name":"What happens if I don't set memory limits on Docker containers?","acceptedAnswer":{"@type":"Answer","text":"A container with a memory leak or runaway process can consume all available RAM on the host. The Linux OOM killer will then terminate processes — often killing other containers or system services rather than the container at fault."}},
+{"@type":"Question","name":"How do I set resource limits in docker-compose.yml?","acceptedAnswer":{"@type":"Answer","text":"In Compose v3 with Swarm: use <code>deploy.resources.limits</code>. Without Swarm, use the Compose v2 format: <code>mem_limit: 512m</code> and <code>cpus: '0.5'</code> at the service level. ConfigClarity's Docker Auditor flags services with no resource limits defined."}},
+{"@type":"Question","name":"What is a good starting memory limit for a web service?","acceptedAnswer":{"@type":"Answer","text":"Start conservative — 256m to 512m for small services, 1g to 2g for larger applications. Monitor with <code>docker stats</code> under normal load and adjust. The OOM risk of setting limits too low is lower than the availability risk of not setting them."}}]
   }
   </script>
   <script type="application/ld+json">

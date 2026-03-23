@@ -21,9 +21,9 @@
   }
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Does Allow override Disallow in robots.txt?',"acceptedAnswer":{"@type":"Answer","text":'Not unconditionally. The most-specific rule (longest matching path) wins. If Allow and Disallow have the same path length and both match a URL, Googlebot gives precedence to Allow. Bing and other crawlers may handle this differently.'}},
-{"@type":"Question","name":'What is the correct order for Allow and Disallow rules?',"acceptedAnswer":{"@type":"Answer","text":'Rule order does not affect precedence in Googlebot — specificity wins, not order. However, for clarity and compatibility with older crawlers that use first-match semantics, put more specific rules before general ones and put Allow rules before their corresponding Disallow rules.'}},
-{"@type":"Question","name":'How do I test which rule wins for a specific URL?',"acceptedAnswer":{"@type":"Answer","text":"Paste your robots.txt into ConfigClarity's robots.txt Validator and use the URL Tester — enter any path and select a user agent. The tool shows BLOCKED or ALLOWED and which rule matched."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does Allow override Disallow in robots.txt?","acceptedAnswer":{"@type":"Answer","text":"Not unconditionally. The most-specific rule (longest matching path) wins. If Allow and Disallow have the same path length and both match a URL, Googlebot gives precedence to Allow. Bing and other crawlers may handle this differently."}},
+{"@type":"Question","name":"What is the correct order for Allow and Disallow rules?","acceptedAnswer":{"@type":"Answer","text":"Rule order does not affect precedence in Googlebot — specificity wins, not order. However, for clarity and compatibility with older crawlers that use first-match semantics, put more specific rules before general ones and put Allow rules before their corresponding Disallow rules."}},
+{"@type":"Question","name":"How do I test which rule wins for a specific URL?","acceptedAnswer":{"@type":"Answer","text":"Paste your robots.txt into ConfigClarity's robots.txt Validator and use the URL Tester — enter any path and select a user agent. The tool shows BLOCKED or ALLOWED and which rule matched."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

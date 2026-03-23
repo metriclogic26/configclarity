@@ -29,9 +29,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":'How do dangling routes happen in Docker Compose?',"acceptedAnswer":{"@type":"Answer","text":"When a container is removed from docker-compose.yml but the Nginx config in another service still references it via <code>proxy_pass http://removed-service:port</code>. Docker removes the DNS entry for the removed service, but Nginx's config is not automatically updated."}},
-{"@type":"Question","name":'Will Nginx start with a dangling upstream?',"acceptedAnswer":{"@type":"Answer","text":'Yes. Nginx validates config syntax with <code>nginx -t</code> but does not check whether upstream servers are reachable at startup. The error only appears at runtime when a request is made to the dangling route.'}},
-{"@type":"Question","name":'How do I find dangling routes in my Nginx config?',"acceptedAnswer":{"@type":"Answer","text":"Paste your nginx.conf into ConfigClarity's Reverse Proxy Mapper. It extracts all <code>proxy_pass</code> targets and cross-references them against the upstream definitions and Docker service names defined in the same config."}}]
+    "mainEntity": [{"@type":"Question","name":"How do dangling routes happen in Docker Compose?","acceptedAnswer":{"@type":"Answer","text":"When a container is removed from docker-compose.yml but the Nginx config in another service still references it via <code>proxy_pass http://removed-service:port</code>. Docker removes the DNS entry for the removed service, but Nginx's config is not automatically updated."}},
+{"@type":"Question","name":"Will Nginx start with a dangling upstream?","acceptedAnswer":{"@type":"Answer","text":"Yes. Nginx validates config syntax with <code>nginx -t</code> but does not check whether upstream servers are reachable at startup. The error only appears at runtime when a request is made to the dangling route."}},
+{"@type":"Question","name":"How do I find dangling routes in my Nginx config?","acceptedAnswer":{"@type":"Answer","text":"Paste your nginx.conf into ConfigClarity's Reverse Proxy Mapper. It extracts all <code>proxy_pass</code> targets and cross-references them against the upstream definitions and Docker service names defined in the same config."}}]
   }
   </script>
   <script type="application/ld+json">

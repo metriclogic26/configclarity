@@ -13,8 +13,8 @@
     "author":{"@type":"Organization","name":"MetricLogic"}}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Why does Caddy fail to get a certificate even with port 80 open?',"acceptedAnswer":{"@type":"Answer","text":"Common causes: (1) DNS hasn't propagated yet — wait 5–10 minutes after pointing DNS to the server, (2) a UFW rule allows port 80 but Docker is bypassing UFW, (3) Caddy is rate-limited by Let's Encrypt — check caddy logs for rate limit errors."}},
-{"@type":"Question","name":'Can I use Caddy with Cloudflare proxy enabled?',"acceptedAnswer":{"@type":"Answer","text":"Yes, but you need to use Caddy's DNS-01 ACME challenge instead of HTTP-01. With Cloudflare proxying enabled, Caddy can't complete HTTP-01 challenges. Install the Caddy Cloudflare DNS module and configure DNS challenge with your Cloudflare API token."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does Caddy fail to get a certificate even with port 80 open?","acceptedAnswer":{"@type":"Answer","text":"Common causes: (1) DNS hasn't propagated yet — wait 5–10 minutes after pointing DNS to the server, (2) a UFW rule allows port 80 but Docker is bypassing UFW, (3) Caddy is rate-limited by Let's Encrypt — check caddy logs for rate limit errors."}},
+{"@type":"Question","name":"Can I use Caddy with Cloudflare proxy enabled?","acceptedAnswer":{"@type":"Answer","text":"Yes, but you need to use Caddy's DNS-01 ACME challenge instead of HTTP-01. With Cloudflare proxying enabled, Caddy can't complete HTTP-01 challenges. Install the Caddy Cloudflare DNS module and configure DNS challenge with your Cloudflare API token."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

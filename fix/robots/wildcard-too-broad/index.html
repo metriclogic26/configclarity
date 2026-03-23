@@ -21,9 +21,9 @@
   }
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Does robots.txt support full regex?',"acceptedAnswer":{"@type":"Answer","text":'No. robots.txt only supports two wildcards: * (match any sequence of characters) and $ (match end of URL). Full regex like character classes [a-z], alternatives (foo|bar), or quantifiers {2,5} are not supported. Test your patterns carefully.'}},
-{"@type":"Question","name":'How do I test if a robots.txt pattern is blocking a specific URL?',"acceptedAnswer":{"@type":"Answer","text":"Use ConfigClarity's robots.txt Validator — paste your robots.txt and use the URL Tester to check any path against any bot. Google Search Console's URL Inspection also shows 'Blocked by robots.txt' for specific URLs."}},
-{"@type":"Question","name":'What is the difference between Disallow: /search and Disallow: /search$?',"acceptedAnswer":{"@type":"Answer","text":'Disallow: /search blocks any URL starting with /search — including /search-results/, /search-engine-tips/, /search?q=. Disallow: /search$ only blocks the exact URL /search with nothing after it. Use $ to anchor the end of the pattern.'}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does robots.txt support full regex?","acceptedAnswer":{"@type":"Answer","text":"No. robots.txt only supports two wildcards: * (match any sequence of characters) and $ (match end of URL). Full regex like character classes [a-z], alternatives (foo|bar), or quantifiers {2,5} are not supported. Test your patterns carefully."}},
+{"@type":"Question","name":"How do I test if a robots.txt pattern is blocking a specific URL?","acceptedAnswer":{"@type":"Answer","text":"Use ConfigClarity's robots.txt Validator — paste your robots.txt and use the URL Tester to check any path against any bot. Google Search Console's URL Inspection also shows 'Blocked by robots.txt' for specific URLs."}},
+{"@type":"Question","name":"What is the difference between Disallow: /search and Disallow: /search$?","acceptedAnswer":{"@type":"Answer","text":"Disallow: /search blocks any URL starting with /search — including /search-results/, /search-engine-tips/, /search?q=. Disallow: /search$ only blocks the exact URL /search with nothing after it. Use $ to anchor the end of the pattern."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

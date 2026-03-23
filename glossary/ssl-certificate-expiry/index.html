@@ -29,9 +29,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":'How long are SSL certificates valid?',"acceptedAnswer":{"@type":"Answer","text":"Since September 2020, browser-trusted TLS certificates are valid for a maximum of 398 days (roughly 13 months). Let's Encrypt certificates are valid for 90 days and are designed to auto-renew every 60 days."}},
-{"@type":"Question","name":'What happens when an SSL certificate expires?',"acceptedAnswer":{"@type":"Answer","text":"Browsers display a full-page 'Your connection is not private' warning (ERR_CERT_DATE_INVALID). HTTPS connections are refused. The site remains accessible via HTTP but search engines will flag it. API clients and webhooks that enforce certificate validation will also fail."}},
-{"@type":"Question","name":'How do I monitor SSL certificate expiry?',"acceptedAnswer":{"@type":"Answer","text":"ConfigClarity's SSL Checker checks multiple domains at once and flags anything expiring within 200 days with exact days remaining. For automated monitoring, set a cron job running <code>openssl s_client -connect domain.com:443</code> and parsing the <code>notAfter</code> field."}}]
+    "mainEntity": [{"@type":"Question","name":"How long are SSL certificates valid?","acceptedAnswer":{"@type":"Answer","text":"Since September 2020, browser-trusted TLS certificates are valid for a maximum of 398 days (roughly 13 months). Let's Encrypt certificates are valid for 90 days and are designed to auto-renew every 60 days."}},
+{"@type":"Question","name":"What happens when an SSL certificate expires?","acceptedAnswer":{"@type":"Answer","text":"Browsers display a full-page 'Your connection is not private' warning (ERR_CERT_DATE_INVALID). HTTPS connections are refused. The site remains accessible via HTTP but search engines will flag it. API clients and webhooks that enforce certificate validation will also fail."}},
+{"@type":"Question","name":"How do I monitor SSL certificate expiry?","acceptedAnswer":{"@type":"Answer","text":"ConfigClarity's SSL Checker checks multiple domains at once and flags anything expiring within 200 days with exact days remaining. For automated monitoring, set a cron job running <code>openssl s_client -connect domain.com:443</code> and parsing the <code>notAfter</code> field."}}]
   }
   </script>
   <script type="application/ld+json">

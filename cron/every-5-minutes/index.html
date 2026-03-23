@@ -18,8 +18,8 @@
     "datePublished":"2026-03-22"}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'What does */5 mean in a cron expression?',"acceptedAnswer":{"@type":"Answer","text":"*/5 means 'every 5th value of the field's range'. In the minute field, the range is 0-59, so */5 fires at 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, and 55 of every hour."}},
-{"@type":"Question","name":'Does */5 start exactly 5 minutes after the last run?',"acceptedAnswer":{"@type":"Answer","text":'No. */5 fires at fixed points in the minute field (0, 5, 10...) regardless of when the previous run completed. If you need exactly 5 minutes between runs, use a service manager with a delay loop, not cron.'}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does */5 mean in a cron expression?","acceptedAnswer":{"@type":"Answer","text":"*/5 means 'every 5th value of the field's range'. In the minute field, the range is 0-59, so */5 fires at 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, and 55 of every hour."}},
+{"@type":"Question","name":"Does */5 start exactly 5 minutes after the last run?","acceptedAnswer":{"@type":"Answer","text":"No. */5 fires at fixed points in the minute field (0, 5, 10...) regardless of when the previous run completed. If you need exactly 5 minutes between runs, use a service manager with a delay loop, not cron."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

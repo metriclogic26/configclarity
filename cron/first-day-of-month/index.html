@@ -18,8 +18,8 @@
     "datePublished":"2026-03-22"}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'How do I run a cron job on the last day of the month?',"acceptedAnswer":{"@type":"Answer","text":'Cron can\'t calculate the last day natively. The standard workaround is to check if tomorrow is the 1st: 0 23 * * * [ "$(date -d tomorrow +%d)" = "01" ] && /your/script.sh. On macOS use date -v+1d +%d instead.'}},
-{"@type":"Question","name":'What happens if I use 31 in the day-of-month field?',"acceptedAnswer":{"@type":"Answer","text":'The job only runs in months that have 31 days (January, March, May, July, August, October, December). It silently skips months with fewer days — no error, just no execution.'}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I run a cron job on the last day of the month?","acceptedAnswer":{"@type":"Answer","text":"Cron can\"t calculate the last day natively. The standard workaround is to check if tomorrow is the 1st: 0 23 * * * [ "$(date -d tomorrow +%d)" = "01" ] && /your/script.sh. On macOS use date -v+1d +%d instead.'}},
+{"@type":"Question","name":"What happens if I use 31 in the day-of-month field?","acceptedAnswer":{"@type":"Answer","text":"The job only runs in months that have 31 days (January, March, May, July, August, October, December). It silently skips months with fewer days — no error, just no execution."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

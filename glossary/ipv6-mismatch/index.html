@@ -29,9 +29,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":'How do I enable IPv6 rules in UFW?',"acceptedAnswer":{"@type":"Answer","text":'Edit <code>/etc/default/ufw</code> and set <code>IPV6=yes</code>. Then run <code>ufw disable && ufw enable</code> to reload. UFW will now create both iptables and ip6tables rules for every subsequent allow/deny command.'}},
-{"@type":"Question","name":'Does Docker expose ports on IPv6?',"acceptedAnswer":{"@type":"Answer","text":"Docker's default bridge network does not expose IPv6 unless explicitly configured with <code>--ipv6</code> in daemon.json. However, services bound to <code>0.0.0.0</code> may also bind to <code>::</code> depending on the Linux kernel's <code>net.ipv6.bindv6only</code> setting."}},
-{"@type":"Question","name":'How do I detect IPv6 firewall mismatches?',"acceptedAnswer":{"@type":"Answer","text":"Paste your <code>ufw status verbose</code> output into ConfigClarity's Firewall Auditor. It compares IPv4 and IPv6 rule parity and flags rules that exist in one address family but not the other."}}]
+    "mainEntity": [{"@type":"Question","name":"How do I enable IPv6 rules in UFW?","acceptedAnswer":{"@type":"Answer","text":"Edit <code>/etc/default/ufw</code> and set <code>IPV6=yes</code>. Then run <code>ufw disable && ufw enable</code> to reload. UFW will now create both iptables and ip6tables rules for every subsequent allow/deny command."}},
+{"@type":"Question","name":"Does Docker expose ports on IPv6?","acceptedAnswer":{"@type":"Answer","text":"Docker's default bridge network does not expose IPv6 unless explicitly configured with <code>--ipv6</code> in daemon.json. However, services bound to <code>0.0.0.0</code> may also bind to <code>::</code> depending on the Linux kernel's <code>net.ipv6.bindv6only</code> setting."}},
+{"@type":"Question","name":"How do I detect IPv6 firewall mismatches?","acceptedAnswer":{"@type":"Answer","text":"Paste your <code>ufw status verbose</code> output into ConfigClarity's Firewall Auditor. It compares IPv4 and IPv6 rule parity and flags rules that exist in one address family but not the other."}}]
   }
   </script>
   <script type="application/ld+json">

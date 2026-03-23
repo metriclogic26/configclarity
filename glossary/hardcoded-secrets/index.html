@@ -29,9 +29,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":'How do I find hardcoded secrets in my Docker Compose files?',"acceptedAnswer":{"@type":"Answer","text":"Paste your docker-compose.yml and .env files into ConfigClarity's Docker Auditor. It scans all environment blocks for literal credential values and flags any that should be environment variable references."}},
-{"@type":"Question","name":'Is a .env file safe for secrets?',"acceptedAnswer":{"@type":"Answer","text":'A .env file is safe if and only if it is listed in .gitignore and never committed to version control. For production, .env files are a transitional solution — proper secrets management uses Docker Secrets, Vault, or a cloud-native secrets store.'}},
-{"@type":"Question","name":'What do I do if I accidentally committed a secret to GitHub?',"acceptedAnswer":{"@type":"Answer","text":"Treat the secret as compromised immediately — rotate it before doing anything else. Then remove it from history using git-filter-repo or BFG Repo Cleaner. GitHub's advisory on removing sensitive data covers the exact steps. Removing from history does not protect forks or cached views."}}]
+    "mainEntity": [{"@type":"Question","name":"How do I find hardcoded secrets in my Docker Compose files?","acceptedAnswer":{"@type":"Answer","text":"Paste your docker-compose.yml and .env files into ConfigClarity's Docker Auditor. It scans all environment blocks for literal credential values and flags any that should be environment variable references."}},
+{"@type":"Question","name":"Is a .env file safe for secrets?","acceptedAnswer":{"@type":"Answer","text":"A .env file is safe if and only if it is listed in .gitignore and never committed to version control. For production, .env files are a transitional solution — proper secrets management uses Docker Secrets, Vault, or a cloud-native secrets store."}},
+{"@type":"Question","name":"What do I do if I accidentally committed a secret to GitHub?","acceptedAnswer":{"@type":"Answer","text":"Treat the secret as compromised immediately — rotate it before doing anything else. Then remove it from history using git-filter-repo or BFG Repo Cleaner. GitHub's advisory on removing sensitive data covers the exact steps. Removing from history does not protect forks or cached views."}}]
   }
   </script>
   <script type="application/ld+json">

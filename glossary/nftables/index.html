@@ -29,9 +29,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":'Is nftables better than iptables?',"acceptedAnswer":{"@type":"Answer","text":'For new deployments, yes. nftables has cleaner syntax, better performance at scale, native set support, and is actively maintained. For existing setups, migration requires care — Docker, fail2ban, and some VPN software still default to iptables rules that need compatibility configuration.'}},
-{"@type":"Question","name":'How do I check if my system is using nftables or iptables?',"acceptedAnswer":{"@type":"Answer","text":'Run <code>sudo nft list ruleset</code>. If it returns rules, nftables is active. Run <code>sudo iptables -L</code> — on nftables systems this uses the iptables-nft compatibility layer. Check <code>dpkg -l nftables iptables</code> to see which packages are installed.'}},
-{"@type":"Question","name":'Does UFW work with nftables?',"acceptedAnswer":{"@type":"Answer","text":"Yes. UFW on Ubuntu 20.10+ uses the nftables backend by default. The firewall rules you write with <code>ufw allow/deny</code> are translated to nftables rules. However, Docker's iptables rules may not integrate correctly — see the Docker UFW bypass glossary entry."}}]
+    "mainEntity": [{"@type":"Question","name":"Is nftables better than iptables?","acceptedAnswer":{"@type":"Answer","text":"For new deployments, yes. nftables has cleaner syntax, better performance at scale, native set support, and is actively maintained. For existing setups, migration requires care — Docker, fail2ban, and some VPN software still default to iptables rules that need compatibility configuration."}},
+{"@type":"Question","name":"How do I check if my system is using nftables or iptables?","acceptedAnswer":{"@type":"Answer","text":"Run <code>sudo nft list ruleset</code>. If it returns rules, nftables is active. Run <code>sudo iptables -L</code> — on nftables systems this uses the iptables-nft compatibility layer. Check <code>dpkg -l nftables iptables</code> to see which packages are installed."}},
+{"@type":"Question","name":"Does UFW work with nftables?","acceptedAnswer":{"@type":"Answer","text":"Yes. UFW on Ubuntu 20.10+ uses the nftables backend by default. The firewall rules you write with <code>ufw allow/deny</code> are translated to nftables rules. However, Docker's iptables rules may not integrate correctly — see the Docker UFW bypass glossary entry."}}]
   }
   </script>
   <script type="application/ld+json">

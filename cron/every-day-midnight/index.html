@@ -18,8 +18,8 @@
     "datePublished":"2026-03-22"}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Why do all my cron jobs run at midnight?',"acceptedAnswer":{"@type":"Answer","text":"It's the most common default. When setting up a job without a specific time requirement, developers choose 0 0 * * *. When multiple jobs pile up at the same minute, the server CPU and disk I/O spike simultaneously. Stagger jobs by at least 5 minutes."}},
-{"@type":"Question","name":'How do I run a cron job at a random time around midnight?',"acceptedAnswer":{"@type":"Answer","text":"Cron doesn't support randomisation natively. Use: 0 0 * * * sleep $((RANDOM % 1800)) && /path/to/script.sh to add a random 0–30 minute delay. This spreads load across servers in a fleet."}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why do all my cron jobs run at midnight?","acceptedAnswer":{"@type":"Answer","text":"It's the most common default. When setting up a job without a specific time requirement, developers choose 0 0 * * *. When multiple jobs pile up at the same minute, the server CPU and disk I/O spike simultaneously. Stagger jobs by at least 5 minutes."}},
+{"@type":"Question","name":"How do I run a cron job at a random time around midnight?","acceptedAnswer":{"@type":"Answer","text":"Cron doesn't support randomisation natively. Use: 0 0 * * * sleep $((RANDOM % 1800)) && /path/to/script.sh to add a random 0–30 minute delay. This spreads load across servers in a fleet."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

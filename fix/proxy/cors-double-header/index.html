@@ -15,9 +15,9 @@
     "datePublished":"2026-03-22"}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Why do CORS headers get duplicated in Nginx?',"acceptedAnswer":{"@type":"Answer","text":"Nginx's add_header directive adds headers to the response, but does not remove existing headers set by the upstream application. If both Nginx and the application set Access-Control-Allow-Origin, both values appear in the response. Browsers reject multiple values for this header."}},
-{"@type":"Question","name":'How do I check if I have duplicate CORS headers?',"acceptedAnswer":{"@type":"Answer","text":"Run: curl -sI -H 'Origin: https://yourapp.com' https://yourdomain.com/api/endpoint | grep -i access-control. If you see the same header twice, you have the duplication problem."}},
-{"@type":"Question","name":'Does always in add_header matter for CORS?',"acceptedAnswer":{"@type":"Answer","text":'Yes. Without always, Nginx only adds headers to 2xx and 3xx responses. CORS headers need to be present on 4xx and 5xx responses too, otherwise browser error handling breaks. Always use add_header ... always for CORS headers.'}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why do CORS headers get duplicated in Nginx?","acceptedAnswer":{"@type":"Answer","text":"Nginx's add_header directive adds headers to the response, but does not remove existing headers set by the upstream application. If both Nginx and the application set Access-Control-Allow-Origin, both values appear in the response. Browsers reject multiple values for this header."}},
+{"@type":"Question","name":"How do I check if I have duplicate CORS headers?","acceptedAnswer":{"@type":"Answer","text":"Run: curl -sI -H 'Origin: https://yourapp.com' https://yourdomain.com/api/endpoint | grep -i access-control. If you see the same header twice, you have the duplication problem."}},
+{"@type":"Question","name":"Does always in add_header matter for CORS?","acceptedAnswer":{"@type":"Answer","text":"Yes. Without always, Nginx only adds headers to 2xx and 3xx responses. CORS headers need to be present on 4xx and 5xx responses too, otherwise browser error handling breaks. Always use add_header ... always for CORS headers."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

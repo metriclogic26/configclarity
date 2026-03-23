@@ -18,8 +18,8 @@
     "datePublished":"2026-03-22"}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'What is the difference between 0 * * * * and */60 * * * *?',"acceptedAnswer":{"@type":"Answer","text":"*/60 is technically invalid — the minute field range is 0-59, so */60 only matches minute 0 (since 60 doesn't exist) and behaves like 0 * * * *. Use 0 * * * * explicitly to be clear."}},
-{"@type":"Question","name":'How do I run a job every hour but not on the hour?',"acceptedAnswer":{"@type":"Answer","text":'Use a specific minute offset: 15 * * * * runs at :15 past every hour. 45 * * * * runs at :45 past every hour. Offsetting from :00 reduces load concentration.'}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the difference between 0 * * * * and */60 * * * *?","acceptedAnswer":{"@type":"Answer","text":"*/60 is technically invalid — the minute field range is 0-59, so */60 only matches minute 0 (since 60 doesn't exist) and behaves like 0 * * * *. Use 0 * * * * explicitly to be clear."}},
+{"@type":"Question","name":"How do I run a job every hour but not on the hour?","acceptedAnswer":{"@type":"Answer","text":"Use a specific minute offset: 15 * * * * runs at :15 past every hour. 45 * * * * runs at :45 past every hour. Offsetting from :00 reduces load concentration."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

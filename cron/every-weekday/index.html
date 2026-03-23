@@ -18,8 +18,8 @@
     "datePublished":"2026-03-22"}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Can I combine day-of-month and day-of-week in cron?',"acceptedAnswer":{"@type":"Answer","text":'Yes, but cron treats them as OR, not AND. If you set both a day-of-month value and a day-of-week value (both non-*), the job runs when EITHER condition is true. To get AND behaviour, use a shell condition inside the script.'}},
-{"@type":"Question","name":'How do I skip public holidays in cron?',"acceptedAnswer":{"@type":"Answer","text":'Cron has no concept of public holidays. The standard approach is to check a holiday list inside the script: if grep -q "$(date +%Y-%m-%d)" /etc/holidays.txt; then exit 0; fi at the start of your script.'}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Can I combine day-of-month and day-of-week in cron?","acceptedAnswer":{"@type":"Answer","text":"Yes, but cron treats them as OR, not AND. If you set both a day-of-month value and a day-of-week value (both non-*), the job runs when EITHER condition is true. To get AND behaviour, use a shell condition inside the script."}},
+{"@type":"Question","name":"How do I skip public holidays in cron?","acceptedAnswer":{"@type":"Answer","text":"Cron has no concept of public holidays. The standard approach is to check a holiday list inside the script: if grep -q "$(date +%Y-%m-%d)" /etc/holidays.txt; then exit 0; fi at the start of your script."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[

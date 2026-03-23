@@ -29,9 +29,9 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":'What is the difference between a proxy and a reverse proxy?',"acceptedAnswer":{"@type":"Answer","text":'A forward proxy sits in front of clients and forwards their requests to servers — used for anonymity, content filtering, or caching outbound traffic. A reverse proxy sits in front of servers and forwards client requests to backend applications — used for TLS termination, routing, and load balancing.'}},
-{"@type":"Question","name":'Why use Nginx as a reverse proxy for Docker?',"acceptedAnswer":{"@type":"Answer","text":"Docker containers typically run on high-numbered ports (8080, 3000, 5000). Nginx acts as the public-facing server on ports 80 and 443, handles TLS, and proxies requests to the container's port. This means only Nginx needs to be exposed — container ports are bound to 127.0.0.1 only."}},
-{"@type":"Question","name":'What is a dangling reverse proxy route?',"acceptedAnswer":{"@type":"Answer","text":'A dangling route is a proxy configuration pointing to a backend that no longer exists — a container that was stopped, a service that was moved, or a hostname that no longer resolves. The reverse proxy returns a 502 or 504 error for these routes.'}}]
+    "mainEntity": [{"@type":"Question","name":"What is the difference between a proxy and a reverse proxy?","acceptedAnswer":{"@type":"Answer","text":"A forward proxy sits in front of clients and forwards their requests to servers — used for anonymity, content filtering, or caching outbound traffic. A reverse proxy sits in front of servers and forwards client requests to backend applications — used for TLS termination, routing, and load balancing."}},
+{"@type":"Question","name":"Why use Nginx as a reverse proxy for Docker?","acceptedAnswer":{"@type":"Answer","text":"Docker containers typically run on high-numbered ports (8080, 3000, 5000). Nginx acts as the public-facing server on ports 80 and 443, handles TLS, and proxies requests to the container's port. This means only Nginx needs to be exposed — container ports are bound to 127.0.0.1 only."}},
+{"@type":"Question","name":"What is a dangling reverse proxy route?","acceptedAnswer":{"@type":"Answer","text":"A dangling route is a proxy configuration pointing to a backend that no longer exists — a container that was stopped, a service that was moved, or a hostname that no longer resolves. The reverse proxy returns a 502 or 504 error for these routes."}}]
   }
   </script>
   <script type="application/ld+json">

@@ -15,9 +15,9 @@
     "datePublished":"2026-03-22"}
   </script>
   <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Why does Nginx start successfully with a dangling proxy_pass?',"acceptedAnswer":{"@type":"Answer","text":'Nginx validates configuration syntax at startup with nginx -t, but does not verify that upstream servers are reachable. The 502 error only appears at runtime when a request is made to the dangling route.'}},
-{"@type":"Question","name":'How do I prevent dangling routes when removing services?',"acceptedAnswer":{"@type":"Answer","text":'Before removing a service from docker-compose.yml, remove or update its Nginx server block or Traefik labels first. After removing the service, run nginx -t && systemctl reload nginx to confirm the config is clean.'}},
-{"@type":"Question","name":'What is the difference between a 502 and a 504 from a reverse proxy?',"acceptedAnswer":{"@type":"Answer","text":'502 Bad Gateway means the reverse proxy got an invalid response from the upstream — including no response at all (connection refused). 504 Gateway Timeout means the upstream started responding but took too long. Dangling routes to stopped services produce 502, not 504.'}}]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Why does Nginx start successfully with a dangling proxy_pass?","acceptedAnswer":{"@type":"Answer","text":"Nginx validates configuration syntax at startup with nginx -t, but does not verify that upstream servers are reachable. The 502 error only appears at runtime when a request is made to the dangling route."}},
+{"@type":"Question","name":"How do I prevent dangling routes when removing services?","acceptedAnswer":{"@type":"Answer","text":"Before removing a service from docker-compose.yml, remove or update its Nginx server block or Traefik labels first. After removing the service, run nginx -t && systemctl reload nginx to confirm the config is clean."}},
+{"@type":"Question","name":"What is the difference between a 502 and a 504 from a reverse proxy?","acceptedAnswer":{"@type":"Answer","text":"502 Bad Gateway means the reverse proxy got an invalid response from the upstream — including no response at all (connection refused). 504 Gateway Timeout means the upstream started responding but took too long. Dangling routes to stopped services produce 502, not 504."}}]}
   </script>
   <script type="application/ld+json">
   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
