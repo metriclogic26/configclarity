@@ -1,39 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ollama Exposes Your Server by Default. Here's the Proof. — ConfigClarity</title>
-  <meta name="description" content="Ollama binds to 0.0.0.0 by default. UFW won't protect you because Docker bypasses the INPUT chain. How to lock down your Ollama server in 10 minutes.">
-  <meta name="keywords" content="ollama server security, ollama ufw bypass, ollama docker exposed, ollama 11434 public, secure ollama server linux">
-  <link rel="canonical" href="https://configclarity.dev/blog/ollama-server-security/">
-  <meta property="og:title" content="Ollama Exposes Your Server by Default. Here's the Proof.">
-  <meta property="og:description" content="UFW is active. Port 11434 shows blocked. Your Ollama is still open to the internet. Here's why — and how to fix it.">
-  <meta property="og:url" content="https://configclarity.dev/blog/ollama-server-security/">
-  <meta property="og:type" content="article">
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
-  <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    "headline": "Ollama Exposes Your Server by Default. Here's the Proof.",
-    "description": "Ollama binds to 0.0.0.0 by default. UFW won't protect you because Docker bypasses the INPUT chain. How to lock down your Ollama server in 10 minutes.",
-    "url": "https://configclarity.dev/blog/ollama-server-security/",
-    "datePublished": "2026-03-23",
-    "dateModified": "2026-03-23",
-    "author": {"@type": "Organization", "name": "MetricLogic", "url": "https://metriclogic.dev"},
-    "publisher": {"@type": "Organization", "name": "ConfigClarity", "url": "https://configclarity.dev"},
-    "isPartOf": {"@type": "Blog", "name": "ConfigClarity Blog", "url": "https://configclarity.dev/blog/"}
-  }
-  </script>
-  <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
-    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
-    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
-    {"@type":"ListItem","position":3,"name":"Ollama Server Security","item":"https://configclarity.dev/blog/ollama-server-security/"}
-  ]}
-  </script>
+#!/usr/bin/env python3
+"""
+Script 11: Build /blog/ollama-server-security/ from Medium article.
+Run from: ~/Projects/CronSight/
+"""
 
+import os, json
+
+FONT = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">'
+
+CSS = """
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
@@ -72,17 +47,62 @@
       footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; }
       @media (max-width:600px) { h1 { font-size:1.4rem; } .hero, .content { padding-left:1.25rem; padding-right:1.25rem; } }
     </style>
+"""
 
-</head>
-<body>
-  <header class="header">
+HEADER = """  <header class="header">
     <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
     <nav class="header-nav">
       <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
       <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
       <a href="/blog/" style="color:var(--purple);">Blog</a>
     </nav>
-  </header>
+  </header>"""
+
+FOOTER = """  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>"""
+
+OLLAMA_PAGE = """<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ollama Exposes Your Server by Default. Here's the Proof. — ConfigClarity</title>
+  <meta name="description" content="Ollama binds to 0.0.0.0 by default. UFW won't protect you because Docker bypasses the INPUT chain. How to lock down your Ollama server in 10 minutes.">
+  <meta name="keywords" content="ollama server security, ollama ufw bypass, ollama docker exposed, ollama 11434 public, secure ollama server linux">
+  <link rel="canonical" href="https://configclarity.dev/blog/ollama-server-security/">
+  <meta property="og:title" content="Ollama Exposes Your Server by Default. Here's the Proof.">
+  <meta property="og:description" content="UFW is active. Port 11434 shows blocked. Your Ollama is still open to the internet. Here's why — and how to fix it.">
+  <meta property="og:url" content="https://configclarity.dev/blog/ollama-server-security/">
+  <meta property="og:type" content="article">
+  """ + FONT + """
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Ollama Exposes Your Server by Default. Here's the Proof.",
+    "description": "Ollama binds to 0.0.0.0 by default. UFW won't protect you because Docker bypasses the INPUT chain. How to lock down your Ollama server in 10 minutes.",
+    "url": "https://configclarity.dev/blog/ollama-server-security/",
+    "datePublished": "2026-03-23",
+    "dateModified": "2026-03-23",
+    "author": {"@type": "Organization", "name": "MetricLogic", "url": "https://metriclogic.dev"},
+    "publisher": {"@type": "Organization", "name": "ConfigClarity", "url": "https://configclarity.dev"},
+    "isPartOf": {"@type": "Blog", "name": "ConfigClarity Blog", "url": "https://configclarity.dev/blog/"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
+    {"@type":"ListItem","position":3,"name":"Ollama Server Security","item":"https://configclarity.dev/blog/ollama-server-security/"}
+  ]}
+  </script>
+""" + CSS + """
+</head>
+<body>
+""" + HEADER + """
   <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › Ollama Server Security</div>
   <div class="hero">
     <div class="hero-meta">
@@ -240,10 +260,69 @@ curl http://YOUR_SERVER_IP:11434  (from mobile data)</pre>
     <p style="margin-top:2rem;font-size:0.82rem;color:var(--muted);">The model layer gets all the attention. The infrastructure layer underneath is where things quietly go wrong. Go run that curl command. Off Wi-Fi. Right now.</p>
 
   </div>
-  <footer>
-    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
-    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
-    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
-  </footer>
+""" + FOOTER + """
 </body>
-</html>
+</html>"""
+
+
+if __name__ == "__main__":
+    print("=== Building Ollama Blog Post ===\n")
+
+    # Write page
+    os.makedirs("blog/ollama-server-security", exist_ok=True)
+    with open("blog/ollama-server-security/index.html", "w") as f:
+        f.write(OLLAMA_PAGE)
+    print(f"  ✅ blog/ollama-server-security/index.html ({len(OLLAMA_PAGE):,} bytes)")
+
+    # Update blog index to add this post if not already there
+    blog_index = "blog/index.html"
+    if os.path.exists(blog_index):
+        with open(blog_index, "r") as f:
+            content = f.read()
+        if "ollama-server-security" not in content:
+            # Insert card before the first existing card
+            new_card = '''    <a href="/blog/ollama-server-security/" style="display:block;background:var(--bg2);border:1px solid #2a2d3d;border-radius:8px;padding:1.5rem;margin-bottom:1rem;text-decoration:none;">
+      <div style="font-size:0.72rem;color:var(--muted);margin-bottom:0.5rem;">2026-03-23 &nbsp;·&nbsp; <span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Ollama</span>&nbsp;<span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Security</span>&nbsp;<span style="background:rgba(108,99,255,.15);color:var(--purple);padding:.1rem .4rem;border-radius:3px;font-size:.68rem;">Docker</span></div>
+      <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:0.4rem;line-height:1.4;">Ollama Exposes Your Server by Default. Here&#39;s the Proof.</div>
+      <div style="font-size:0.82rem;color:var(--muted);">UFW is active. Port 11434 shows blocked. Your Ollama is still open. Here&#39;s why — and the one-line fix.</div>
+    </a>'''
+            # Insert after the <div style="max-width... opening
+            marker = '<h1 style="font-size:1.6rem'
+            content = content.replace(marker, new_card + "\n    " + marker, 1)
+            with open(blog_index, "w") as f:
+                f.write(content)
+            print(f"  ✅ blog/index.html — Ollama post added to index")
+        else:
+            print(f"  SKIP blog/index.html — already contains ollama post")
+
+    # Update vercel.json
+    with open("vercel.json", "r") as f:
+        config = json.load(f)
+    new_rules = [
+        {"source": "/blog/ollama-server-security/", "destination": "/blog/ollama-server-security/index.html"},
+        {"source": "/blog/ollama-server-security", "destination": "/blog/ollama-server-security/index.html"},
+    ]
+    added = 0
+    for r in new_rules:
+        if r not in config["rewrites"]:
+            config["rewrites"].append(r)
+            added += 1
+    with open("vercel.json", "w") as f:
+        json.dump(config, f, indent=2)
+    print(f"  ✅ vercel.json — {added} rewrites added")
+
+    # Update sitemap
+    with open("sitemap-seo.xml", "r") as f:
+        sitemap = f.read()
+    if "/blog/ollama-server-security/" not in sitemap:
+        entry = "  <url><loc>https://configclarity.dev/blog/ollama-server-security/</loc><lastmod>2026-03-23</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>"
+        sitemap = sitemap.replace("</urlset>", entry + "\n</urlset>")
+        with open("sitemap-seo.xml", "w") as f:
+            f.write(sitemap)
+        print(f"  ✅ sitemap-seo.xml — ollama post added")
+
+    print(f"\nDone.")
+    print("\nRun:")
+    print("  git add -A && git commit -m 'feat: ollama server security blog post' && git push origin main && npx vercel --prod --force")
+    print("\nGSC submit:")
+    print("  https://configclarity.dev/blog/ollama-server-security/")
