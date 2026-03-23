@@ -116,6 +116,10 @@ curl http://localhost:8080/api/http/routers |   python3 -c "import json,sys; [pr
 <div class="faq-item"><div class="faq-q">How do I prevent dangling routes when removing services?</div><div class="faq-a">Before removing a service from docker-compose.yml, remove or update its Nginx server block or Traefik labels first. After removing the service, run nginx -t && systemctl reload nginx to confirm the config is clean.</div></div>
 <div class="faq-item"><div class="faq-q">What is the difference between a 502 and a 504 from a reverse proxy?</div><div class="faq-a">502 Bad Gateway means the reverse proxy got an invalid response from the upstream — including no response at all (connection refused). 504 Gateway Timeout means the upstream started responding but took too long. Dangling routes to stopped services produce 502, not 504.</div></div>
   </div>
+  
+    <h2>Related Glossary Terms</h2>
+    <ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);line-height:2.2;"><li><a href="/glossary/dangling-route/">Dangling Route</a></li>
+<li><a href="/glossary/reverse-proxy/">Reverse Proxy</a></li></ul>
   <footer>
     <p><a href="/fix/">Fix Guides</a> &nbsp;·&nbsp; <a href="/glossary/">Glossary</a> &nbsp;·&nbsp;
     <a href="https://metriclogic.dev">MetricLogic</a> &nbsp;·&nbsp;

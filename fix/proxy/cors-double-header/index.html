@@ -114,6 +114,9 @@
 <div class="faq-item"><div class="faq-q">How do I check if I have duplicate CORS headers?</div><div class="faq-a">Run: curl -sI -H 'Origin: https://yourapp.com' https://yourdomain.com/api/endpoint | grep -i access-control. If you see the same header twice, you have the duplication problem.</div></div>
 <div class="faq-item"><div class="faq-q">Does always in add_header matter for CORS?</div><div class="faq-a">Yes. Without always, Nginx only adds headers to 2xx and 3xx responses. CORS headers need to be present on 4xx and 5xx responses too, otherwise browser error handling breaks. Always use add_header ... always for CORS headers.</div></div>
   </div>
+  
+    <h2>Related Glossary Terms</h2>
+    <ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);line-height:2.2;"><li><a href="/glossary/reverse-proxy/">Reverse Proxy</a></li></ul>
   <footer>
     <p><a href="/fix/">Fix Guides</a> &nbsp;·&nbsp; <a href="/glossary/">Glossary</a> &nbsp;·&nbsp;
     <a href="https://metriclogic.dev">MetricLogic</a> &nbsp;·&nbsp;

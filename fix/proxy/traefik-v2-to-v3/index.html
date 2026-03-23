@@ -127,6 +127,10 @@ docker network create traefik-public</pre>
 <div class="faq-item"><div class="faq-q">Do I need to recreate my Docker network when upgrading to Traefik v3?</div><div class="faq-a">No — if you already have an external Docker network for Traefik, keep it. Just ensure all services that need proxying are attached to it and have the traefik.docker.network label set explicitly.</div></div>
 <div class="faq-item"><div class="faq-q">What happened to allowEmptyServices in Traefik v3?</div><div class="faq-a">allowEmptyServices was removed in v3. Traefik v3 handles empty services differently — it no longer requires this option to start when backends are unavailable. Simply remove it from your static config.</div></div>
   </div>
+  
+    <h2>Related Glossary Terms</h2>
+    <ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);line-height:2.2;"><li><a href="/glossary/traefik-labels/">Traefik Labels</a></li>
+<li><a href="/glossary/reverse-proxy/">Reverse Proxy</a></li></ul>
   <footer>
     <p><a href="/fix/">Fix Guides</a> &nbsp;·&nbsp; <a href="/glossary/">Glossary</a> &nbsp;·&nbsp;
     <a href="https://metriclogic.dev">MetricLogic</a> &nbsp;·&nbsp;
