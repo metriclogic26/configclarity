@@ -33,6 +33,10 @@
   ],
   "rewrites": [
     {
+      "source": "/sitemap-seo.xml",
+      "destination": "/sitemap-seo.xml"
+    },
+    {
       "source": "/crontab/",
       "destination": "/index.html"
     },
