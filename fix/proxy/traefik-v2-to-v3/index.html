@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Fix: Traefik v2 to v3 Migration — Labels and Config Changes — ConfigClarity</title>
+  <meta name="description" content="How to migrate Traefik from v2 to v3. Fix broken Docker labels, Docker network configuration, removed allowEmptyServices, and deprecated v1 label patterns.">
+  <meta name="keywords" content="traefik v2 to v3 migration, traefik v3 labels, traefik upgrade fix, traefik v3 docker network">
+  <link rel="canonical" href="https://configclarity.dev/fix/proxy/traefik-v2-to-v3/">
+  <meta property="og:title" content="Fix: Traefik v2 to v3 Migration — Labels and Config Changes"><meta property="og:description" content="How to migrate Traefik from v2 to v3. Fix broken Docker labels, Docker network configuration, removed allowEmptyServices, and deprecated v1 label patterns.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Fix: Traefik v2 to v3 Migration — Labels and Config Changes",
+    "url":"https://configclarity.dev/fix/proxy/traefik-v2-to-v3/","description":"How to migrate Traefik from v2 to v3. Fix broken Docker labels, Docker network configuration, removed allowEmptyServices, and deprecated v1 label patterns.",
+    "author":{"@type":"Organization","name":"MetricLogic"},
+    "datePublished":"2026-03-22"}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Why do my Traefik routes stop working after upgrading to v3?',"acceptedAnswer":{"@type":"Answer","text":"The most common causes are: (1) using old v1-style labels like traefik.frontend.rule that v3 silently ignores, (2) missing Docker network configuration — v3 requires explicit network attachment, (3) swarmMode: false left in the Docker provider static config. Use ConfigClarity's Reverse Proxy Mapper to detect v1 labels automatically."}},
+{"@type":"Question","name":'Do I need to recreate my Docker network when upgrading to Traefik v3?',"acceptedAnswer":{"@type":"Answer","text":'No — if you already have an external Docker network for Traefik, keep it. Just ensure all services that need proxying are attached to it and have the traefik.docker.network label set explicitly.'}},
+{"@type":"Question","name":'What happened to allowEmptyServices in Traefik v3?',"acceptedAnswer":{"@type":"Answer","text":'allowEmptyServices was removed in v3. Traefik v3 handles empty services differently — it no longer requires this option to start when backends are unavailable. Simply remove it from your static config.'}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://configclarity.dev/fix/"},
+    {"@type":"ListItem","position":3,"name":"Proxy Fix Guides","item":"https://configclarity.dev/fix/proxy/"},
+    {"@type":"ListItem","position":4,"name":"Traefik v2 to v3","item":"https://configclarity.dev/fix/proxy/traefik-v2-to-v3/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.75; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:760px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .content { max-width:760px; margin:0 auto; padding:2rem; }
+      h1 { font-size:1.6rem; font-weight:700; margin-bottom:1rem; }
+      h2 { font-size:1.05rem; font-weight:700; margin:2rem 0 0.6rem; }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1rem; }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.1rem 1.3rem; font-size:0.78rem; overflow-x:auto; margin:0.75rem 0 1.25rem; line-height:1.7; }
+      code { background:#1e2130; padding:0.1rem 0.35rem; border-radius:3px; font-size:0.82rem; }
+      .fix-box { background:var(--bg2); border-left:3px solid var(--green); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.25rem 0; }
+      .fix-box .label { font-size:0.7rem; color:var(--green); text-transform:uppercase; letter-spacing:.06em; margin-bottom:0.4rem; }
+      .warn-box { background:var(--bg2); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.25rem 0; }
+      .warn-box p { margin-bottom:0; color:var(--text); }
+      .faq-item { margin-bottom:1.4rem; }
+      .faq-q { font-size:0.9rem; font-weight:600; margin-bottom:0.35rem; }
+      .faq-a { font-size:0.84rem; color:var(--muted); }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; margin:2rem 0; text-align:center; }
+      .cta p { color:var(--text); margin-bottom:0.6rem; font-size:0.875rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.45rem 1.2rem; border-radius:6px; font-size:0.82rem; font-weight:700; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; margin-top:2rem; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/proxy/">Proxy Fix Guides</a> › Traefik v2 to v3
+  </div>
+  <div class="content">
+    <h1>Fix: Traefik v2 to v3 Migration — Labels and Config Changes</h1>
+    <p>Traefik v3 routes stop working silently after upgrading. The core label syntax is unchanged, but Docker provider network handling, some middleware options, and v1-style labels all need updating.</p>
+    
+<h2>V1 Labels That No Longer Work</h2>
+<p>These Traefik v1 labels were deprecated in v2 but silently ignored. In v3 they do nothing — and Traefik gives no warning:</p>
+<div class="warn-box"><p>Remove these from your compose files: <code>traefik.frontend.rule</code>, <code>traefik.backend</code>, <code>traefik.port</code>, <code>traefik.frontend.entryPoints</code></p></div>
+<div class="fix-box">
+  <div class="label">CORRECT v3 Labels</div>
+  <pre>traefik.enable=true
+traefik.http.routers.myapp.rule=Host(`app.example.com`)
+traefik.http.routers.myapp.entrypoints=websecure
+traefik.http.routers.myapp.tls.certresolver=letsencrypt
+traefik.http.services.myapp.loadbalancer.server.port=3000
+traefik.docker.network=traefik-public</pre>
+</div>
+
+<h2>Docker Network Fix</h2>
+<p>Traefik v3's Docker provider requires explicit network attachment. Create a shared external network and attach both Traefik and your services to it:</p>
+<div class="fix-box">
+  <div class="label">docker-compose.yml — Traefik service</div>
+  <pre>services:
+  traefik:
+    image: traefik:v3
+    networks:
+      - traefik-public
+networks:
+  traefik-public:
+    external: true</pre>
+</div>
+<div class="fix-box">
+  <div class="label">docker-compose.yml — Application service</div>
+  <pre>services:
+  myapp:
+    networks:
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik-public"
+      - "traefik.http.routers.myapp.rule=Host(`app.example.com`)"
+networks:
+  traefik-public:
+    external: true</pre>
+</div>
+<pre># Create the network once:
+docker network create traefik-public</pre>
+
+<h2>Static Config Changes</h2>
+<p>If you use <code>traefik.yml</code>, remove <code>swarmMode: false</code> from the Docker provider — it moved to a separate Swarm provider and causes a startup error in v3 if left in the Docker block.</p>
+
+    <div class="cta"><p>Paste your docker-compose.yml to detect Traefik v1 label patterns and get exact v3 replacements.</p><a href="/proxy/">Open Reverse Proxy Mapper →</a></div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item"><div class="faq-q">Why do my Traefik routes stop working after upgrading to v3?</div><div class="faq-a">The most common causes are: (1) using old v1-style labels like traefik.frontend.rule that v3 silently ignores, (2) missing Docker network configuration — v3 requires explicit network attachment, (3) swarmMode: false left in the Docker provider static config. Use ConfigClarity's Reverse Proxy Mapper to detect v1 labels automatically.</div></div>
+<div class="faq-item"><div class="faq-q">Do I need to recreate my Docker network when upgrading to Traefik v3?</div><div class="faq-a">No — if you already have an external Docker network for Traefik, keep it. Just ensure all services that need proxying are attached to it and have the traefik.docker.network label set explicitly.</div></div>
+<div class="faq-item"><div class="faq-q">What happened to allowEmptyServices in Traefik v3?</div><div class="faq-a">allowEmptyServices was removed in v3. Traefik v3 handles empty services differently — it no longer requires this option to start when backends are unavailable. Simply remove it from your static config.</div></div>
+  </div>
+  <footer>
+    <p><a href="/fix/">Fix Guides</a> &nbsp;·&nbsp; <a href="/glossary/">Glossary</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>

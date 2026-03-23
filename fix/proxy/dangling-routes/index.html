@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Fix: Dangling Reverse Proxy Routes Causing 502 Errors — ConfigClarity</title>
+  <meta name="description" content="How to find and fix dangling Nginx and Traefik routes pointing to stopped containers or removed services. Causes 502 Bad Gateway errors and log flooding.">
+  <meta name="keywords" content="nginx dangling route fix, reverse proxy 502 fix, traefik dangling route, nginx proxy_pass 502">
+  <link rel="canonical" href="https://configclarity.dev/fix/proxy/dangling-routes/">
+  <meta property="og:title" content="Fix: Dangling Reverse Proxy Routes Causing 502 Errors"><meta property="og:description" content="How to find and fix dangling Nginx and Traefik routes pointing to stopped containers or removed services. Causes 502 Bad Gateway errors and log flooding.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Fix: Dangling Reverse Proxy Routes Causing 502 Errors",
+    "url":"https://configclarity.dev/fix/proxy/dangling-routes/","description":"How to find and fix dangling Nginx and Traefik routes pointing to stopped containers or removed services. Causes 502 Bad Gateway errors and log flooding.",
+    "author":{"@type":"Organization","name":"MetricLogic"},
+    "datePublished":"2026-03-22"}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Why does Nginx start successfully with a dangling proxy_pass?',"acceptedAnswer":{"@type":"Answer","text":'Nginx validates configuration syntax at startup with nginx -t, but does not verify that upstream servers are reachable. The 502 error only appears at runtime when a request is made to the dangling route.'}},
+{"@type":"Question","name":'How do I prevent dangling routes when removing services?',"acceptedAnswer":{"@type":"Answer","text":'Before removing a service from docker-compose.yml, remove or update its Nginx server block or Traefik labels first. After removing the service, run nginx -t && systemctl reload nginx to confirm the config is clean.'}},
+{"@type":"Question","name":'What is the difference between a 502 and a 504 from a reverse proxy?',"acceptedAnswer":{"@type":"Answer","text":'502 Bad Gateway means the reverse proxy got an invalid response from the upstream — including no response at all (connection refused). 504 Gateway Timeout means the upstream started responding but took too long. Dangling routes to stopped services produce 502, not 504.'}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://configclarity.dev/fix/"},
+    {"@type":"ListItem","position":3,"name":"Proxy Fix Guides","item":"https://configclarity.dev/fix/proxy/"},
+    {"@type":"ListItem","position":4,"name":"Dangling Routes","item":"https://configclarity.dev/fix/proxy/dangling-routes/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.75; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:760px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .content { max-width:760px; margin:0 auto; padding:2rem; }
+      h1 { font-size:1.6rem; font-weight:700; margin-bottom:1rem; }
+      h2 { font-size:1.05rem; font-weight:700; margin:2rem 0 0.6rem; }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1rem; }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.1rem 1.3rem; font-size:0.78rem; overflow-x:auto; margin:0.75rem 0 1.25rem; line-height:1.7; }
+      code { background:#1e2130; padding:0.1rem 0.35rem; border-radius:3px; font-size:0.82rem; }
+      .fix-box { background:var(--bg2); border-left:3px solid var(--green); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.25rem 0; }
+      .fix-box .label { font-size:0.7rem; color:var(--green); text-transform:uppercase; letter-spacing:.06em; margin-bottom:0.4rem; }
+      .warn-box { background:var(--bg2); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.25rem 0; }
+      .warn-box p { margin-bottom:0; color:var(--text); }
+      .faq-item { margin-bottom:1.4rem; }
+      .faq-q { font-size:0.9rem; font-weight:600; margin-bottom:0.35rem; }
+      .faq-a { font-size:0.84rem; color:var(--muted); }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; margin:2rem 0; text-align:center; }
+      .cta p { color:var(--text); margin-bottom:0.6rem; font-size:0.875rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.45rem 1.2rem; border-radius:6px; font-size:0.82rem; font-weight:700; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; margin-top:2rem; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/proxy/">Proxy Fix Guides</a> › Dangling Routes
+  </div>
+  <div class="content">
+    <h1>Fix: Dangling Reverse Proxy Routes Causing 502 Errors</h1>
+    <p>A dangling route is a reverse proxy config entry pointing to a backend that no longer exists. Nginx starts fine, logs no startup error, but returns 502 for every request to that route.</p>
+    
+<h2>Finding Dangling Routes in Nginx</h2>
+<p>Every <code>proxy_pass</code> target in your Nginx config should correspond to a running service. Check them manually:</p>
+<pre># List all proxy_pass targets in your config:
+grep -r "proxy_pass" /etc/nginx/sites-enabled/
+
+# Then verify each upstream is reachable:
+curl -sI http://127.0.0.1:PORT/</pre>
+
+<h2>The Fix — Nginx</h2>
+<div class="fix-box">
+  <div class="label">Option 1: Remove the dangling server block</div>
+  <pre># Remove or comment out the entire server block
+# that points to the dead upstream:
+# server {
+#     server_name old-app.example.com;
+#     location / { proxy_pass http://127.0.0.1:8080; }
+# }</pre>
+</div>
+<div class="fix-box">
+  <div class="label">Option 2: Return 410 Gone for retired services</div>
+  <pre>server {
+    server_name old-app.example.com;
+    return 410;  # Gone — better than 502
+}</pre>
+</div>
+
+<h2>Finding Dangling Routes in Traefik</h2>
+<p>In Traefik with Docker labels, dangling routes appear when a container is removed but nothing else is pointing at the hostname. Check Traefik's dashboard at <code>http://localhost:8080</code> — any router showing 0 healthy servers is dangling.</p>
+<pre># Check Traefik API for routers with no healthy backends:
+curl http://localhost:8080/api/http/routers |   python3 -c "import json,sys; [print(r['name'], r.get('status','?')) for r in json.load(sys.stdin)]"</pre>
+<div class="fix-box">
+  <div class="label">After fixing — validate and reload</div>
+  <pre>nginx -t && systemctl reload nginx</pre>
+</div>
+
+    <div class="cta"><p>Paste your nginx.conf or docker-compose labels to detect dangling routes automatically.</p><a href="/proxy/">Open Reverse Proxy Mapper →</a></div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item"><div class="faq-q">Why does Nginx start successfully with a dangling proxy_pass?</div><div class="faq-a">Nginx validates configuration syntax at startup with nginx -t, but does not verify that upstream servers are reachable. The 502 error only appears at runtime when a request is made to the dangling route.</div></div>
+<div class="faq-item"><div class="faq-q">How do I prevent dangling routes when removing services?</div><div class="faq-a">Before removing a service from docker-compose.yml, remove or update its Nginx server block or Traefik labels first. After removing the service, run nginx -t && systemctl reload nginx to confirm the config is clean.</div></div>
+<div class="faq-item"><div class="faq-q">What is the difference between a 502 and a 504 from a reverse proxy?</div><div class="faq-a">502 Bad Gateway means the reverse proxy got an invalid response from the upstream — including no response at all (connection refused). 504 Gateway Timeout means the upstream started responding but took too long. Dangling routes to stopped services produce 502, not 504.</div></div>
+  </div>
+  <footer>
+    <p><a href="/fix/">Fix Guides</a> &nbsp;·&nbsp; <a href="/glossary/">Glossary</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>

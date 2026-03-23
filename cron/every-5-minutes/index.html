@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Cron Expression: */5 * * * * — Run every 5 minutes — ConfigClarity</title>
+  <meta name="description" content="Cron expression */5 * * * * runs a job every 5 minutes. Breakdown, use cases, flock safety, and related expressions.">
+  <meta name="keywords" content="cron every 5 minutes, */5 * * * * cron meaning, cron expression 5 minutes">
+  <link rel="canonical" href="https://configclarity.dev/cron/every-5-minutes/">
+  <meta property="og:title" content="Cron */5 * * * * — Run every 5 minutes">
+  <meta property="og:description" content="Cron expression */5 * * * * runs a job every 5 minutes. Breakdown, use cases, flock safety, and related expressions.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle",
+    "headline":"Cron Expression: */5 * * * * — Run every 5 minutes",
+    "url":"https://configclarity.dev/cron/every-5-minutes/",
+    "description":"Cron expression */5 * * * * runs a job every 5 minutes. Breakdown, use cases, flock safety, and related expressions.",
+    "author":{"@type":"Organization","name":"MetricLogic"},
+    "datePublished":"2026-03-22"}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'What does */5 mean in a cron expression?',"acceptedAnswer":{"@type":"Answer","text":"*/5 means 'every 5th value of the field's range'. In the minute field, the range is 0-59, so */5 fires at 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, and 55 of every hour."}},
+{"@type":"Question","name":'Does */5 start exactly 5 minutes after the last run?',"acceptedAnswer":{"@type":"Answer","text":'No. */5 fires at fixed points in the minute field (0, 5, 10...) regardless of when the previous run completed. If you need exactly 5 minutes between runs, use a service manager with a delay loop, not cron.'}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Cron Visualiser","item":"https://configclarity.dev/"},
+    {"@type":"ListItem","position":3,"name":"Cron Expressions","item":"https://configclarity.dev/cron/"},
+    {"@type":"ListItem","position":4,"name":"Run every 5 minutes","item":"https://configclarity.dev/cron/every-5-minutes/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.75; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:760px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .content { max-width:760px; margin:0 auto; padding:2rem; }
+      h1 { font-size:1.6rem; font-weight:700; margin-bottom:0.75rem; }
+      h2 { font-size:1.05rem; font-weight:700; margin:2rem 0 0.6rem; }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1rem; }
+      .expr-hero { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.5rem 2rem; margin:1.25rem 0 2rem; text-align:center; }
+      .expr-code { font-size:1.8rem; font-weight:700; color:var(--purple); letter-spacing:0.1em; display:block; margin-bottom:0.5rem; }
+      .expr-meaning { font-size:0.9rem; color:var(--text); }
+      .field-table { width:100%; border-collapse:collapse; font-size:0.82rem; margin:1rem 0 1.5rem; }
+      .field-table th { text-align:left; padding:0.5rem 0.75rem; color:var(--muted); font-weight:600; border-bottom:1px solid #2a2d3d; }
+      .field-table td { padding:0.5rem 0.75rem; border-bottom:1px solid #1a1c26; }
+      .field-table td:first-child { color:var(--purple); font-weight:700; }
+      .field-table tr.active td { color:var(--text); }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1rem 1.25rem; font-size:0.78rem; overflow-x:auto; margin:0.75rem 0 1.25rem; line-height:1.7; }
+      .variants { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:0.75rem; margin:1rem 0 1.5rem; }
+      .variant-card { background:var(--bg2); border:1px solid #2a2d3d; border-radius:6px; padding:0.85rem 1rem; }
+      .variant-expr { font-size:0.9rem; font-weight:700; color:var(--purple); }
+      .variant-desc { font-size:0.75rem; color:var(--muted); margin-top:0.25rem; }
+      .faq-item { margin-bottom:1.4rem; }
+      .faq-q { font-size:0.9rem; font-weight:600; margin-bottom:0.35rem; }
+      .faq-a { font-size:0.84rem; color:var(--muted); }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; margin:2rem 0; text-align:center; }
+      .cta p { color:var(--text); margin-bottom:0.6rem; font-size:0.875rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.45rem 1.2rem; border-radius:6px; font-size:0.82rem; font-weight:700; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; margin-top:2rem; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/cron/">Cron Expressions</a> › Run every 5 minutes
+  </div>
+  <div class="content">
+    <h1>Cron Expression: */5 * * * *</h1>
+    <div class="expr-hero">
+      <span class="expr-code">*/5 * * * *</span>
+      <span class="expr-meaning">Run every 5 minutes</span>
+    </div>
+
+    <h2>Field Breakdown</h2>
+    <table class="field-table">
+      <tr><th>Value</th><th>Field</th><th>Meaning</th></tr>
+      <tr class="active"><td>*/5</td><td>minute</td><td>every 5 minutes (0,5,10,15...)</td></tr>
+<tr class="active"><td>*</td><td>hour</td><td>every hour</td></tr>
+<tr class="active"><td>*</td><td>day</td><td>every day</td></tr>
+<tr class="active"><td>*</td><td>month</td><td>every month</td></tr>
+<tr class="active"><td>*</td><td>weekday</td><td>every weekday</td></tr>
+    </table>
+
+    <p>The <code>*/5</code> syntax means "every 5th value" — so <code>*/5</code> in the minute field fires at minutes 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, and 55 of every hour. It does not mean "5 minutes after the last run". If the job starts at 00:00 and takes 8 minutes, the next invocation fires at 00:05 regardless.</p>
+<h2>Combining with flock</h2>
+<pre>*/5 * * * * flock -n /tmp/sync.lock /usr/local/bin/sync.sh</pre>
+
+    <h2>Related Expressions</h2>
+    <div class="variants"><div class="variant-card"><div class="variant-expr">*/2 * * * *</div><div class="variant-desc">Every 2 minutes</div></div>
+<div class="variant-card"><div class="variant-expr">*/3 * * * *</div><div class="variant-desc">Every 3 minutes</div></div>
+<div class="variant-card"><div class="variant-expr">*/10 * * * *</div><div class="variant-desc">Every 10 minutes</div></div>
+<div class="variant-card"><div class="variant-expr">*/15 * * * *</div><div class="variant-desc">Every 15 minutes</div></div>
+<div class="variant-card"><div class="variant-expr">1-59/5 * * * *</div><div class="variant-desc">Every 5 min starting at :01</div></div></div>
+
+    <h2>Common Use Cases</h2>
+    <ul style="font-size:0.875rem;color:var(--muted);padding-left:1.5rem;line-height:2.2;"><li>Cache warming</li>
+<li>RSS feed polling</li>
+<li>Metrics collection</li>
+<li>Webhook retries</li></ul>
+
+    <div class="cta">
+      <p>Paste your crontab to visualise every job on a 24-hour timeline — detect overlaps, collisions, and get flock-safe versions.</p>
+      <a href="/">Open Cron Visualiser →</a>
+    </div>
+
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item"><div class="faq-q">What does */5 mean in a cron expression?</div><div class="faq-a">*/5 means 'every 5th value of the field's range'. In the minute field, the range is 0-59, so */5 fires at 0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, and 55 of every hour.</div></div>
+<div class="faq-item"><div class="faq-q">Does */5 start exactly 5 minutes after the last run?</div><div class="faq-a">No. */5 fires at fixed points in the minute field (0, 5, 10...) regardless of when the previous run completed. If you need exactly 5 minutes between runs, use a service manager with a delay loop, not cron.</div></div>
+  </div>
+  <footer>
+    <p><a href="/fix/cron/">Cron Fix Guides</a> &nbsp;·&nbsp; <a href="/glossary/cron-job-collision/">Cron Job Collision</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>

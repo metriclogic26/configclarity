@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Cron Expression: 0 9 * * 1-5 — Run every weekday (Mon–Fri) at 9am — ConfigClarity</title>
+  <meta name="description" content="Cron expression 0 9 * * 1-5 runs a job every weekday Monday through Friday at 9am. Weekday range syntax and business hours cron patterns.">
+  <meta name="keywords" content="cron every weekday, 0 9 * * 1-5 cron, cron business hours, cron monday friday">
+  <link rel="canonical" href="https://configclarity.dev/cron/every-weekday/">
+  <meta property="og:title" content="Cron 0 9 * * 1-5 — Run every weekday (Mon–Fri) at 9am">
+  <meta property="og:description" content="Cron expression 0 9 * * 1-5 runs a job every weekday Monday through Friday at 9am. Weekday range syntax and business hours cron patterns.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle",
+    "headline":"Cron Expression: 0 9 * * 1-5 — Run every weekday (Mon–Fri) at 9am",
+    "url":"https://configclarity.dev/cron/every-weekday/",
+    "description":"Cron expression 0 9 * * 1-5 runs a job every weekday Monday through Friday at 9am. Weekday range syntax and business hours cron patterns.",
+    "author":{"@type":"Organization","name":"MetricLogic"},
+    "datePublished":"2026-03-22"}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Can I combine day-of-month and day-of-week in cron?',"acceptedAnswer":{"@type":"Answer","text":'Yes, but cron treats them as OR, not AND. If you set both a day-of-month value and a day-of-week value (both non-*), the job runs when EITHER condition is true. To get AND behaviour, use a shell condition inside the script.'}},
+{"@type":"Question","name":'How do I skip public holidays in cron?',"acceptedAnswer":{"@type":"Answer","text":'Cron has no concept of public holidays. The standard approach is to check a holiday list inside the script: if grep -q "$(date +%Y-%m-%d)" /etc/holidays.txt; then exit 0; fi at the start of your script.'}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Cron Visualiser","item":"https://configclarity.dev/"},
+    {"@type":"ListItem","position":3,"name":"Cron Expressions","item":"https://configclarity.dev/cron/"},
+    {"@type":"ListItem","position":4,"name":"Run every weekday (Mon–Fri) at 9am","item":"https://configclarity.dev/cron/every-weekday/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.75; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:760px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .content { max-width:760px; margin:0 auto; padding:2rem; }
+      h1 { font-size:1.6rem; font-weight:700; margin-bottom:0.75rem; }
+      h2 { font-size:1.05rem; font-weight:700; margin:2rem 0 0.6rem; }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1rem; }
+      .expr-hero { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.5rem 2rem; margin:1.25rem 0 2rem; text-align:center; }
+      .expr-code { font-size:1.8rem; font-weight:700; color:var(--purple); letter-spacing:0.1em; display:block; margin-bottom:0.5rem; }
+      .expr-meaning { font-size:0.9rem; color:var(--text); }
+      .field-table { width:100%; border-collapse:collapse; font-size:0.82rem; margin:1rem 0 1.5rem; }
+      .field-table th { text-align:left; padding:0.5rem 0.75rem; color:var(--muted); font-weight:600; border-bottom:1px solid #2a2d3d; }
+      .field-table td { padding:0.5rem 0.75rem; border-bottom:1px solid #1a1c26; }
+      .field-table td:first-child { color:var(--purple); font-weight:700; }
+      .field-table tr.active td { color:var(--text); }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1rem 1.25rem; font-size:0.78rem; overflow-x:auto; margin:0.75rem 0 1.25rem; line-height:1.7; }
+      .variants { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:0.75rem; margin:1rem 0 1.5rem; }
+      .variant-card { background:var(--bg2); border:1px solid #2a2d3d; border-radius:6px; padding:0.85rem 1rem; }
+      .variant-expr { font-size:0.9rem; font-weight:700; color:var(--purple); }
+      .variant-desc { font-size:0.75rem; color:var(--muted); margin-top:0.25rem; }
+      .faq-item { margin-bottom:1.4rem; }
+      .faq-q { font-size:0.9rem; font-weight:600; margin-bottom:0.35rem; }
+      .faq-a { font-size:0.84rem; color:var(--muted); }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; margin:2rem 0; text-align:center; }
+      .cta p { color:var(--text); margin-bottom:0.6rem; font-size:0.875rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.45rem 1.2rem; border-radius:6px; font-size:0.82rem; font-weight:700; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; margin-top:2rem; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/cron/">Cron Expressions</a> › Run every weekday (Mon–Fri) at 9am
+  </div>
+  <div class="content">
+    <h1>Cron Expression: 0 9 * * 1-5</h1>
+    <div class="expr-hero">
+      <span class="expr-code">0 9 * * 1-5</span>
+      <span class="expr-meaning">Run every weekday (Mon–Fri) at 9am</span>
+    </div>
+
+    <h2>Field Breakdown</h2>
+    <table class="field-table">
+      <tr><th>Value</th><th>Field</th><th>Meaning</th></tr>
+      <tr class="active"><td>0</td><td>minute</td><td>at minute 0</td></tr>
+<tr class="active"><td>9</td><td>hour</td><td>at 9am</td></tr>
+<tr class="active"><td>*</td><td>day</td><td>any day of month</td></tr>
+<tr class="active"><td>*</td><td>month</td><td>every month</td></tr>
+<tr class="active"><td>1-5</td><td>weekday</td><td>Monday through Friday</td></tr>
+    </table>
+
+    <p>The range syntax <code>1-5</code> in the weekday field means "Monday through Friday". This is one of the most useful cron patterns for business-hours tasks.</p>
+<h2>Business hours patterns</h2>
+<pre># Every weekday at 9am:
+0 9 * * 1-5
+
+# Every hour during business hours, weekdays:
+0 9-17 * * 1-5
+
+# Every 30 minutes, business hours, weekdays:
+*/30 9-17 * * 1-5
+
+# Weekdays at 6am (before work):
+0 6 * * 1-5</pre>
+
+    <h2>Related Expressions</h2>
+    <div class="variants"><div class="variant-card"><div class="variant-expr">0 9 * * 1-5</div><div class="variant-desc">Weekdays at 9am</div></div>
+<div class="variant-card"><div class="variant-expr">0 17 * * 1-5</div><div class="variant-desc">Weekdays at 5pm</div></div>
+<div class="variant-card"><div class="variant-expr">0 9-17 * * 1-5</div><div class="variant-desc">Top of every business hour</div></div>
+<div class="variant-card"><div class="variant-expr">0 6 * * 1-5</div><div class="variant-desc">Weekdays 6am (pre-work)</div></div>
+<div class="variant-card"><div class="variant-expr">0 0 * * 6,0</div><div class="variant-desc">Weekends at midnight</div></div></div>
+
+    <h2>Common Use Cases</h2>
+    <ul style="font-size:0.875rem;color:var(--muted);padding-left:1.5rem;line-height:2.2;"><li>Business report generation</li>
+<li>Weekday data syncs</li>
+<li>Morning digests</li>
+<li>End-of-day summaries</li></ul>
+
+    <div class="cta">
+      <p>Paste your crontab to visualise every job on a 24-hour timeline — detect overlaps, collisions, and get flock-safe versions.</p>
+      <a href="/">Open Cron Visualiser →</a>
+    </div>
+
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item"><div class="faq-q">Can I combine day-of-month and day-of-week in cron?</div><div class="faq-a">Yes, but cron treats them as OR, not AND. If you set both a day-of-month value and a day-of-week value (both non-*), the job runs when EITHER condition is true. To get AND behaviour, use a shell condition inside the script.</div></div>
+<div class="faq-item"><div class="faq-q">How do I skip public holidays in cron?</div><div class="faq-a">Cron has no concept of public holidays. The standard approach is to check a holiday list inside the script: if grep -q "$(date +%Y-%m-%d)" /etc/holidays.txt; then exit 0; fi at the start of your script.</div></div>
+  </div>
+  <footer>
+    <p><a href="/fix/cron/">Cron Fix Guides</a> &nbsp;·&nbsp; <a href="/glossary/cron-job-collision/">Cron Job Collision</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>

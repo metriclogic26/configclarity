@@ -306,4 +306,34 @@
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
+  <url><loc>https://configclarity.dev/fix/proxy/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/traefik-v2-to-v3/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/dangling-routes/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/missing-ssl-redirect/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/cors-double-header/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/traefik-gateway-timeout/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/nginx-413-request-too-large/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/traefik-no-route-found/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/caddy-tls-handshake-failed/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/nginx/ssl-setup/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/nginx/docker-setup/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/traefik/ssl-setup/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/traefik/docker-setup/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/caddy/ssl-setup/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/caddy/docker-setup/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/nginx-proxy-manager/ssl-setup/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/fix/proxy/nginx-proxy-manager/docker-setup/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/every-minute/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/every-5-minutes/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/every-hour/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/every-day-midnight/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/every-monday/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/first-day-of-month/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/every-weekday/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/twice-a-day/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/every-15-minutes/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/reboot/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/every-sunday-2am/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/cron/every-6-hours/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>

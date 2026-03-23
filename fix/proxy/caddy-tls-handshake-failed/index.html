@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Fix: Caddy TLS Handshake Failed Error — ConfigClarity</title>
+  <meta name="description" content="Caddy TLS handshake failures — certificate not issued, DNS not propagated, port 80 blocked. How to diagnose and fix Caddy automatic HTTPS failures.">
+  <meta name="keywords" content="caddy tls handshake failed, caddy https not working, caddy certificate error, caddy acme challenge failed">
+  <link rel="canonical" href="https://configclarity.dev/fix/proxy/caddy-tls-handshake-failed/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Fix: Caddy TLS Handshake Failed Error",
+    "url":"https://configclarity.dev/fix/proxy/caddy-tls-handshake-failed/","description":"Caddy TLS handshake failures — certificate not issued, DNS not propagated, port 80 blocked. How to diagnose and fix Caddy automatic HTTPS failures.",
+    "author":{"@type":"Organization","name":"MetricLogic"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Why does Caddy fail to get a certificate even with port 80 open?',"acceptedAnswer":{"@type":"Answer","text":"Common causes: (1) DNS hasn't propagated yet — wait 5–10 minutes after pointing DNS to the server, (2) a UFW rule allows port 80 but Docker is bypassing UFW, (3) Caddy is rate-limited by Let's Encrypt — check caddy logs for rate limit errors."}},
+{"@type":"Question","name":'Can I use Caddy with Cloudflare proxy enabled?',"acceptedAnswer":{"@type":"Answer","text":"Yes, but you need to use Caddy's DNS-01 ACME challenge instead of HTTP-01. With Cloudflare proxying enabled, Caddy can't complete HTTP-01 challenges. Install the Caddy Cloudflare DNS module and configure DNS challenge with your Cloudflare API token."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://configclarity.dev/fix/"},
+    {"@type":"ListItem","position":3,"name":"Proxy Fix Guides","item":"https://configclarity.dev/fix/proxy/"},
+    {"@type":"ListItem","position":4,"name":"Fix: Caddy TLS Handshake Failed Error","item":"https://configclarity.dev/fix/proxy/caddy-tls-handshake-failed/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.75; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:760px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .content { max-width:760px; margin:0 auto; padding:2rem; }
+      h1 { font-size:1.6rem; font-weight:700; margin-bottom:1rem; }
+      h2 { font-size:1.05rem; font-weight:700; margin:2rem 0 0.6rem; }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1rem; }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.1rem 1.3rem; font-size:0.78rem; overflow-x:auto; margin:0.75rem 0 1.25rem; line-height:1.7; }
+      code { background:#1e2130; padding:0.1rem 0.35rem; border-radius:3px; font-size:0.82rem; }
+      .fix-box { background:var(--bg2); border-left:3px solid var(--green); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.25rem 0; }
+      .fix-box .label { font-size:0.7rem; color:var(--green); text-transform:uppercase; letter-spacing:.06em; margin-bottom:0.4rem; }
+      .warn-box { background:var(--bg2); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.25rem 0; }
+      .warn-box p { margin-bottom:0; color:var(--text); }
+      .faq-item { margin-bottom:1.4rem; }
+      .faq-q { font-size:0.9rem; font-weight:600; margin-bottom:0.35rem; }
+      .faq-a { font-size:0.84rem; color:var(--muted); }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; margin:2rem 0; text-align:center; }
+      .cta p { color:var(--text); margin-bottom:0.6rem; font-size:0.875rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.45rem 1.2rem; border-radius:6px; font-size:0.82rem; font-weight:700; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; margin-top:2rem; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/proxy/">Proxy</a> › Fix: Caddy TLS Handshake Failed Error
+  </div>
+  <div class="content">
+    <h1>Fix: Caddy TLS Handshake Failed Error</h1>
+    <h2>The Cause</h2>
+    <p>Caddy uses automatic HTTPS via Let's Encrypt. TLS handshake failures occur when the ACME challenge fails — usually because port 80 is blocked by a firewall, DNS hasn't propagated, or the domain doesn't point to the server.</p>
+    <h2>The Fix</h2>
+    <div class="fix-box">
+  <div class="label">1. Verify port 80 is open (required for ACME HTTP-01 challenge)</div>
+  <pre>sudo ufw allow 80/tcp
+sudo ufw allow 443/tcp
+sudo ufw reload</pre>
+</div>
+<div class="fix-box">
+  <div class="label">2. Verify DNS points to your server</div>
+  <pre>dig +short yourdomain.com
+# Should return your server's IP</pre>
+</div>
+<div class="fix-box">
+  <div class="label">3. Check Caddy logs for the specific ACME error</div>
+  <pre>journalctl -u caddy --since "1 hour ago" | grep -i "tls|acme|cert|error"</pre>
+</div>
+<div class="fix-box">
+  <div class="label">4. Force certificate re-issue (clear Caddy's cert cache)</div>
+  <pre>sudo systemctl stop caddy
+sudo rm -rf /var/lib/caddy/.local/share/caddy/certificates/
+sudo systemctl start caddy</pre>
+</div>
+    <div class="cta"><p>Paste your config to detect proxy misconfigurations and get exact fixes.</p><a href="/proxy/">Open Reverse Proxy Mapper →</a></div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item"><div class="faq-q">Why does Caddy fail to get a certificate even with port 80 open?</div><div class="faq-a">Common causes: (1) DNS hasn't propagated yet — wait 5–10 minutes after pointing DNS to the server, (2) a UFW rule allows port 80 but Docker is bypassing UFW, (3) Caddy is rate-limited by Let's Encrypt — check caddy logs for rate limit errors.</div></div>
+<div class="faq-item"><div class="faq-q">Can I use Caddy with Cloudflare proxy enabled?</div><div class="faq-a">Yes, but you need to use Caddy's DNS-01 ACME challenge instead of HTTP-01. With Cloudflare proxying enabled, Caddy can't complete HTTP-01 challenges. Install the Caddy Cloudflare DNS module and configure DNS challenge with your Cloudflare API token.</div></div>
+  </div>
+  <footer>
+    <p><a href="/fix/">Fix Guides</a> &nbsp;·&nbsp; <a href="/glossary/">Glossary</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>

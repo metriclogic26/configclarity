@@ -655,6 +655,246 @@
     {
       "source": "/blog/traefik-v2-to-v3-migration",
       "destination": "/blog/traefik-v2-to-v3-migration/index.html"
+    },
+    {
+      "source": "/fix/proxy/",
+      "destination": "/fix/proxy/index.html"
+    },
+    {
+      "source": "/fix/proxy",
+      "destination": "/fix/proxy/index.html"
+    },
+    {
+      "source": "/fix/proxy/traefik-v2-to-v3/",
+      "destination": "/fix/proxy/traefik-v2-to-v3/index.html"
+    },
+    {
+      "source": "/fix/proxy/traefik-v2-to-v3",
+      "destination": "/fix/proxy/traefik-v2-to-v3/index.html"
+    },
+    {
+      "source": "/fix/proxy/dangling-routes/",
+      "destination": "/fix/proxy/dangling-routes/index.html"
+    },
+    {
+      "source": "/fix/proxy/dangling-routes",
+      "destination": "/fix/proxy/dangling-routes/index.html"
+    },
+    {
+      "source": "/fix/proxy/missing-ssl-redirect/",
+      "destination": "/fix/proxy/missing-ssl-redirect/index.html"
+    },
+    {
+      "source": "/fix/proxy/missing-ssl-redirect",
+      "destination": "/fix/proxy/missing-ssl-redirect/index.html"
+    },
+    {
+      "source": "/fix/proxy/cors-double-header/",
+      "destination": "/fix/proxy/cors-double-header/index.html"
+    },
+    {
+      "source": "/fix/proxy/cors-double-header",
+      "destination": "/fix/proxy/cors-double-header/index.html"
+    },
+    {
+      "source": "/fix/proxy/traefik-gateway-timeout/",
+      "destination": "/fix/proxy/traefik-gateway-timeout/index.html"
+    },
+    {
+      "source": "/fix/proxy/traefik-gateway-timeout",
+      "destination": "/fix/proxy/traefik-gateway-timeout/index.html"
+    },
+    {
+      "source": "/fix/proxy/nginx-413-request-too-large/",
+      "destination": "/fix/proxy/nginx-413-request-too-large/index.html"
+    },
+    {
+      "source": "/fix/proxy/nginx-413-request-too-large",
+      "destination": "/fix/proxy/nginx-413-request-too-large/index.html"
+    },
+    {
+      "source": "/fix/proxy/traefik-no-route-found/",
+      "destination": "/fix/proxy/traefik-no-route-found/index.html"
+    },
+    {
+      "source": "/fix/proxy/traefik-no-route-found",
+      "destination": "/fix/proxy/traefik-no-route-found/index.html"
+    },
+    {
+      "source": "/fix/proxy/caddy-tls-handshake-failed/",
+      "destination": "/fix/proxy/caddy-tls-handshake-failed/index.html"
+    },
+    {
+      "source": "/fix/proxy/caddy-tls-handshake-failed",
+      "destination": "/fix/proxy/caddy-tls-handshake-failed/index.html"
+    },
+    {
+      "source": "/fix/proxy/nginx/ssl-setup/",
+      "destination": "/fix/proxy/nginx/ssl-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/nginx/ssl-setup",
+      "destination": "/fix/proxy/nginx/ssl-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/nginx/docker-setup/",
+      "destination": "/fix/proxy/nginx/docker-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/nginx/docker-setup",
+      "destination": "/fix/proxy/nginx/docker-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/traefik/ssl-setup/",
+      "destination": "/fix/proxy/traefik/ssl-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/traefik/ssl-setup",
+      "destination": "/fix/proxy/traefik/ssl-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/traefik/docker-setup/",
+      "destination": "/fix/proxy/traefik/docker-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/traefik/docker-setup",
+      "destination": "/fix/proxy/traefik/docker-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/caddy/ssl-setup/",
+      "destination": "/fix/proxy/caddy/ssl-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/caddy/ssl-setup",
+      "destination": "/fix/proxy/caddy/ssl-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/caddy/docker-setup/",
+      "destination": "/fix/proxy/caddy/docker-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/caddy/docker-setup",
+      "destination": "/fix/proxy/caddy/docker-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/nginx-proxy-manager/ssl-setup/",
+      "destination": "/fix/proxy/nginx-proxy-manager/ssl-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/nginx-proxy-manager/ssl-setup",
+      "destination": "/fix/proxy/nginx-proxy-manager/ssl-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/nginx-proxy-manager/docker-setup/",
+      "destination": "/fix/proxy/nginx-proxy-manager/docker-setup/index.html"
+    },
+    {
+      "source": "/fix/proxy/nginx-proxy-manager/docker-setup",
+      "destination": "/fix/proxy/nginx-proxy-manager/docker-setup/index.html"
+    },
+    {
+      "source": "/cron/",
+      "destination": "/cron/index.html"
+    },
+    {
+      "source": "/cron",
+      "destination": "/cron/index.html"
+    },
+    {
+      "source": "/cron/every-minute/",
+      "destination": "/cron/every-minute/index.html"
+    },
+    {
+      "source": "/cron/every-minute",
+      "destination": "/cron/every-minute/index.html"
+    },
+    {
+      "source": "/cron/every-5-minutes/",
+      "destination": "/cron/every-5-minutes/index.html"
+    },
+    {
+      "source": "/cron/every-5-minutes",
+      "destination": "/cron/every-5-minutes/index.html"
+    },
+    {
+      "source": "/cron/every-hour/",
+      "destination": "/cron/every-hour/index.html"
+    },
+    {
+      "source": "/cron/every-hour",
+      "destination": "/cron/every-hour/index.html"
+    },
+    {
+      "source": "/cron/every-day-midnight/",
+      "destination": "/cron/every-day-midnight/index.html"
+    },
+    {
+      "source": "/cron/every-day-midnight",
+      "destination": "/cron/every-day-midnight/index.html"
+    },
+    {
+      "source": "/cron/every-monday/",
+      "destination": "/cron/every-monday/index.html"
+    },
+    {
+      "source": "/cron/every-monday",
+      "destination": "/cron/every-monday/index.html"
+    },
+    {
+      "source": "/cron/first-day-of-month/",
+      "destination": "/cron/first-day-of-month/index.html"
+    },
+    {
+      "source": "/cron/first-day-of-month",
+      "destination": "/cron/first-day-of-month/index.html"
+    },
+    {
+      "source": "/cron/every-weekday/",
+      "destination": "/cron/every-weekday/index.html"
+    },
+    {
+      "source": "/cron/every-weekday",
+      "destination": "/cron/every-weekday/index.html"
+    },
+    {
+      "source": "/cron/twice-a-day/",
+      "destination": "/cron/twice-a-day/index.html"
+    },
+    {
+      "source": "/cron/twice-a-day",
+      "destination": "/cron/twice-a-day/index.html"
+    },
+    {
+      "source": "/cron/every-15-minutes/",
+      "destination": "/cron/every-15-minutes/index.html"
+    },
+    {
+      "source": "/cron/every-15-minutes",
+      "destination": "/cron/every-15-minutes/index.html"
+    },
+    {
+      "source": "/cron/reboot/",
+      "destination": "/cron/reboot/index.html"
+    },
+    {
+      "source": "/cron/reboot",
+      "destination": "/cron/reboot/index.html"
+    },
+    {
+      "source": "/cron/every-sunday-2am/",
+      "destination": "/cron/every-sunday-2am/index.html"
+    },
+    {
+      "source": "/cron/every-sunday-2am",
+      "destination": "/cron/every-sunday-2am/index.html"
+    },
+    {
+      "source": "/cron/every-6-hours/",
+      "destination": "/cron/every-6-hours/index.html"
+    },
+    {
+      "source": "/cron/every-6-hours",
+      "destination": "/cron/every-6-hours/index.html"
     }
   ]
 }

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Fix: Duplicate CORS Headers from Nginx and Application — ConfigClarity</title>
+  <meta name="description" content="When both Nginx and your application set CORS headers, browsers reject requests with 'The Access-Control-Allow-Origin header contains multiple values'. How to fix duplicate CORS headers.">
+  <meta name="keywords" content="duplicate cors headers nginx, cors multiple values fix, nginx cors double header, access-control-allow-origin multiple values">
+  <link rel="canonical" href="https://configclarity.dev/fix/proxy/cors-double-header/">
+  <meta property="og:title" content="Fix: Duplicate CORS Headers from Nginx and Application"><meta property="og:description" content="When both Nginx and your application set CORS headers, browsers reject requests with 'The Access-Control-Allow-Origin header contains multiple values'. How to fix duplicate CORS headers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Fix: Duplicate CORS Headers from Nginx and Application",
+    "url":"https://configclarity.dev/fix/proxy/cors-double-header/","description":"When both Nginx and your application set CORS headers, browsers reject requests with 'The Access-Control-Allow-Origin header contains multiple values'. How to fix duplicate CORS headers.",
+    "author":{"@type":"Organization","name":"MetricLogic"},
+    "datePublished":"2026-03-22"}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Why do CORS headers get duplicated in Nginx?',"acceptedAnswer":{"@type":"Answer","text":"Nginx's add_header directive adds headers to the response, but does not remove existing headers set by the upstream application. If both Nginx and the application set Access-Control-Allow-Origin, both values appear in the response. Browsers reject multiple values for this header."}},
+{"@type":"Question","name":'How do I check if I have duplicate CORS headers?',"acceptedAnswer":{"@type":"Answer","text":"Run: curl -sI -H 'Origin: https://yourapp.com' https://yourdomain.com/api/endpoint | grep -i access-control. If you see the same header twice, you have the duplication problem."}},
+{"@type":"Question","name":'Does always in add_header matter for CORS?',"acceptedAnswer":{"@type":"Answer","text":'Yes. Without always, Nginx only adds headers to 2xx and 3xx responses. CORS headers need to be present on 4xx and 5xx responses too, otherwise browser error handling breaks. Always use add_header ... always for CORS headers.'}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://configclarity.dev/fix/"},
+    {"@type":"ListItem","position":3,"name":"Proxy Fix Guides","item":"https://configclarity.dev/fix/proxy/"},
+    {"@type":"ListItem","position":4,"name":"Duplicate CORS Headers","item":"https://configclarity.dev/fix/proxy/cors-double-header/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.75; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:760px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .content { max-width:760px; margin:0 auto; padding:2rem; }
+      h1 { font-size:1.6rem; font-weight:700; margin-bottom:1rem; }
+      h2 { font-size:1.05rem; font-weight:700; margin:2rem 0 0.6rem; }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1rem; }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.1rem 1.3rem; font-size:0.78rem; overflow-x:auto; margin:0.75rem 0 1.25rem; line-height:1.7; }
+      code { background:#1e2130; padding:0.1rem 0.35rem; border-radius:3px; font-size:0.82rem; }
+      .fix-box { background:var(--bg2); border-left:3px solid var(--green); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.25rem 0; }
+      .fix-box .label { font-size:0.7rem; color:var(--green); text-transform:uppercase; letter-spacing:.06em; margin-bottom:0.4rem; }
+      .warn-box { background:var(--bg2); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.25rem 0; }
+      .warn-box p { margin-bottom:0; color:var(--text); }
+      .faq-item { margin-bottom:1.4rem; }
+      .faq-q { font-size:0.9rem; font-weight:600; margin-bottom:0.35rem; }
+      .faq-a { font-size:0.84rem; color:var(--muted); }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; margin:2rem 0; text-align:center; }
+      .cta p { color:var(--text); margin-bottom:0.6rem; font-size:0.875rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.45rem 1.2rem; border-radius:6px; font-size:0.82rem; font-weight:700; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; margin-top:2rem; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/proxy/">Proxy Fix Guides</a> › Duplicate CORS Headers
+  </div>
+  <div class="content">
+    <h1>Fix: Duplicate CORS Headers from Nginx and Application</h1>
+    <p>Duplicate CORS headers cause browser errors like <code>The 'Access-Control-Allow-Origin' header contains multiple values 'https://app.com, https://app.com'</code>. This happens when both Nginx and your backend application set the same CORS headers independently.</p>
+    
+<h2>Why This Happens</h2>
+<p>Your Express/Django/FastAPI application returns <code>Access-Control-Allow-Origin: https://app.com</code>. Your Nginx config also adds <code>add_header Access-Control-Allow-Origin https://app.com</code>. Both headers are sent. Browsers reject multiple values for this header.</p>
+
+<h2>Option 1: Remove CORS headers from Nginx (recommended)</h2>
+<p>If your application already handles CORS correctly, remove the duplicate headers from Nginx:</p>
+<div class="fix-box">
+  <div class="label">Remove these lines from your Nginx location block</div>
+  <pre># Delete or comment out:
+# add_header Access-Control-Allow-Origin $http_origin;
+# add_header Access-Control-Allow-Methods "GET, POST, OPTIONS";
+# add_header Access-Control-Allow-Headers "Authorization, Content-Type";</pre>
+</div>
+
+<h2>Option 2: Remove CORS from your app, handle in Nginx</h2>
+<p>Centralise CORS handling at the Nginx layer if you have multiple services that need the same policy:</p>
+<div class="fix-box">
+  <div class="label">Nginx CORS block — handles all CORS including preflight</div>
+  <pre>location / {
+    # Handle OPTIONS preflight
+    if ($request_method = OPTIONS) {
+        add_header Access-Control-Allow-Origin $http_origin always;
+        add_header Access-Control-Allow-Methods "GET, POST, PUT, DELETE, OPTIONS" always;
+        add_header Access-Control-Allow-Headers "Authorization, Content-Type" always;
+        add_header Access-Control-Max-Age 3600 always;
+        return 204;
+    }
+
+    add_header Access-Control-Allow-Origin $http_origin always;
+    proxy_pass http://127.0.0.1:3000;
+}</pre>
+</div>
+<p>Then disable CORS handling in your application entirely — let Nginx own it.</p>
+
+    <div class="cta"><p>Paste your nginx.conf to detect CORS header duplication and missing always flags.</p><a href="/proxy/">Open Reverse Proxy Mapper →</a></div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item"><div class="faq-q">Why do CORS headers get duplicated in Nginx?</div><div class="faq-a">Nginx's add_header directive adds headers to the response, but does not remove existing headers set by the upstream application. If both Nginx and the application set Access-Control-Allow-Origin, both values appear in the response. Browsers reject multiple values for this header.</div></div>
+<div class="faq-item"><div class="faq-q">How do I check if I have duplicate CORS headers?</div><div class="faq-a">Run: curl -sI -H 'Origin: https://yourapp.com' https://yourdomain.com/api/endpoint | grep -i access-control. If you see the same header twice, you have the duplication problem.</div></div>
+<div class="faq-item"><div class="faq-q">Does always in add_header matter for CORS?</div><div class="faq-a">Yes. Without always, Nginx only adds headers to 2xx and 3xx responses. CORS headers need to be present on 4xx and 5xx responses too, otherwise browser error handling breaks. Always use add_header ... always for CORS headers.</div></div>
+  </div>
+  <footer>
+    <p><a href="/fix/">Fix Guides</a> &nbsp;·&nbsp; <a href="/glossary/">Glossary</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>
