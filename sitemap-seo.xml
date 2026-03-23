@@ -465,4 +465,5 @@
   <url><loc>https://configclarity.dev/providers/gcp-compute/docker-setup/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://configclarity.dev/providers/gcp-compute/ssh-hardening/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
   <url><loc>https://configclarity.dev/providers/gcp-compute/firewall-setup/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>https://configclarity.dev/blog/openclaw-server-audit/</loc><lastmod>2026-03-23</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>

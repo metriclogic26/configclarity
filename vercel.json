@@ -1907,6 +1907,14 @@
     {
       "source": "/providers/gcp-compute/firewall-setup",
       "destination": "/providers/gcp-compute/firewall-setup/index.html"
+    },
+    {
+      "source": "/blog/openclaw-server-audit/",
+      "destination": "/blog/openclaw-server-audit/index.html"
+    },
+    {
+      "source": "/blog/openclaw-server-audit",
+      "destination": "/blog/openclaw-server-audit/index.html"
     }
   ]
 }
