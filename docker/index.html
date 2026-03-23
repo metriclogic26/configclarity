@@ -26,6 +26,82 @@
     "provider": { "@type": "Organization", "name": "ConfigClarity", "url": "https://configclarity.dev" }
   }
   </script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What does the Docker Compose Auditor check?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "It scans your compose file for missing healthchecks, hardcoded secrets in environment blocks, port collisions, services bound to 0.0.0.0, and insecure image tags including :latest."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does this tool send my compose file anywhere?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. All parsing happens entirely in your browser. Your compose file never leaves your machine."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a hardcoded secret in Docker Compose?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A hardcoded secret is when you write a literal value like PASSWORD=mysecret directly in your compose file instead of using a variable reference like PASSWORD=${MY_SECRET}. Hardcoded secrets can be accidentally committed to version control."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is a port collision in Docker Compose?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A port collision is when two services in the same compose file map to the same host port. Only one service can bind to a host port at a time — the second one will fail to start."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why does Docker bypass UFW firewall rules?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Docker inserts iptables rules directly into the PREROUTING chain, which executes before UFW's INPUT chain. Any ports mapped in docker-compose.yml are publicly accessible regardless of UFW rules. Fix by binding to 127.0.0.1:PORT:PORT instead of PORT:PORT."
+      }
+    }
+  ]
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  "name": "How to audit a Docker Compose file for security issues",
+  "description": "Use ConfigClarity Docker Auditor to find hardcoded secrets, missing healthchecks, port collisions and insecure bindings in docker-compose.yml",
+  "estimatedCost": { "@type": "MonetaryAmount", "currency": "USD", "value": "0" },
+  "step": [
+    {
+      "@type": "HowToStep",
+      "name": "Paste your docker-compose.yml",
+      "text": "Copy your docker-compose.yml content and paste it into the left panel. Optionally paste your .env file below it."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Click Audit",
+      "text": "Click the Audit button. The tool scans all services for missing healthchecks, hardcoded secrets, port collisions, and insecure 0.0.0.0 bindings."
+    },
+    {
+      "@type": "HowToStep",
+      "name": "Review findings and apply fixes",
+      "text": "Each finding includes an explanation and copy-paste fix. Use the Inject Fixes button to auto-generate healthcheck blocks for all services."
+    }
+  ]
+}
+</script>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
   <style>

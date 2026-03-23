@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reverse Proxy — DevOps Glossary — ConfigClarity</title>
+  <meta name="description" content="A reverse proxy is a server that sits in front of backend applications and forwards client requests to them, handling TLS termination, load balancing, caching, and routing.">
+  <meta name="keywords" content="nginx, reverse proxy, traefik, tls, load balancing, devops, linux server, devops glossary">
+  <link rel="canonical" href="https://configclarity.dev/glossary/reverse-proxy/">
+  <meta property="og:title" content="Reverse Proxy — ConfigClarity Glossary">
+  <meta property="og:description" content="A reverse proxy is a server that sits in front of backend applications and forwards client requests to them, handling TLS termination, load balancing, caching, and routing.">
+  <meta property="og:url" content="https://configclarity.dev/glossary/reverse-proxy/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": "Reverse Proxy",
+    "url": "https://configclarity.dev/glossary/reverse-proxy/",
+    "description": "A reverse proxy is a server that sits in front of backend applications and forwards client requests to them, handling TLS termination, load balancing, caching, and routing.",
+    "inDefinedTermSet": {
+      "@type": "DefinedTermSet",
+      "name": "ConfigClarity DevOps Glossary",
+      "url": "https://configclarity.dev/glossary/"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{"@type":"Question","name":'What is the difference between a proxy and a reverse proxy?',"acceptedAnswer":{"@type":"Answer","text":'A forward proxy sits in front of clients and forwards their requests to servers — used for anonymity, content filtering, or caching outbound traffic. A reverse proxy sits in front of servers and forwards client requests to backend applications — used for TLS termination, routing, and load balancing.'}},
+{"@type":"Question","name":'Why use Nginx as a reverse proxy for Docker?',"acceptedAnswer":{"@type":"Answer","text":"Docker containers typically run on high-numbered ports (8080, 3000, 5000). Nginx acts as the public-facing server on ports 80 and 443, handles TLS, and proxies requests to the container's port. This means only Nginx needs to be exposed — container ports are bound to 127.0.0.1 only."}},
+{"@type":"Question","name":'What is a dangling reverse proxy route?',"acceptedAnswer":{"@type":"Answer","text":'A dangling route is a proxy configuration pointing to a backend that no longer exists — a container that was stopped, a service that was moved, or a hostname that no longer resolves. The reverse proxy returns a 502 or 504 error for these routes.'}}]
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Glossary","item":"https://configclarity.dev/glossary/"},
+    {"@type":"ListItem","position":3,"name":"Reverse Proxy","item":"https://configclarity.dev/glossary/reverse-proxy/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; }
+      .definition-box { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.95rem; }
+      h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.4rem; }
+      .related-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+      .related-links a { font-size: 0.8rem; padding: 0.3rem 0.75rem; background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 6px; color: var(--text); }
+      .related-links a:hover { border-color: var(--purple); text-decoration: none; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .tool-cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; }
+      .tool-cta p { color: var(--text); font-size: 0.85rem; margin-bottom: 0.75rem; }
+      .tool-cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+      .card { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; }
+      .card:hover { border-color: var(--purple); }
+      .card-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.35rem; }
+      .card-desc { font-size: 0.78rem; color: var(--muted); }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/glossary/">Glossary</a> › Reverse Proxy
+  </div>
+  <div class="content">
+    <h1>Reverse Proxy</h1>
+    <div class="definition-box">A reverse proxy is a server that sits in front of backend applications and forwards client requests to them, handling TLS termination, load balancing, caching, and routing.</div>
+    <div><span class="tag">Nginx</span><span class="tag">Reverse Proxy</span><span class="tag">Traefik</span><span class="tag">TLS</span><span class="tag">Load Balancing</span><span class="tag">DevOps</span></div>
+    <p>A reverse proxy accepts incoming connections from clients and forwards them to one or more backend services. From the client's perspective, they are communicating with a single server. The backend services are hidden behind the proxy.</p>
+
+<p>The most common reverse proxies in self-hosted Linux environments are Nginx, Caddy, Traefik, and HAProxy. In cloud environments, Cloudflare, AWS ALB, and Vercel's edge network serve as reverse proxies.</p>
+
+<h2>What a Reverse Proxy Does</h2>
+<p><strong>TLS termination</strong> — the proxy handles HTTPS, so backend services can communicate over plain HTTP internally. <strong>Host-based routing</strong> — route app.domain.com to one backend, api.domain.com to another, all on the same server. <strong>Path-based routing</strong> — route /api/ to one service, / to another. <strong>Load balancing</strong> — distribute traffic across multiple backend instances. <strong>Header manipulation</strong> — add X-Forwarded-For, X-Real-IP, security headers.</p>
+
+<h2>Common Misconfigurations</h2>
+<p>Dangling routes pointing to stopped containers are the most frequent issue — Nginx config references a backend that no longer exists, causing 502 errors. Missing SSL redirects (HTTP not redirected to HTTPS) are the second most common. Traefik users frequently encounter label conflicts when migrating from v2 to v3, as label syntax changed significantly.</p>
+    <h2>Related Tools</h2>
+    <div class="related-links"><a href="/proxy/">Reverse Proxy Mapper →</a></div>
+    <h2>Fix Guides</h2>
+    <div class="related-links"><a href="/fix/nginx/502-bad-gateway/">Nginx 502 fix</a><a href="/fix/nginx/ssl-redirect-missing/">SSL redirect missing fix</a></div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+        <div class="faq-q">What is the difference between a proxy and a reverse proxy?</div>
+        <div class="faq-a">A forward proxy sits in front of clients and forwards their requests to servers — used for anonymity, content filtering, or caching outbound traffic. A reverse proxy sits in front of servers and forwards client requests to backend applications — used for TLS termination, routing, and load balancing.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">Why use Nginx as a reverse proxy for Docker?</div>
+        <div class="faq-a">Docker containers typically run on high-numbered ports (8080, 3000, 5000). Nginx acts as the public-facing server on ports 80 and 443, handles TLS, and proxies requests to the container's port. This means only Nginx needs to be exposed — container ports are bound to 127.0.0.1 only.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">What is a dangling reverse proxy route?</div>
+        <div class="faq-a">A dangling route is a proxy configuration pointing to a backend that no longer exists — a container that was stopped, a service that was moved, or a hostname that no longer resolves. The reverse proxy returns a 502 or 504 error for these routes.</div>
+      </div>
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+# ConfigClarity — configclarity.dev
+# Free browser-based DevOps audit tools. No signup, nothing leaves your browser.
+# MIT Licensed — github.com/metriclogic26/configclarity
+
+## Tools
+
+- Cron Builder & Visualiser: /crontab — overlap detection, timeline, flock safety, systemd import, Markdown export
+- SSL Certificate Checker: /ssl — bulk expiry monitoring, CDN detection, 200-day validity flag, PNG export
+- Docker Compose Auditor: /docker — healthcheck injector, secrets scan, port collision, image tag checker, NVIDIA GPU runtime
+- Firewall Auditor: /firewall — UFW and nftables auto-detect, high-risk ports, IPv4/IPv6 mismatch
+- Reverse Proxy Mapper: /proxy — nginx and Traefik v2/v3, routing visualisation, URL match tester
+- robots.txt Validator: /robots — syntax errors, AI bot coverage (GPTBot, ClaudeBot, Perplexity, Bytespider)
+
+## Fix Guides
+
+- Docker port exposure: /fix/docker/port-exposure — bind to 127.0.0.1, not 0.0.0.0
+- Docker UFW bypass: /fix/docker/ufw-bypass — Docker bypasses iptables, three permanent fixes
+- Docker hardcoded secrets: /fix/docker/hardcoded-secrets — .env files, Docker Secrets
+- Docker missing healthcheck: /fix/docker/missing-healthcheck — postgres, redis, nginx, mongodb templates
+
+## Error Pages
+
+- Docker UFW bypass: /error/docker-ufw-bypass
+- nginx 502 Bad Gateway: /error/nginx-502-bad-gateway
+- Cron not running: /error/cron-not-running
+- UFW inactive still open: /error/ufw-inactive-still-open
+- Permission denied docker.sock: /error/permission-denied-docker-socket
+
+## Comparisons
+
+- vs crontab.guru: /vs/crontab-guru
+- vs SSL Labs: /vs/ssl-labs
+- vs Docker Bench Security: /vs/docker-bench-security
+
+## Micro-Tools
+
+- Docker Compose linter: /docker-compose-linter
+- Crontab validator: /crontab-validator
+- nginx config validator: /nginx-config-validator
+
+## Provider Guides
+
+- Hetzner + Docker firewall: /providers/hetzner/docker-firewall
+- Hetzner SSL setup: /providers/hetzner/ssl-setup
+- DigitalOcean UFW + Docker: /providers/digitalocean/ufw-docker
+- Vultr SSL setup: /providers/vultr/ssl-setup
+- Linode Docker security: /providers/linode/docker-setup
+
+## Network
+
+- DomainPreflight: https://domainpreflight.dev — email DNS audit, SPF/DKIM/DMARC alignment
+- PackageFix: https://packagefix.dev — dependency CVE scanner
+
+## License: MIT
+## Source: github.com/metriclogic26/configclarity

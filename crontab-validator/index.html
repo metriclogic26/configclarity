@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crontab validator — check syntax and visualise schedule | ConfigClarity</title>
+  <meta name="description" content="Validate cron expressions online. Check syntax, see plain English translation, visualise all jobs on a timeline, detect overlaps. Supports standard crontab and @daily/@hourly macros.">
+  <link rel="canonical" href="https://configclarity.dev/crontab-validator">
+  <meta property="og:title" content="Crontab validator — check syntax and visualise schedule">
+  <meta property="og:description" content="Validate cron expressions online. Check syntax, see plain English translation, visualise all jobs on a timeline, detect overlaps. Supports standard crontab and @daily/@hourly macros.">
+  <meta property="og:url" content="https://configclarity.dev/crontab-validator">
+  <meta property="og:type" content="website">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap">
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "SoftwareApplication", "name": "Crontab Validator", "url": "https://configclarity.dev/crontab-validator", "applicationCategory": "DeveloperApplication", "offers": {"@type": "Offer", "price": "0"}}</script>
+  <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://configclarity.dev/"}, {"@type": "ListItem", "position": 2, "name": "Crontab Validator", "item": "https://configclarity.dev"}]}</script>
+  <style>
+:root {
+  --bg: #0f1117; --bg2: #1e2130; --purple: #6c63ff;
+  --green: #22c55e; --orange: #f97316; --red: #ef4444;
+  --text: #e2e4f0; --muted: #8a8fb5;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--text);
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  line-height: 1.6; font-size: 1rem; }
+a { color: var(--purple); }
+a:hover { color: #8b83ff; }
+.header { padding: 1.5rem; text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.08); }
+.header h1 { margin: 0; font-size: 1.5rem; font-weight: 600;
+  letter-spacing: -0.02em; }
+.header .subtitle { margin: 0.5rem 0 0;
+  color: rgba(255,255,255,0.65); font-size: 0.9rem; }
+.breadcrumb { padding: 0.75rem 1.5rem;
+  background: #10131f; border-bottom: 1px solid #1e2236;
+  font-size: 0.8rem; color: var(--muted); }
+.breadcrumb a { color: var(--muted); text-decoration: none; }
+.breadcrumb a:hover { color: var(--purple); }
+.breadcrumb span { margin: 0 0.4rem; }
+.container { max-width: 860px; margin: 0 auto;
+  padding: 2rem 1.5rem; }
+.section { margin-bottom: 2.5rem; }
+h2 { font-size: 1.25rem; font-weight: 600; margin: 0 0 1rem;
+  color: #fff; }
+h3 { font-size: 1rem; font-weight: 600; margin: 0 0 0.75rem;
+  color: rgba(255,255,255,0.9); }
+p { color: rgba(255,255,255,0.75); margin: 0 0 1rem; }
+.code-block { background: rgba(0,0,0,0.4);
+  border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+  padding: 1rem 1.25rem; margin: 1rem 0; overflow-x: auto; }
+.code-block pre { margin: 0; font-size: 0.8125rem;
+  color: #e2e4f0; white-space: pre; }
+.bad-code { border-left: 4px solid var(--red); }
+.good-code { border-left: 4px solid var(--green); }
+.bad-label { color: var(--red); font-size: 0.75rem;
+  font-weight: 600; margin-bottom: 0.5rem; display: block; }
+.good-label { color: var(--green); font-size: 0.75rem;
+  font-weight: 600; margin-bottom: 0.5rem; display: block; }
+.alert { padding: 0.75rem 1rem; border-radius: 8px;
+  border-left: 4px solid; margin: 1rem 0; font-size: 0.875rem; }
+.alert-red { border-left-color: var(--red);
+  background: rgba(239,68,68,0.1); color: #fca5a5; }
+.alert-orange { border-left-color: var(--orange);
+  background: rgba(249,115,22,0.1); color: #fdba74; }
+.alert-green { border-left-color: var(--green);
+  background: rgba(34,197,94,0.1); color: #86efac; }
+.alert-purple { border-left-color: var(--purple);
+  background: rgba(108,99,255,0.1); color: #a5b4fc; }
+.cta-box { background: var(--bg2);
+  border: 1px solid rgba(108,99,255,0.4); border-radius: 12px;
+  padding: 1.5rem; margin: 2rem 0; text-align: center; }
+.cta-box h3 { color: #fff; margin-bottom: 0.5rem; }
+.cta-box p { color: var(--muted); margin-bottom: 1rem; }
+.btn-primary { display: inline-block;
+  padding: 0.75rem 1.5rem; background: var(--purple);
+  border-radius: 8px; color: #fff; text-decoration: none;
+  font-weight: 600; font-size: 0.9375rem; }
+.btn-primary:hover { background: #5a52e0; color: #fff; }
+.faq-section { margin-top: 3rem;
+  border-top: 1px solid rgba(255,255,255,0.08);
+  padding-top: 2rem; }
+.faq-item { background: var(--bg2);
+  border: 1px solid rgba(255,255,255,0.08); border-radius: 8px;
+  margin-bottom: 0.5rem; overflow: hidden; }
+.faq-question { padding: 1rem 1.25rem; font-size: 0.9375rem;
+  font-weight: 600; color: rgba(255,255,255,0.95);
+  cursor: pointer; list-style: none; }
+.faq-question::-webkit-details-marker { display: none; }
+.faq-question::before { content: '+ '; color: var(--purple); }
+.faq-item[open] .faq-question::before { content: '− '; }
+.faq-answer { margin: 0; padding: 0 1.25rem 1rem;
+  font-size: 0.875rem; line-height: 1.55;
+  color: rgba(255,255,255,0.75); }
+.faq-answer code { background: rgba(255,255,255,0.1);
+  padding: 0.1rem 0.35rem; border-radius: 4px;
+  font-size: 0.875em; }
+.tool-nav { display: flex; gap: 0.75rem; padding: 0.75rem 1.5rem;
+  background: #10131f; border-bottom: 1px solid #1e2236;
+  justify-content: center; flex-wrap: wrap; }
+.tool-link { display: flex; align-items: center; gap: 0.5rem;
+  padding: 0.5rem 0.875rem; border-radius: 8px;
+  border: 1px solid #1e2236; text-decoration: none;
+  color: #8a8fb5; font-size: 0.8rem; transition: all 0.15s; }
+.tool-link:hover { border-color: var(--purple);
+  color: var(--text); background: #161924; }
+.step { display: flex; gap: 1rem; margin-bottom: 1.5rem;
+  align-items: flex-start; }
+.step-num { flex-shrink: 0; width: 2rem; height: 2rem;
+  background: var(--purple); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 600; font-size: 0.875rem; }
+.step-body { flex: 1; }
+.tag { display: inline-block; padding: 0.2rem 0.5rem;
+  border-radius: 4px; font-size: 0.7rem; font-weight: 600;
+  margin-right: 0.35rem; }
+.tag-red { background: rgba(239,68,68,0.25); color: var(--red); }
+.tag-green { background: rgba(34,197,94,0.25); color: var(--green); }
+.tag-orange { background: rgba(249,115,22,0.25); color: var(--orange); }
+.comparison-table { width: 100%; border-collapse: collapse;
+  font-size: 0.875rem; margin: 1rem 0; }
+.comparison-table th { padding: 0.75rem 1rem; text-align: left;
+  background: rgba(108,99,255,0.15); color: #fff;
+  border-bottom: 1px solid rgba(255,255,255,0.1); }
+.comparison-table td { padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.8); }
+.comparison-table tr:last-child td { border-bottom: none; }
+.check { color: var(--green); } .cross { color: var(--red); }
+.site-footer { text-align: center; padding: 2rem 1.5rem;
+  border-top: 1px solid #1e2236; margin-top: 3rem; }
+.site-footer p { color: var(--muted); font-size: 0.8rem; margin: 0.25rem 0; }
+.site-footer a { color: var(--muted); }
+@media (max-width: 600px) {
+  .tool-nav { gap: 0.35rem; padding: 0.5rem; }
+  .tool-link { font-size: 0.7rem; padding: 0.4rem 0.6rem; }
+  .container { padding: 1.25rem 1rem; }
+}
+</style>
+</head>
+<body>
+  <header class="header">
+    <h1><a href="/" style="text-decoration:none;color:inherit;">ConfigClarity</a></h1>
+    <p class="subtitle">Free browser-based DevOps audit tools — no signup, nothing leaves your browser</p>
+  </header>
+  <nav class="tool-nav">
+  <a href="/crontab" class="tool-link">🕐 Cron</a>
+  <a href="/ssl" class="tool-link">🔒 SSL</a>
+  <a href="/docker" class="tool-link">🐳 Docker</a>
+  <a href="/firewall" class="tool-link">🛡️ Firewall</a>
+  <a href="/proxy" class="tool-link">🔀 Proxy</a>
+  <a href="/robots" class="tool-link">🤖 robots.txt</a>
+</nav>
+  <div class="breadcrumb"><a href="/">Home</a> <span>›</span> Crontab Validator</div>
+  <div class="container">
+    
+<section class="section">
+  <h1 style="font-size:1.75rem;margin:0 0 0.5rem;">Crontab Validator</h1>
+  <p style="font-size:1.1rem;color:var(--muted);">Check cron syntax, see plain English translation, detect overlaps</p>
+</section>
+
+<section class="section">
+  <h2>Cron expression format</h2>
+  <div class="code-block">
+    <pre>┌──────── minute (0–59)
+│ ┌────── hour (0–23)
+│ │ ┌──── day of month (1–31)
+│ │ │ ┌── month (1–12)
+│ │ │ │ ┌ day of week (0–6, 0=Sunday)
+│ │ │ │ │
+* * * * * command</pre>
+  </div>
+</section>
+
+<section class="section">
+  <h2>Common expressions</h2>
+  <table class="comparison-table">
+    <thead><tr><th>Expression</th><th>Plain English</th><th>Next run example</th></tr></thead>
+    <tbody>
+      <tr><td><code>*/5 * * * *</code></td><td>Every 5 minutes</td><td>:00, :05, :10...</td></tr>
+      <tr><td><code>0 * * * *</code></td><td>Every hour at :00</td><td>01:00, 02:00...</td></tr>
+      <tr><td><code>0 2 * * *</code></td><td>Daily at 2:00 AM</td><td>Tomorrow 02:00</td></tr>
+      <tr><td><code>0 0 * * 0</code></td><td>Every Sunday at midnight</td><td>Next Sunday 00:00</td></tr>
+      <tr><td><code>0 9 * * 1-5</code></td><td>Weekdays at 9:00 AM</td><td>Next weekday 09:00</td></tr>
+      <tr><td><code>0 0 1 * *</code></td><td>First day of every month</td><td>1st of next month</td></tr>
+      <tr><td><code>30 8 * * 1</code></td><td>Mondays at 8:30 AM</td><td>Next Monday 08:30</td></tr>
+      <tr><td><code>@daily</code></td><td>Same as 0 0 * * *</td><td>Tomorrow midnight</td></tr>
+      <tr><td><code>@hourly</code></td><td>Same as 0 * * * *</td><td>Next hour :00</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section">
+  <h2>What makes cron expressions tricky</h2>
+  
+  <h3>Day of week: 0 and 7 are both Sunday</h3>
+  <div class="code-block">
+    <pre>0 0 * * 0   # Sunday (0)
+0 0 * * 7   # Also Sunday (7) — both valid</pre>
+  </div>
+
+  <h3>Step values</h3>
+  <div class="code-block">
+    <pre>*/15 * * * *    # Every 15 minutes: :00, :15, :30, :45
+0 */6 * * *    # Every 6 hours: 00:00, 06:00, 12:00, 18:00
+0 8-18/2 * * * # Every 2 hours between 8am-6pm</pre>
+  </div>
+
+  <h3>Lists and ranges</h3>
+  <div class="code-block">
+    <pre>0 9,17 * * *     # At 9:00 AM and 5:00 PM
+0 9 * * 1,3,5   # Monday, Wednesday, Friday at 9:00 AM
+0 0 1-7 * *     # First 7 days of every month</pre>
+  </div>
+</section>
+
+<div class="cta-box">
+  <h3>Validate your full crontab</h3>
+  <p>Paste your entire <code>crontab -l</code> output and see every job on a timeline with overlap detection, server load warnings, and plain English translations.</p>
+  <a href="/crontab" class="btn-primary">Open Cron Visualiser →</a>
+</div>
+
+<section class="faq-section">
+  <h2>Frequently Asked Questions</h2>
+  <details class="faq-item">
+    <summary class="faq-question">Does cron use the server's timezone?</summary>
+    <p class="faq-answer">Yes. Cron runs in the system timezone (usually UTC on servers). The ConfigClarity Cron Visualiser lets you set UTC, local, or a custom timezone offset so you can verify schedules in the context of your server's clock.</p>
+  </details>
+  <details class="faq-item">
+    <summary class="faq-question">Why is my cron job not running even though the expression looks correct?</summary>
+    <p class="faq-answer">Common causes: the cron daemon isn't running (<code>systemctl status cron</code>), the script has a PATH issue (cron runs with minimal PATH), the script isn't executable (<code>chmod +x script.sh</code>), or output is going nowhere. Add <code>>> /tmp/cronlog.txt 2>&1</code> to capture all output.</p>
+  </details>
+  <details class="faq-item">
+    <summary class="faq-question">What does @reboot do?</summary>
+    <p class="faq-answer"><code>@reboot command</code> runs once when the cron daemon starts (typically at system boot). It's equivalent to running the command once on startup. There's no guarantee of timing relative to other services — use systemd units for ordering guarantees.</p>
+  </details>
+</section>
+
+  </div>
+  <footer class="site-footer">
+  <p>🔒 No data stored. All processing in your browser.</p>
+  <p style="margin-top:0.75rem;">
+    <a href="https://configclarity.dev">ConfigClarity</a> by MetricLogic ·
+    <a href="https://domainpreflight.dev">DomainPreflight</a> ·
+    <a href="https://packagefix.dev">PackageFix</a>
+  </p>
+</footer>
+</body>
+</html>

@@ -1177,6 +1177,15 @@ api-check     */30 * * * *`;
           pasteSaveTimer = null;
         }, 500);
       });
+      textarea.addEventListener('paste', function () {
+        setTimeout(function () {
+          if (textarea.value.trim()) {
+            hasVisualised = true;
+            updateControlsVisibility();
+            runVisualization();
+          }
+        }, 300);
+      });
     }
     function saveCronPasteToStorage() {
       try {

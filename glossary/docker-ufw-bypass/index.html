@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker UFW Bypass — DevOps Glossary — ConfigClarity</title>
+  <meta name="description" content="Docker UFW bypass is a known misconfiguration where Docker's iptables rules expose container ports to the internet, ignoring UFW's deny rules.">
+  <meta name="keywords" content="docker, ufw, iptables, firewall, security, linux server, devops glossary">
+  <link rel="canonical" href="https://configclarity.dev/glossary/docker-ufw-bypass/">
+  <meta property="og:title" content="Docker UFW Bypass — ConfigClarity Glossary">
+  <meta property="og:description" content="Docker UFW bypass is a known misconfiguration where Docker's iptables rules expose container ports to the internet, ignoring UFW's deny rules.">
+  <meta property="og:url" content="https://configclarity.dev/glossary/docker-ufw-bypass/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": "Docker UFW Bypass",
+    "url": "https://configclarity.dev/glossary/docker-ufw-bypass/",
+    "description": "Docker UFW bypass is a known misconfiguration where Docker's iptables rules expose container ports to the internet, ignoring UFW's deny rules.",
+    "inDefinedTermSet": {
+      "@type": "DefinedTermSet",
+      "name": "ConfigClarity DevOps Glossary",
+      "url": "https://configclarity.dev/glossary/"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{"@type":"Question","name":'Does UFW protect Docker containers?',"acceptedAnswer":{"@type":"Answer","text":'No. UFW manages the Linux INPUT chain. Docker containers use the FORWARD chain, which UFW does not control by default. Docker ports are accessible from the internet even if UFW has no allow rule for them.'}},
+{"@type":"Question","name":'How do I check if Docker is bypassing UFW?',"acceptedAnswer":{"@type":"Answer","text":'Run: <code>sudo iptables -L DOCKER --line-numbers</code>. Any ACCEPT rules in that chain bypass UFW. You can also use the ConfigClarity Firewall Auditor — paste your <code>ufw status verbose</code> output and it will flag Docker bypass risk.'}},
+{"@type":"Question","name":'What is the safest Docker port binding?',"acceptedAnswer":{"@type":"Answer","text":'Bind to <code>127.0.0.1</code>: use <code>127.0.0.1:8080:80</code> in docker-compose.yml. This exposes the port only on the loopback interface, accessible via Nginx reverse proxy but not directly from the internet.'}}]
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Glossary","item":"https://configclarity.dev/glossary/"},
+    {"@type":"ListItem","position":3,"name":"Docker UFW Bypass","item":"https://configclarity.dev/glossary/docker-ufw-bypass/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; }
+      .definition-box { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.95rem; }
+      h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.4rem; }
+      .related-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+      .related-links a { font-size: 0.8rem; padding: 0.3rem 0.75rem; background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 6px; color: var(--text); }
+      .related-links a:hover { border-color: var(--purple); text-decoration: none; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .tool-cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; }
+      .tool-cta p { color: var(--text); font-size: 0.85rem; margin-bottom: 0.75rem; }
+      .tool-cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+      .card { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; }
+      .card:hover { border-color: var(--purple); }
+      .card-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.35rem; }
+      .card-desc { font-size: 0.78rem; color: var(--muted); }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/glossary/">Glossary</a> › Docker UFW Bypass
+  </div>
+  <div class="content">
+    <h1>Docker UFW Bypass</h1>
+    <div class="definition-box">Docker UFW bypass is a known misconfiguration where Docker's iptables rules expose container ports to the internet, ignoring UFW's deny rules.</div>
+    <div><span class="tag">Docker</span><span class="tag">UFW</span><span class="tag">iptables</span><span class="tag">Firewall</span><span class="tag">Security</span></div>
+    <p>Docker UFW bypass occurs because Docker inserts its own iptables rules directly into the DOCKER chain, which is evaluated before UFW's INPUT chain rules. When you run a container with <code>-p 8080:80</code> or set <code>ports:</code> in docker-compose.yml, Docker adds an iptables ACCEPT rule that allows external traffic to reach the container regardless of your <code>ufw deny</code> rules.</p>
+
+<p>This is not a bug — it's Docker's intended behavior for container networking. The problem is that most system administrators assume UFW protects all ports on the server. For standalone services this is true. For Dockerized services it is not, unless you explicitly configure Docker to respect UFW.</p>
+
+<h2>Why This Happens</h2>
+<p>Linux packet flow for incoming traffic evaluates iptables chains in order: PREROUTING → DOCKER → FORWARD → INPUT. UFW manages the INPUT chain. Docker manages the DOCKER and FORWARD chains. A packet destined for a Docker container never reaches the INPUT chain — it's routed through FORWARD before UFW can block it.</p>
+
+<h2>How to Fix It</h2>
+<p>The standard fix is to add <code>DOCKER-USER</code> chain rules or to bind container ports only to <code>127.0.0.1</code> (e.g., <code>127.0.0.1:8080:80</code>) so Docker does not expose the port on the public interface. For server-wide protection, the <code>/etc/docker/daemon.json</code> approach with <code>"iptables": false</code> is an option but breaks Docker's networking for external container access.</p>
+    <h2>Related Tools</h2>
+    <div class="related-links"><a href="/firewall/">Firewall Auditor →</a><a href="/docker/">Docker Auditor →</a></div>
+    <h2>Fix Guides</h2>
+    <div class="related-links"><a href="/fix/docker/ufw-bypass/">Docker UFW bypass fix</a><a href="/fix/ufw/docker-bypass/">UFW Docker bypass fix</a></div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+        <div class="faq-q">Does UFW protect Docker containers?</div>
+        <div class="faq-a">No. UFW manages the Linux INPUT chain. Docker containers use the FORWARD chain, which UFW does not control by default. Docker ports are accessible from the internet even if UFW has no allow rule for them.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">How do I check if Docker is bypassing UFW?</div>
+        <div class="faq-a">Run: <code>sudo iptables -L DOCKER --line-numbers</code>. Any ACCEPT rules in that chain bypass UFW. You can also use the ConfigClarity Firewall Auditor — paste your <code>ufw status verbose</code> output and it will flag Docker bypass risk.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">What is the safest Docker port binding?</div>
+        <div class="faq-a">Bind to <code>127.0.0.1</code>: use <code>127.0.0.1:8080:80</code> in docker-compose.yml. This exposes the port only on the loopback interface, accessible via Nginx reverse proxy but not directly from the internet.</div>
+      </div>
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

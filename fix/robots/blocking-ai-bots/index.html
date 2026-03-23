@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fix: robots.txt Missing AI Bot Directives — ConfigClarity</title>
+  <meta name="description" content="How to configure robots.txt for AI crawlers — GPTBot, ClaudeBot, PerplexityBot, and Bytespider. Allow or block AI training crawlers with exact robots.txt syntax.">
+  <meta name="keywords" content="block gptbot robots txt, block claudebot, allow ai crawlers robots txt, gptbot robots txt fix">
+  <link rel="canonical" href="https://configclarity.dev/fix/robots/blocking-ai-bots/">
+  <meta property="og:title" content="Fix: robots.txt Missing AI Bot Directives — ConfigClarity">
+  <meta property="og:description" content="How to configure robots.txt for AI crawlers — GPTBot, ClaudeBot, PerplexityBot, and Bytespider. Allow or block AI training crawlers with exact robots.txt syntax.">
+  <meta property="og:url" content="https://configclarity.dev/fix/robots/blocking-ai-bots/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle",
+    "headline":"Fix: robots.txt Missing AI Bot Directives",
+    "url":"https://configclarity.dev/fix/robots/blocking-ai-bots/",
+    "description":"How to configure robots.txt for AI crawlers — GPTBot, ClaudeBot, PerplexityBot, and Bytespider. Allow or block AI training crawlers with exact robots.txt syntax.",
+    "author":{"@type":"Organization","name":"MetricLogic"},
+    "isPartOf":{"@type":"WebSite","name":"ConfigClarity","url":"https://configclarity.dev"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Should I allow or block AI crawlers?',"acceptedAnswer":{"@type":"Answer","text":"It depends on your goals. Allow them if you want your content cited in AI answers (GEO strategy) — sites that block AI crawlers are excluded from ChatGPT, Claude, and Perplexity's knowledge base. Block them if your content is proprietary and you're concerned about training data use."}},
+{"@type":"Question","name":'Does blocking GPTBot stop ChatGPT from knowing about my site?',"acceptedAnswer":{"@type":"Answer","text":"It stops future training data collection, but ChatGPT's existing knowledge base already contains your content if it was crawled before you added the block. Blocking prevents future training updates, not retroactive removal."}},
+{"@type":"Question","name":'What is Google-Extended?',"acceptedAnswer":{"@type":"Answer","text":"Google-Extended is a separate user agent that controls whether your content is used for Google's AI products (Bard/Gemini training, AI Overviews). Setting Disallow for Google-Extended while allowing Googlebot means Google can index your site normally but cannot use your content for AI training."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://configclarity.dev/fix/"},
+    {"@type":"ListItem","position":3,"name":"robots.txt","item":"https://configclarity.dev/fix/robots/"},
+    {"@type":"ListItem","position":4,"name":"Fix: robots.txt Missing AI Bot Directives","item":"https://configclarity.dev/fix/robots/blocking-ai-bots/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; }
+      h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      pre { background: #0b0d14; border: 1px solid #2a2d3d; border-radius: 6px; padding: 1rem 1.25rem; font-size: 0.78rem; overflow-x: auto; margin: 0.75rem 0 1.25rem; }
+      .fix-box { background: var(--bg2); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+      .fix-box .label { font-size: 0.7rem; color: var(--green); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 0.5rem; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .cta-box { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; text-align: center; }
+      .cta-box p { color: var(--text); margin-bottom: 0.75rem; }
+      .cta-btn { display: inline-block; background: var(--purple); color: #fff; padding: 0.45rem 1.2rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.75rem; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/robots/">robots.txt</a> › Fix: robots.txt Missing AI Bot Directives
+  </div>
+  <div class="content">
+    <h1>Fix: robots.txt Missing AI Bot Directives</h1>
+    <p>AI training crawlers like GPTBot (OpenAI), ClaudeBot (Anthropic), PerplexityBot, and Bytespider operate independently of Google. A robots.txt that only addresses <code>User-agent: *</code> and <code>Googlebot</code> does not explicitly address these crawlers. This guide covers both blocking and allowing them.</p>
+    <h2>The Problem</h2>
+    <p>Many sites either want to allow AI crawlers (for GEO — Generative Engine Optimisation, getting cited in AI answers) or block them (for content protection). A robots.txt without explicit AI crawler directives has ambiguous intent. Some AI crawlers respect <code>User-agent: *</code> rules. Others only act on explicit user-agent entries. Missing directives means inconsistent handling.</p>
+    <h2>The Fix</h2>
+    <div class="fix-box">
+      <div class="label">robots.txt — Allow AI Crawlers (GEO strategy)</div>
+      <pre>User-agent: *
+Allow: /
+
+# Allow AI crawlers explicitly for GEO (AI search citation)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+Sitemap: https://yourdomain.com/sitemap.xml</pre>
+    </div>
+    <p>Use <code>Allow: /</code> for AI crawlers you want to allow for AI search visibility, or <code>Disallow: /</code> to block them from training data. GPTBot is OpenAI's crawler. ClaudeBot is Anthropic's. PerplexityBot is used by Perplexity AI. Google-Extended controls Google's AI training separately from Googlebot.</p>
+    <div class="cta-box">
+      <p>Validate your robots.txt live — fetch any URL and get a corrected file in one click.</p>
+      <a href="/robots/" class="cta-btn">Open robots.txt Validator →</a>
+    </div>
+    <h2>Frequently Asked Questions</h2>
+      <div class="faq-item"><div class="faq-q">Should I allow or block AI crawlers?</div><div class="faq-a">It depends on your goals. Allow them if you want your content cited in AI answers (GEO strategy) — sites that block AI crawlers are excluded from ChatGPT, Claude, and Perplexity's knowledge base. Block them if your content is proprietary and you're concerned about training data use.</div></div>
+      <div class="faq-item"><div class="faq-q">Does blocking GPTBot stop ChatGPT from knowing about my site?</div><div class="faq-a">It stops future training data collection, but ChatGPT's existing knowledge base already contains your content if it was crawled before you added the block. Blocking prevents future training updates, not retroactive removal.</div></div>
+      <div class="faq-item"><div class="faq-q">What is Google-Extended?</div><div class="faq-a">Google-Extended is a separate user agent that controls whether your content is used for Google's AI products (Bard/Gemini training, AI Overviews). Setting Disallow for Google-Extended while allowing Googlebot means Google can index your site normally but cannot use your content for AI training.</div></div>
+    <h2>Related Guides</h2>
+    <ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);"><li><a href="/robots/">robots.txt Validator — live AI bot coverage check</a></li>
+<li><a href="/fix/robots/missing-sitemap-reference/">Fix: Missing sitemap in robots.txt</a></li></ul>
+  </div>
+
+  <footer>
+    <p><a href="/glossary/">Glossary</a> &nbsp;·&nbsp; <a href="/fix/">Fix Guides</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic Network</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

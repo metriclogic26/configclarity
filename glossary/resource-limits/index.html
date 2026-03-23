@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Resource Limits (Docker) — DevOps Glossary — ConfigClarity</title>
+  <meta name="description" content="Docker resource limits are configuration directives that cap the CPU and memory a container can consume, preventing a single container from exhausting host resources and causing the entire server to become unresponsive.">
+  <meta name="keywords" content="docker, resource limits, memory, cpu, oom, container, devops, linux server, devops glossary">
+  <link rel="canonical" href="https://configclarity.dev/glossary/resource-limits/">
+  <meta property="og:title" content="Resource Limits (Docker) — ConfigClarity Glossary">
+  <meta property="og:description" content="Docker resource limits are configuration directives that cap the CPU and memory a container can consume, preventing a single container from exhausting host resources and causing the entire server to become unresponsive.">
+  <meta property="og:url" content="https://configclarity.dev/glossary/resource-limits/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": "Resource Limits (Docker)",
+    "url": "https://configclarity.dev/glossary/resource-limits/",
+    "description": "Docker resource limits are configuration directives that cap the CPU and memory a container can consume, preventing a single container from exhausting host resources and causing the entire server to become unresponsive.",
+    "inDefinedTermSet": {
+      "@type": "DefinedTermSet",
+      "name": "ConfigClarity DevOps Glossary",
+      "url": "https://configclarity.dev/glossary/"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{"@type":"Question","name":"What happens if I don't set memory limits on Docker containers?","acceptedAnswer":{"@type":"Answer","text":'A container with a memory leak or runaway process can consume all available RAM on the host. The Linux OOM killer will then terminate processes — often killing other containers or system services rather than the container at fault.'}},
+{"@type":"Question","name":'How do I set resource limits in docker-compose.yml?',"acceptedAnswer":{"@type":"Answer","text":"In Compose v3 with Swarm: use <code>deploy.resources.limits</code>. Without Swarm, use the Compose v2 format: <code>mem_limit: 512m</code> and <code>cpus: '0.5'</code> at the service level. ConfigClarity's Docker Auditor flags services with no resource limits defined."}},
+{"@type":"Question","name":'What is a good starting memory limit for a web service?',"acceptedAnswer":{"@type":"Answer","text":'Start conservative — 256m to 512m for small services, 1g to 2g for larger applications. Monitor with <code>docker stats</code> under normal load and adjust. The OOM risk of setting limits too low is lower than the availability risk of not setting them.'}}]
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Glossary","item":"https://configclarity.dev/glossary/"},
+    {"@type":"ListItem","position":3,"name":"Resource Limits (Docker)","item":"https://configclarity.dev/glossary/resource-limits/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; }
+      .definition-box { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.95rem; }
+      h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.4rem; }
+      .related-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+      .related-links a { font-size: 0.8rem; padding: 0.3rem 0.75rem; background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 6px; color: var(--text); }
+      .related-links a:hover { border-color: var(--purple); text-decoration: none; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .tool-cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; }
+      .tool-cta p { color: var(--text); font-size: 0.85rem; margin-bottom: 0.75rem; }
+      .tool-cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+      .card { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; }
+      .card:hover { border-color: var(--purple); }
+      .card-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.35rem; }
+      .card-desc { font-size: 0.78rem; color: var(--muted); }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/glossary/">Glossary</a> › Resource Limits (Docker)
+  </div>
+  <div class="content">
+    <h1>Resource Limits (Docker)</h1>
+    <div class="definition-box">Docker resource limits are configuration directives that cap the CPU and memory a container can consume, preventing a single container from exhausting host resources and causing the entire server to become unresponsive.</div>
+    <div><span class="tag">Docker</span><span class="tag">Resource Limits</span><span class="tag">Memory</span><span class="tag">CPU</span><span class="tag">OOM</span><span class="tag">Container</span><span class="tag">DevOps</span></div>
+    <p>Without resource limits, any container can consume all available CPU and memory on the host. A memory leak in one container can OOM-kill other containers or the host kernel. A runaway process in one container can starve all other containers of CPU time.</p>
+
+<p>Resource limits in Docker Compose are defined under the <code>deploy.resources</code> key (Compose v3) or the top-level <code>mem_limit</code>/<code>cpus</code> keys (Compose v2). Compose v3 limits require Docker Swarm mode unless you use the <code>--compatibility</code> flag with docker-compose.</p>
+
+<h2>Memory Limits</h2>
+<p>Memory limits prevent OOM conditions. Set both <code>memory</code> (hard limit) and <code>memory_reservation</code> (soft limit). When the hard limit is reached, Docker kills the container with OOM. When the soft limit is reached, Docker throttles memory allocation.</p>
+
+<h2>CPU Limits</h2>
+<p><code>cpus: "0.5"</code> limits the container to 50% of one CPU core. <code>cpu_shares</code> is a relative weight — containers with higher shares get more CPU time under contention but are not hard-capped. For consistent limits, prefer <code>cpus</code> over <code>cpu_shares</code>.</p>
+    <h2>Related Tools</h2>
+    <div class="related-links"><a href="/docker/">Docker Auditor →</a></div>
+    <h2>Fix Guides</h2>
+    <div class="related-links"><a href="/fix/docker/resource-limits/">Docker resource limits fix</a></div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+        <div class="faq-q">What happens if I don't set memory limits on Docker containers?</div>
+        <div class="faq-a">A container with a memory leak or runaway process can consume all available RAM on the host. The Linux OOM killer will then terminate processes — often killing other containers or system services rather than the container at fault.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">How do I set resource limits in docker-compose.yml?</div>
+        <div class="faq-a">In Compose v3 with Swarm: use <code>deploy.resources.limits</code>. Without Swarm, use the Compose v2 format: <code>mem_limit: 512m</code> and <code>cpus: '0.5'</code> at the service level. ConfigClarity's Docker Auditor flags services with no resource limits defined.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">What is a good starting memory limit for a web service?</div>
+        <div class="faq-a">Start conservative — 256m to 512m for small services, 1g to 2g for larger applications. Monitor with <code>docker stats</code> under normal load and adjust. The OOM risk of setting limits too low is lower than the availability risk of not setting them.</div>
+      </div>
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

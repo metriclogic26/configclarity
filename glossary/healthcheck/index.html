@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Docker Healthcheck — DevOps Glossary — ConfigClarity</title>
+  <meta name="description" content="A Docker healthcheck is a command defined in a container's configuration that Docker runs periodically to determine if the container is functioning correctly — allowing orchestrators to restart failed containers and delay dependent services.">
+  <meta name="keywords" content="docker, healthcheck, orchestration, container, devops, linux server, devops glossary">
+  <link rel="canonical" href="https://configclarity.dev/glossary/healthcheck/">
+  <meta property="og:title" content="Docker Healthcheck — ConfigClarity Glossary">
+  <meta property="og:description" content="A Docker healthcheck is a command defined in a container's configuration that Docker runs periodically to determine if the container is functioning correctly — allowing orchestrators to restart failed containers and delay dependent services.">
+  <meta property="og:url" content="https://configclarity.dev/glossary/healthcheck/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": "Docker Healthcheck",
+    "url": "https://configclarity.dev/glossary/healthcheck/",
+    "description": "A Docker healthcheck is a command defined in a container's configuration that Docker runs periodically to determine if the container is functioning correctly — allowing orchestrators to restart failed containers and delay dependent services.",
+    "inDefinedTermSet": {
+      "@type": "DefinedTermSet",
+      "name": "ConfigClarity DevOps Glossary",
+      "url": "https://configclarity.dev/glossary/"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{"@type":"Question","name":'What happens if a container has no healthcheck?',"acceptedAnswer":{"@type":"Answer","text":"Docker reports the container status as 'running' regardless of whether the application is functioning. Dependent services start immediately without waiting for the container to be ready. Orchestrators cannot detect application failures — only process crashes."}},
+{"@type":"Question","name":'What is a good healthcheck command for a web service?',"acceptedAnswer":{"@type":"Answer","text":'For HTTP services: <code>["CMD", "curl", "-f", "http://localhost:PORT/health"]</code>. For services without curl: <code>["CMD-SHELL", "wget -q --spider http://localhost:PORT/health || exit 1"]</code>. For databases: use the database\'s own health tool — <code>["CMD", "pg_isready", "-U", "postgres"]</code> for PostgreSQL.'}},
+{"@type":"Question","name":'How do I check if my containers have healthchecks configured?',"acceptedAnswer":{"@type":"Answer","text":"Paste your docker-compose.yml into ConfigClarity's Docker Auditor. It flags every service missing a healthcheck definition and generates a suggested healthcheck command based on the detected service type."}}]
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Glossary","item":"https://configclarity.dev/glossary/"},
+    {"@type":"ListItem","position":3,"name":"Docker Healthcheck","item":"https://configclarity.dev/glossary/healthcheck/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; }
+      .definition-box { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.95rem; }
+      h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.4rem; }
+      .related-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+      .related-links a { font-size: 0.8rem; padding: 0.3rem 0.75rem; background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 6px; color: var(--text); }
+      .related-links a:hover { border-color: var(--purple); text-decoration: none; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .tool-cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; }
+      .tool-cta p { color: var(--text); font-size: 0.85rem; margin-bottom: 0.75rem; }
+      .tool-cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+      .card { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; }
+      .card:hover { border-color: var(--purple); }
+      .card-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.35rem; }
+      .card-desc { font-size: 0.78rem; color: var(--muted); }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/glossary/">Glossary</a> › Docker Healthcheck
+  </div>
+  <div class="content">
+    <h1>Docker Healthcheck</h1>
+    <div class="definition-box">A Docker healthcheck is a command defined in a container's configuration that Docker runs periodically to determine if the container is functioning correctly — allowing orchestrators to restart failed containers and delay dependent services.</div>
+    <div><span class="tag">Docker</span><span class="tag">Healthcheck</span><span class="tag">Orchestration</span><span class="tag">Container</span><span class="tag">DevOps</span></div>
+    <p>A Docker healthcheck defines a test command that Docker runs inside the container at a regular interval. If the command exits with a non-zero status code, Docker marks the container as unhealthy. Container orchestrators (Docker Compose, Swarm, Kubernetes) can then take action — restarting the container, stopping dependent services from starting, or routing traffic away from unhealthy instances.</p>
+
+<p>Without a healthcheck, Docker considers a container healthy as soon as it starts. The container may be running but the application inside may not be ready to serve traffic — the web server may still be starting up, the database may be running its initial migration, or a connection pool may not yet be established.</p>
+
+<h2>Healthcheck in docker-compose.yml</h2>
+<pre style="background:#0b0d14;padding:1rem;border-radius:6px;font-size:0.78rem;overflow-x:auto;margin:0.75rem 0;">healthcheck:
+  test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+  start_period: 40s</pre>
+
+<p><code>start_period</code> is the grace period before health failures count against the retry limit — essential for services with slow startup like Java applications or services running database migrations on boot.</p>
+    <h2>Related Tools</h2>
+    <div class="related-links"><a href="/docker/">Docker Auditor →</a></div>
+    <h2>Fix Guides</h2>
+    <div class="related-links"><a href="/fix/docker/missing-healthcheck/">Docker missing healthcheck fix</a></div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+        <div class="faq-q">What happens if a container has no healthcheck?</div>
+        <div class="faq-a">Docker reports the container status as 'running' regardless of whether the application is functioning. Dependent services start immediately without waiting for the container to be ready. Orchestrators cannot detect application failures — only process crashes.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">What is a good healthcheck command for a web service?</div>
+        <div class="faq-a">For HTTP services: <code>["CMD", "curl", "-f", "http://localhost:PORT/health"]</code>. For services without curl: <code>["CMD-SHELL", "wget -q --spider http://localhost:PORT/health || exit 1"]</code>. For databases: use the database's own health tool — <code>["CMD", "pg_isready", "-U", "postgres"]</code> for PostgreSQL.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">How do I check if my containers have healthchecks configured?</div>
+        <div class="faq-a">Paste your docker-compose.yml into ConfigClarity's Docker Auditor. It flags every service missing a healthcheck definition and generates a suggested healthcheck command based on the detected service type.</div>
+      </div>
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

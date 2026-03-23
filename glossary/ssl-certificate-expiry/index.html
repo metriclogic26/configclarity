@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SSL Certificate Expiry — DevOps Glossary — ConfigClarity</title>
+  <meta name="description" content="SSL certificate expiry occurs when a TLS certificate passes its validity end date, causing browsers to display security warnings and refuse HTTPS connections to the site.">
+  <meta name="keywords" content="ssl, tls, https, certificate, let's encrypt, security, linux server, devops glossary">
+  <link rel="canonical" href="https://configclarity.dev/glossary/ssl-certificate-expiry/">
+  <meta property="og:title" content="SSL Certificate Expiry — ConfigClarity Glossary">
+  <meta property="og:description" content="SSL certificate expiry occurs when a TLS certificate passes its validity end date, causing browsers to display security warnings and refuse HTTPS connections to the site.">
+  <meta property="og:url" content="https://configclarity.dev/glossary/ssl-certificate-expiry/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": "SSL Certificate Expiry",
+    "url": "https://configclarity.dev/glossary/ssl-certificate-expiry/",
+    "description": "SSL certificate expiry occurs when a TLS certificate passes its validity end date, causing browsers to display security warnings and refuse HTTPS connections to the site.",
+    "inDefinedTermSet": {
+      "@type": "DefinedTermSet",
+      "name": "ConfigClarity DevOps Glossary",
+      "url": "https://configclarity.dev/glossary/"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{"@type":"Question","name":'How long are SSL certificates valid?',"acceptedAnswer":{"@type":"Answer","text":"Since September 2020, browser-trusted TLS certificates are valid for a maximum of 398 days (roughly 13 months). Let's Encrypt certificates are valid for 90 days and are designed to auto-renew every 60 days."}},
+{"@type":"Question","name":'What happens when an SSL certificate expires?',"acceptedAnswer":{"@type":"Answer","text":"Browsers display a full-page 'Your connection is not private' warning (ERR_CERT_DATE_INVALID). HTTPS connections are refused. The site remains accessible via HTTP but search engines will flag it. API clients and webhooks that enforce certificate validation will also fail."}},
+{"@type":"Question","name":'How do I monitor SSL certificate expiry?',"acceptedAnswer":{"@type":"Answer","text":"ConfigClarity's SSL Checker checks multiple domains at once and flags anything expiring within 200 days with exact days remaining. For automated monitoring, set a cron job running <code>openssl s_client -connect domain.com:443</code> and parsing the <code>notAfter</code> field."}}]
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Glossary","item":"https://configclarity.dev/glossary/"},
+    {"@type":"ListItem","position":3,"name":"SSL Certificate Expiry","item":"https://configclarity.dev/glossary/ssl-certificate-expiry/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; }
+      .definition-box { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.95rem; }
+      h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.4rem; }
+      .related-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+      .related-links a { font-size: 0.8rem; padding: 0.3rem 0.75rem; background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 6px; color: var(--text); }
+      .related-links a:hover { border-color: var(--purple); text-decoration: none; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .tool-cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; }
+      .tool-cta p { color: var(--text); font-size: 0.85rem; margin-bottom: 0.75rem; }
+      .tool-cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+      .card { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; }
+      .card:hover { border-color: var(--purple); }
+      .card-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.35rem; }
+      .card-desc { font-size: 0.78rem; color: var(--muted); }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/glossary/">Glossary</a> › SSL Certificate Expiry
+  </div>
+  <div class="content">
+    <h1>SSL Certificate Expiry</h1>
+    <div class="definition-box">SSL certificate expiry occurs when a TLS certificate passes its validity end date, causing browsers to display security warnings and refuse HTTPS connections to the site.</div>
+    <div><span class="tag">SSL</span><span class="tag">TLS</span><span class="tag">HTTPS</span><span class="tag">Certificate</span><span class="tag">Let's Encrypt</span><span class="tag">Security</span></div>
+    <p>An SSL/TLS certificate is valid for a defined period — historically 1–2 years, and since September 2020 limited to 398 days maximum by major browsers. When a certificate expires, browsers display a full-page warning ("Your connection is not private") and most users will not proceed. The site becomes effectively inaccessible for non-technical visitors.</p>
+
+<p>Certificate expiry is one of the most preventable causes of site outages. Unlike server failures, expiry is fully predictable — the date is embedded in the certificate itself and visible months in advance.</p>
+
+<h2>Common Causes of Missed Expiry</h2>
+<p>Auto-renewal failures are the most common cause. Let's Encrypt certificates expire every 90 days and require a working certbot or ACME renewal cron job. If the renewal job silently fails (wrong path, DNS mismatch, rate limit hit), the certificate expires without warning. CDN-fronted domains (Cloudflare, Fastly) have their own certificate lifecycle separate from the origin cert — many operators monitor only one of the two.</p>
+
+<h2>The 200-Day Warning Standard</h2>
+<p>ConfigClarity's SSL Checker flags certificates expiring within 200 days — not the standard 30-day window. This gives enough time to diagnose and fix renewal pipeline failures before the 30-day critical window. Let's Encrypt certificates issued today will expire in ~89 days if auto-renewal breaks immediately.</p>
+    <h2>Related Tools</h2>
+    <div class="related-links"><a href="/ssl/">SSL Checker →</a></div>
+    <h2>Fix Guides</h2>
+    <div class="related-links"><a href="/fix/ssl/expiry-monitoring/">SSL expiry monitoring fix</a><a href="/fix/ssl/nginx-renewal/">Nginx SSL renewal fix</a><a href="/fix/ssl/traefik-renewal/">Traefik SSL renewal fix</a></div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+        <div class="faq-q">How long are SSL certificates valid?</div>
+        <div class="faq-a">Since September 2020, browser-trusted TLS certificates are valid for a maximum of 398 days (roughly 13 months). Let's Encrypt certificates are valid for 90 days and are designed to auto-renew every 60 days.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">What happens when an SSL certificate expires?</div>
+        <div class="faq-a">Browsers display a full-page 'Your connection is not private' warning (ERR_CERT_DATE_INVALID). HTTPS connections are refused. The site remains accessible via HTTP but search engines will flag it. API clients and webhooks that enforce certificate validation will also fail.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">How do I monitor SSL certificate expiry?</div>
+        <div class="faq-a">ConfigClarity's SSL Checker checks multiple domains at once and flags anything expiring within 200 days with exact days remaining. For automated monitoring, set a cron job running <code>openssl s_client -connect domain.com:443</code> and parsing the <code>notAfter</code> field.</div>
+      </div>
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WordPress robots.txt — Correct Configuration Guide — ConfigClarity</title>
+  <meta name="description" content="The correct robots.txt for WordPress sites. Block wp-admin, allow wp-content, configure for WooCommerce, Yoast SEO sitemap reference, and AI crawler permissions.">
+  <meta name="keywords" content="wordpress robots txt, wp-admin disallow robots txt, wordpress robots txt fix, yoast seo sitemap robots">
+  <link rel="canonical" href="https://configclarity.dev/fix/robots/wordpress/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle",
+    "headline":"WordPress robots.txt — Correct Configuration Guide","url":"https://configclarity.dev/fix/robots/wordpress/",
+    "description":"The correct robots.txt for WordPress sites. Block wp-admin, allow wp-content, configure for WooCommerce, Yoast SEO sitemap reference, and AI crawler permissions.","author":{"@type":"Organization","name":"MetricLogic"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'How do I edit WordPress robots.txt?',"acceptedAnswer":{"@type":"Answer","text":'Three ways: (1) Yoast SEO → Tools → File Editor → robots.txt, (2) RankMath → General Settings → Edit Robots.txt, (3) Create a physical robots.txt file in your WordPress root directory which overrides the virtual one.'}},{"@type":"Question","name":'Should I block /wp-includes/ in WordPress robots.txt?',"acceptedAnswer":{"@type":"Answer","text":'No. /wp-includes/ contains core WordPress scripts and styles that Googlebot needs to render your pages. Blocking it causes Google Search Console to report rendering errors.'}},{"@type":"Question","name":'Why is my WordPress sitemap not being found?',"acceptedAnswer":{"@type":"Answer","text":'Ensure the Sitemap: line in robots.txt points to your actual sitemap URL. Yoast SEO uses sitemap_index.xml. RankMath uses sitemap_index.xml. The All in One SEO plugin uses sitemap.xml. Check which plugin is active and use the correct URL.'}}]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; }
+      h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      pre { background: #0b0d14; border: 1px solid #2a2d3d; border-radius: 6px; padding: 1rem 1.25rem; font-size: 0.78rem; overflow-x: auto; margin: 0.75rem 0 1.25rem; }
+      .fix-box { background: var(--bg2); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+      .fix-box .label { font-size: 0.7rem; color: var(--green); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 0.5rem; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .cta-box { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; text-align: center; }
+      .cta-box p { color: var(--text); margin-bottom: 0.75rem; }
+      .cta-btn { display: inline-block; background: var(--purple); color: #fff; padding: 0.45rem 1.2rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.75rem; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/robots/">robots.txt</a> › WordPress robots.txt — Correct Configuration Guide</div>
+  <div class="content">
+    <h1>WordPress robots.txt — Correct Configuration Guide</h1>
+    <p>WordPress generates a virtual robots.txt by default, but many hosting providers replace it with a static file. The correct WordPress robots.txt blocks admin paths, allows assets, and references the Yoast SEO or RankMath generated sitemap.</p>
+
+<h2>Correct WordPress robots.txt</h2>
+<pre>User-agent: *
+Allow: /wp-content/uploads/
+Disallow: /wp-admin/
+Disallow: /wp-login.php
+Disallow: /xmlrpc.php
+Disallow: /?s=
+Disallow: /search$
+Disallow: /trackback/
+Disallow: /feed/
+Disallow: /comments/
+
+# AI crawlers (allow for GEO / citation in AI search)
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+# Sitemap (replace with your Yoast or RankMath sitemap URL)
+Sitemap: https://yourdomain.com/sitemap_index.xml</pre>
+
+<h2>Key Rules Explained</h2>
+<p><strong>Allow /wp-content/uploads/</strong> — This must be explicitly allowed. If you have a broad Disallow rule, add this Allow to ensure Googlebot can load images.<br>
+<strong>Disallow /wp-admin/</strong> — The admin dashboard should never be indexed.<br>
+<strong>Disallow /?s=</strong> — WordPress search results (/search?s=query) should not be indexed — duplicate content risk.<br>
+<strong>Disallow /feed/</strong> — RSS feeds are not useful in search results and consume crawl budget.</p>
+    <div class="cta-box">
+      <p>Validate your robots.txt live — fetch any URL and get AI bot coverage + URL tester.</p>
+      <a href="/robots/" class="cta-btn">Open robots.txt Validator →</a>
+    </div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item"><div class="faq-q">How do I edit WordPress robots.txt?</div><div class="faq-a">Three ways: (1) Yoast SEO → Tools → File Editor → robots.txt, (2) RankMath → General Settings → Edit Robots.txt, (3) Create a physical robots.txt file in your WordPress root directory which overrides the virtual one.</div></div><div class="faq-item"><div class="faq-q">Should I block /wp-includes/ in WordPress robots.txt?</div><div class="faq-a">No. /wp-includes/ contains core WordPress scripts and styles that Googlebot needs to render your pages. Blocking it causes Google Search Console to report rendering errors.</div></div><div class="faq-item"><div class="faq-q">Why is my WordPress sitemap not being found?</div><div class="faq-a">Ensure the Sitemap: line in robots.txt points to your actual sitemap URL. Yoast SEO uses sitemap_index.xml. RankMath uses sitemap_index.xml. The All in One SEO plugin uses sitemap.xml. Check which plugin is active and use the correct URL.</div></div>
+  </div>
+
+  <footer>
+    <p><a href="/glossary/">Glossary</a> &nbsp;·&nbsp; <a href="/fix/">Fix Guides</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic Network</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

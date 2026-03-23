@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fix: Conflicting robots.txt Allow and Disallow Rules — ConfigClarity</title>
+  <meta name="description" content="How to fix conflicting Allow and Disallow rules in robots.txt. When Allow and Disallow match the same URL, the most specific rule wins — exact Google behaviour explained.">
+  <meta name="keywords" content="robots txt conflicting rules, allow disallow conflict robots txt, robots txt rule priority">
+  <link rel="canonical" href="https://configclarity.dev/fix/robots/conflicting-rules/">
+  <meta property="og:title" content="Fix: Conflicting robots.txt Allow and Disallow Rules — ConfigClarity">
+  <meta property="og:description" content="How to fix conflicting Allow and Disallow rules in robots.txt. When Allow and Disallow match the same URL, the most specific rule wins — exact Google behaviour explained.">
+  <meta property="og:url" content="https://configclarity.dev/fix/robots/conflicting-rules/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle",
+    "headline":"Fix: Conflicting robots.txt Allow and Disallow Rules",
+    "url":"https://configclarity.dev/fix/robots/conflicting-rules/",
+    "description":"How to fix conflicting Allow and Disallow rules in robots.txt. When Allow and Disallow match the same URL, the most specific rule wins — exact Google behaviour explained.",
+    "author":{"@type":"Organization","name":"MetricLogic"},
+    "isPartOf":{"@type":"WebSite","name":"ConfigClarity","url":"https://configclarity.dev"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Does Allow override Disallow in robots.txt?',"acceptedAnswer":{"@type":"Answer","text":'Not unconditionally. The most-specific rule (longest matching path) wins. If Allow and Disallow have the same path length and both match a URL, Googlebot gives precedence to Allow. Bing and other crawlers may handle this differently.'}},
+{"@type":"Question","name":'What is the correct order for Allow and Disallow rules?',"acceptedAnswer":{"@type":"Answer","text":'Rule order does not affect precedence in Googlebot — specificity wins, not order. However, for clarity and compatibility with older crawlers that use first-match semantics, put more specific rules before general ones and put Allow rules before their corresponding Disallow rules.'}},
+{"@type":"Question","name":'How do I test which rule wins for a specific URL?',"acceptedAnswer":{"@type":"Answer","text":"Paste your robots.txt into ConfigClarity's robots.txt Validator and use the URL Tester — enter any path and select a user agent. The tool shows BLOCKED or ALLOWED and which rule matched."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://configclarity.dev/fix/"},
+    {"@type":"ListItem","position":3,"name":"robots.txt","item":"https://configclarity.dev/fix/robots/"},
+    {"@type":"ListItem","position":4,"name":"Fix: Conflicting robots.txt Allow and Disallow Rules","item":"https://configclarity.dev/fix/robots/conflicting-rules/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; }
+      h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      pre { background: #0b0d14; border: 1px solid #2a2d3d; border-radius: 6px; padding: 1rem 1.25rem; font-size: 0.78rem; overflow-x: auto; margin: 0.75rem 0 1.25rem; }
+      .fix-box { background: var(--bg2); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+      .fix-box .label { font-size: 0.7rem; color: var(--green); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 0.5rem; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .cta-box { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; text-align: center; }
+      .cta-box p { color: var(--text); margin-bottom: 0.75rem; }
+      .cta-btn { display: inline-block; background: var(--purple); color: #fff; padding: 0.45rem 1.2rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.75rem; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/robots/">robots.txt</a> › Fix: Conflicting robots.txt Allow and Disallow Rules
+  </div>
+  <div class="content">
+    <h1>Fix: Conflicting robots.txt Allow and Disallow Rules</h1>
+    <p>When a URL matches both an Allow and a Disallow rule in robots.txt, most crawlers apply the most-specific-rule-wins precedence — the rule with the longer matching path takes priority. Understanding this prevents accidental blocks and allows precise control over which URLs are crawled.</p>
+    <h2>The Problem</h2>
+    <p>A common pattern is to disallow a directory but allow specific files within it. For example, <code>Disallow: /private/</code> with <code>Allow: /private/public-page.html</code>. The Allow rule is more specific (longer path match) so it takes precedence — the public page is crawlable. But if both rules are equal length, behaviour varies by crawler.</p>
+    <h2>The Fix</h2>
+    <div class="fix-box">
+      <div class="label">robots.txt — Conflict resolution examples</div>
+      <pre># CORRECT — Allow takes precedence (more specific path):
+User-agent: *
+Disallow: /admin/
+Allow: /admin/public-status/   # This page IS crawled (longer match)
+
+# CORRECT — Disallow takes precedence:
+User-agent: *
+Allow: /products/
+Disallow: /products/draft/      # These pages NOT crawled (longer match)
+
+# AMBIGUOUS — equal length, crawler-dependent:
+User-agent: *
+Disallow: /page
+Allow: /page   # Googlebot: Allow wins. Others: varies.
+# FIX: Use explicit longer path to remove ambiguity:
+Disallow: /page$
+Allow: /page/public/</pre>
+    </div>
+    <p>For Googlebot: when Allow and Disallow match a URL at the same path length, Allow wins. For other crawlers, behaviour is undefined. Eliminate ambiguity by making the intended-to-win rule more specific (longer). Use the URL Tester in ConfigClarity's robots.txt Validator to verify your rules behave as expected.</p>
+    <div class="cta-box">
+      <p>Validate your robots.txt live — fetch any URL and get a corrected file in one click.</p>
+      <a href="/robots/" class="cta-btn">Open robots.txt Validator →</a>
+    </div>
+    <h2>Frequently Asked Questions</h2>
+      <div class="faq-item"><div class="faq-q">Does Allow override Disallow in robots.txt?</div><div class="faq-a">Not unconditionally. The most-specific rule (longest matching path) wins. If Allow and Disallow have the same path length and both match a URL, Googlebot gives precedence to Allow. Bing and other crawlers may handle this differently.</div></div>
+      <div class="faq-item"><div class="faq-q">What is the correct order for Allow and Disallow rules?</div><div class="faq-a">Rule order does not affect precedence in Googlebot — specificity wins, not order. However, for clarity and compatibility with older crawlers that use first-match semantics, put more specific rules before general ones and put Allow rules before their corresponding Disallow rules.</div></div>
+      <div class="faq-item"><div class="faq-q">How do I test which rule wins for a specific URL?</div><div class="faq-a">Paste your robots.txt into ConfigClarity's robots.txt Validator and use the URL Tester — enter any path and select a user agent. The tool shows BLOCKED or ALLOWED and which rule matched.</div></div>
+    <h2>Related Guides</h2>
+    <ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);"><li><a href="/robots/">robots.txt Validator with URL Tester</a></li>
+<li><a href="/fix/robots/wildcard-too-broad/">Fix: Wildcard pattern too broad</a></li></ul>
+  </div>
+
+  <footer>
+    <p><a href="/glossary/">Glossary</a> &nbsp;·&nbsp; <a href="/fix/">Fix Guides</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic Network</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

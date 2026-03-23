@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fix: robots.txt Crawl-Delay Too High — ConfigClarity</title>
+  <meta name="description" content="How to fix crawl-delay in robots.txt that is set too high, reducing how quickly Google indexes new content. Recommended crawl-delay values and when to use them.">
+  <meta name="keywords" content="robots txt crawl delay too high, crawl-delay robots txt fix, reduce crawl delay googlebot">
+  <link rel="canonical" href="https://configclarity.dev/fix/robots/crawl-delay-too-high/">
+  <meta property="og:title" content="Fix: robots.txt Crawl-Delay Too High — ConfigClarity">
+  <meta property="og:description" content="How to fix crawl-delay in robots.txt that is set too high, reducing how quickly Google indexes new content. Recommended crawl-delay values and when to use them.">
+  <meta property="og:url" content="https://configclarity.dev/fix/robots/crawl-delay-too-high/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle",
+    "headline":"Fix: robots.txt Crawl-Delay Too High",
+    "url":"https://configclarity.dev/fix/robots/crawl-delay-too-high/",
+    "description":"How to fix crawl-delay in robots.txt that is set too high, reducing how quickly Google indexes new content. Recommended crawl-delay values and when to use them.",
+    "author":{"@type":"Organization","name":"MetricLogic"},
+    "isPartOf":{"@type":"WebSite","name":"ConfigClarity","url":"https://configclarity.dev"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Does Google respect Crawl-delay in robots.txt?',"acceptedAnswer":{"@type":"Answer","text":'No. Google officially ignores the Crawl-delay directive. Googlebot manages crawl rate based on server response times and your Google Search Console crawl rate settings.'}},
+{"@type":"Question","name":'How do I slow down Googlebot without Crawl-delay?',"acceptedAnswer":{"@type":"Answer","text":"Use Google Search Console → Settings → Crawl rate. You can set it to 'Limit Google's maximum crawl rate' and adjust the slider. This is the only way to affect Googlebot's crawl rate."}},
+{"@type":"Question","name":'What is a reasonable Crawl-delay value for Bing?',"acceptedAnswer":{"@type":"Answer","text":"For most sites: 1–3 seconds. Bing's default crawl rate is already conservative. A Crawl-delay of 1 is a safe default that limits any server impact without significantly slowing indexing."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://configclarity.dev/fix/"},
+    {"@type":"ListItem","position":3,"name":"robots.txt","item":"https://configclarity.dev/fix/robots/"},
+    {"@type":"ListItem","position":4,"name":"Fix: robots.txt Crawl-Delay Too High","item":"https://configclarity.dev/fix/robots/crawl-delay-too-high/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; }
+      h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      pre { background: #0b0d14; border: 1px solid #2a2d3d; border-radius: 6px; padding: 1rem 1.25rem; font-size: 0.78rem; overflow-x: auto; margin: 0.75rem 0 1.25rem; }
+      .fix-box { background: var(--bg2); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+      .fix-box .label { font-size: 0.7rem; color: var(--green); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 0.5rem; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .cta-box { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; text-align: center; }
+      .cta-box p { color: var(--text); margin-bottom: 0.75rem; }
+      .cta-btn { display: inline-block; background: var(--purple); color: #fff; padding: 0.45rem 1.2rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.75rem; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/robots/">robots.txt</a> › Fix: robots.txt Crawl-Delay Too High
+  </div>
+  <div class="content">
+    <h1>Fix: robots.txt Crawl-Delay Too High</h1>
+    <p>The <code>Crawl-delay</code> directive in robots.txt tells crawlers to wait N seconds between requests. Setting it too high (10+ seconds) slows how quickly new content is indexed and can cause Googlebot to crawl fewer pages per day. Google does not officially support Crawl-delay — use Google Search Console's crawl rate settings instead.</p>
+    <h2>The Problem</h2>
+    <p>Crawl-delay was added to robots.txt to protect servers from aggressive crawling. However, Google ignores the Crawl-delay directive — it manages crawl rate internally based on server response times and your GSC settings. Setting a high Crawl-delay only affects crawlers that honour it (Bing, some smaller bots) without protecting against Google's crawl load.</p>
+    <h2>The Fix</h2>
+    <div class="fix-box">
+      <div class="label">Remove Crawl-delay or set low for compatibility</div>
+      <pre># BEFORE — high crawl-delay slows indexing for crawlers that honour it:
+# User-agent: *
+# Crawl-delay: 30
+
+# AFTER — remove crawl-delay (Google ignores it, others over-throttle):
+User-agent: *
+Allow: /
+
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# If you need to throttle Bing specifically, use a low value:
+User-agent: Bingbot
+Crawl-delay: 2</pre>
+    </div>
+    <p>Remove <code>Crawl-delay</code> for <code>User-agent: *</code>. To control Googlebot's crawl rate, use Google Search Console → Settings → Crawl rate settings. For Bing specifically, a Crawl-delay of 1–2 seconds is reasonable. Values above 10 seconds significantly reduce indexing speed for the crawlers that honour the directive.</p>
+    <div class="cta-box">
+      <p>Validate your robots.txt live — fetch any URL and get a corrected file in one click.</p>
+      <a href="/robots/" class="cta-btn">Open robots.txt Validator →</a>
+    </div>
+    <h2>Frequently Asked Questions</h2>
+      <div class="faq-item"><div class="faq-q">Does Google respect Crawl-delay in robots.txt?</div><div class="faq-a">No. Google officially ignores the Crawl-delay directive. Googlebot manages crawl rate based on server response times and your Google Search Console crawl rate settings.</div></div>
+      <div class="faq-item"><div class="faq-q">How do I slow down Googlebot without Crawl-delay?</div><div class="faq-a">Use Google Search Console → Settings → Crawl rate. You can set it to 'Limit Google's maximum crawl rate' and adjust the slider. This is the only way to affect Googlebot's crawl rate.</div></div>
+      <div class="faq-item"><div class="faq-q">What is a reasonable Crawl-delay value for Bing?</div><div class="faq-a">For most sites: 1–3 seconds. Bing's default crawl rate is already conservative. A Crawl-delay of 1 is a safe default that limits any server impact without significantly slowing indexing.</div></div>
+    <h2>Related Guides</h2>
+    <ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);"><li><a href="/robots/">robots.txt Validator tool</a></li>
+<li><a href="/fix/robots/missing-sitemap-reference/">Fix: Missing sitemap reference</a></li></ul>
+  </div>
+
+  <footer>
+    <p><a href="/glossary/">Glossary</a> &nbsp;·&nbsp; <a href="/fix/">Fix Guides</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic Network</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

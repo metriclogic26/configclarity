@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DevOps & Linux Server Glossary — ConfigClarity</title>
+  <meta name="description" content="Definitions for Docker UFW bypass, port binding, SSL certificate expiry, cron job collision, flock safety, reverse proxy, Traefik labels, nftables, and more DevOps terms.">
+  <meta name="keywords" content="devops glossary, linux server terms, docker ufw bypass definition, flock safety, reverse proxy definition, ssl certificate expiry">
+  <link rel="canonical" href="https://configclarity.dev/glossary/">
+  <meta property="og:title" content="DevOps & Linux Server Glossary — ConfigClarity">
+  <meta property="og:description" content="Definitions for common Linux server and Docker terms — with fix guides for each issue.">
+  <meta property="og:url" content="https://configclarity.dev/glossary/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTermSet",
+    "name": "ConfigClarity DevOps & Linux Server Glossary",
+    "url": "https://configclarity.dev/glossary/",
+    "description": "Definitions for Docker, UFW, Nginx, SSL, cron, and reverse proxy terms — with exact fix guides.",
+    "hasPart": [{"@type":"ListItem","position":1,"url":"https://configclarity.dev/glossary/docker-ufw-bypass/","name":"Docker UFW Bypass"},
+{"@type":"ListItem","position":2,"url":"https://configclarity.dev/glossary/port-binding/","name":"Port Binding"},
+{"@type":"ListItem","position":3,"url":"https://configclarity.dev/glossary/ssl-certificate-expiry/","name":"SSL Certificate Expiry"},
+{"@type":"ListItem","position":4,"url":"https://configclarity.dev/glossary/cron-job-collision/","name":"Cron Job Collision"},
+{"@type":"ListItem","position":5,"url":"https://configclarity.dev/glossary/reverse-proxy/","name":"Reverse Proxy"},
+{"@type":"ListItem","position":6,"url":"https://configclarity.dev/glossary/traefik-labels/","name":"Traefik Labels"},
+{"@type":"ListItem","position":7,"url":"https://configclarity.dev/glossary/flock-safety/","name":"flock Safety"},
+{"@type":"ListItem","position":8,"url":"https://configclarity.dev/glossary/hardcoded-secrets/","name":"Hardcoded Secrets"},
+{"@type":"ListItem","position":9,"url":"https://configclarity.dev/glossary/healthcheck/","name":"Docker Healthcheck"},
+{"@type":"ListItem","position":10,"url":"https://configclarity.dev/glossary/nftables/","name":"nftables"},
+{"@type":"ListItem","position":11,"url":"https://configclarity.dev/glossary/ipv6-mismatch/","name":"IPv6 Mismatch"},
+{"@type":"ListItem","position":12,"url":"https://configclarity.dev/glossary/dangling-route/","name":"Dangling Route"},
+{"@type":"ListItem","position":13,"url":"https://configclarity.dev/glossary/resource-limits/","name":"Resource Limits (Docker)"},
+{"@type":"ListItem","position":14,"url":"https://configclarity.dev/glossary/log-overflow/","name":"Log Overflow"}]
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"ItemList",
+    "name":"ConfigClarity Glossary Terms",
+    "itemListElement":[{"@type":"ListItem","position":1,"url":"https://configclarity.dev/glossary/docker-ufw-bypass/","name":"Docker UFW Bypass"},
+{"@type":"ListItem","position":2,"url":"https://configclarity.dev/glossary/port-binding/","name":"Port Binding"},
+{"@type":"ListItem","position":3,"url":"https://configclarity.dev/glossary/ssl-certificate-expiry/","name":"SSL Certificate Expiry"},
+{"@type":"ListItem","position":4,"url":"https://configclarity.dev/glossary/cron-job-collision/","name":"Cron Job Collision"},
+{"@type":"ListItem","position":5,"url":"https://configclarity.dev/glossary/reverse-proxy/","name":"Reverse Proxy"},
+{"@type":"ListItem","position":6,"url":"https://configclarity.dev/glossary/traefik-labels/","name":"Traefik Labels"},
+{"@type":"ListItem","position":7,"url":"https://configclarity.dev/glossary/flock-safety/","name":"flock Safety"},
+{"@type":"ListItem","position":8,"url":"https://configclarity.dev/glossary/hardcoded-secrets/","name":"Hardcoded Secrets"},
+{"@type":"ListItem","position":9,"url":"https://configclarity.dev/glossary/healthcheck/","name":"Docker Healthcheck"},
+{"@type":"ListItem","position":10,"url":"https://configclarity.dev/glossary/nftables/","name":"nftables"},
+{"@type":"ListItem","position":11,"url":"https://configclarity.dev/glossary/ipv6-mismatch/","name":"IPv6 Mismatch"},
+{"@type":"ListItem","position":12,"url":"https://configclarity.dev/glossary/dangling-route/","name":"Dangling Route"},
+{"@type":"ListItem","position":13,"url":"https://configclarity.dev/glossary/resource-limits/","name":"Resource Limits (Docker)"},
+{"@type":"ListItem","position":14,"url":"https://configclarity.dev/glossary/log-overflow/","name":"Log Overflow"}]
+  }
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; }
+      .definition-box { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.95rem; }
+      h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.4rem; }
+      .related-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+      .related-links a { font-size: 0.8rem; padding: 0.3rem 0.75rem; background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 6px; color: var(--text); }
+      .related-links a:hover { border-color: var(--purple); text-decoration: none; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .tool-cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; }
+      .tool-cta p { color: var(--text); font-size: 0.85rem; margin-bottom: 0.75rem; }
+      .tool-cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+      .card { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; }
+      .card:hover { border-color: var(--purple); }
+      .card-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.35rem; }
+      .card-desc { font-size: 0.78rem; color: var(--muted); }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › Glossary</div>
+  <div class="content">
+    <h1>DevOps &amp; Linux Server Glossary</h1>
+    <p style="color:var(--muted);font-size:0.875rem;margin-bottom:2rem;">Definitions for Docker, UFW, SSL, cron, and reverse proxy terms — written for sysadmins, not academics. Each term links to the relevant fix guide and ConfigClarity tool.</p>
+  </div>
+  <div class="grid" style="max-width:900px;margin:0 auto;padding:0 2rem 3rem;">
+    <a href="/glossary/docker-ufw-bypass/" class="card" style="display:block;">
+      <div class="card-title">Docker UFW Bypass</div>
+      <div class="card-desc">Docker UFW bypass is a known misconfiguration where Docker's iptables rules expose container ports t...</div>
+    </a>
+    <a href="/glossary/port-binding/" class="card" style="display:block;">
+      <div class="card-title">Port Binding</div>
+      <div class="card-desc">Port binding is the process of associating a network port on a host interface with a service or cont...</div>
+    </a>
+    <a href="/glossary/ssl-certificate-expiry/" class="card" style="display:block;">
+      <div class="card-title">SSL Certificate Expiry</div>
+      <div class="card-desc">SSL certificate expiry occurs when a TLS certificate passes its validity end date, causing browsers ...</div>
+    </a>
+    <a href="/glossary/cron-job-collision/" class="card" style="display:block;">
+      <div class="card-title">Cron Job Collision</div>
+      <div class="card-desc">A cron job collision occurs when multiple scheduled cron jobs run simultaneously and compete for the...</div>
+    </a>
+    <a href="/glossary/reverse-proxy/" class="card" style="display:block;">
+      <div class="card-title">Reverse Proxy</div>
+      <div class="card-desc">A reverse proxy is a server that sits in front of backend applications and forwards client requests ...</div>
+    </a>
+    <a href="/glossary/traefik-labels/" class="card" style="display:block;">
+      <div class="card-title">Traefik Labels</div>
+      <div class="card-desc">Traefik labels are Docker Compose metadata that tell the Traefik reverse proxy how to route traffic ...</div>
+    </a>
+    <a href="/glossary/flock-safety/" class="card" style="display:block;">
+      <div class="card-title">flock Safety</div>
+      <div class="card-desc">flock safety is the practice of wrapping cron jobs and scheduled scripts with the Linux flock comman...</div>
+    </a>
+    <a href="/glossary/hardcoded-secrets/" class="card" style="display:block;">
+      <div class="card-title">Hardcoded Secrets</div>
+      <div class="card-desc">Hardcoded secrets are credentials, API keys, database passwords, or private keys embedded directly i...</div>
+    </a>
+    <a href="/glossary/healthcheck/" class="card" style="display:block;">
+      <div class="card-title">Docker Healthcheck</div>
+      <div class="card-desc">A Docker healthcheck is a command defined in a container's configuration that Docker runs periodical...</div>
+    </a>
+    <a href="/glossary/nftables/" class="card" style="display:block;">
+      <div class="card-title">nftables</div>
+      <div class="card-desc">nftables is the modern Linux firewall framework that replaced iptables as the default in Debian 10+,...</div>
+    </a>
+    <a href="/glossary/ipv6-mismatch/" class="card" style="display:block;">
+      <div class="card-title">IPv6 Mismatch</div>
+      <div class="card-desc">An IPv6 mismatch occurs when firewall rules protect a service on IPv4 but the same port is exposed a...</div>
+    </a>
+    <a href="/glossary/dangling-route/" class="card" style="display:block;">
+      <div class="card-title">Dangling Route</div>
+      <div class="card-desc">A dangling route is a reverse proxy configuration entry pointing to a backend service that no longer...</div>
+    </a>
+    <a href="/glossary/resource-limits/" class="card" style="display:block;">
+      <div class="card-title">Resource Limits (Docker)</div>
+      <div class="card-desc">Docker resource limits are configuration directives that cap the CPU and memory a container can cons...</div>
+    </a>
+    <a href="/glossary/log-overflow/" class="card" style="display:block;">
+      <div class="card-title">Log Overflow</div>
+      <div class="card-desc">Log overflow occurs when container or application logs grow without bound, filling the host disk and...</div>
+    </a>
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

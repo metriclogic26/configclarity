@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ConfigClarity vs Alternatives — Tool Comparison Guides</title>
+  <meta name="description" content="How ConfigClarity compares to securityheaders.com, SSL Labs, MXToolbox, and other server audit tools. Fixers not checkers.">
+  <meta name="keywords" content="configclarity alternative, securityheaders.com alternative, ssl labs alternative, mxtoolbox alternative">
+  <link rel="canonical" href="https://configclarity.dev/vs/">
+  <meta property="og:title" content="ConfigClarity vs Alternatives — Tool Comparison Guides">
+  <meta property="og:description" content="How ConfigClarity compares to securityheaders.com, SSL Labs, MXToolbox. Fixers not checkers.">
+  <meta property="og:url" content="https://configclarity.dev/vs/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "ConfigClarity Comparison Guides",
+    "url": "https://configclarity.dev/vs/",
+    "description": "How ConfigClarity compares to securityheaders.com, SSL Labs, MXToolbox, and other developer tools.",
+    "isPartOf": {"@type":"WebSite","name":"ConfigClarity","url":"https://configclarity.dev"},
+    "mainEntity": {
+      "@type": "ItemList",
+      "name": "Tool Comparisons",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"url":"https://configclarity.dev/vs/configclarity-vs-securityheaders","name":"ConfigClarity vs securityheaders.com"},
+        {"@type":"ListItem","position":2,"url":"https://configclarity.dev/vs/configclarity-vs-ssl-labs","name":"ConfigClarity vs SSL Labs"},
+        {"@type":"ListItem","position":3,"url":"https://configclarity.dev/vs/configclarity-vs-mxtoolbox","name":"ConfigClarity vs MXToolbox"}
+      ]
+    }
+  }
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .hero { padding: 3rem 2rem 2rem; max-width: 900px; margin: 0 auto; }
+      .hero h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.75rem; }
+      .hero p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; max-width: 600px; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; padding: 0 2rem 3rem; max-width: 900px; margin: 0 auto; }
+      .card { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; transition: border-color .2s; }
+      .card:hover { border-color: var(--purple); }
+      .card-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .card-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+      .badge { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; margin-bottom: 0.5rem; }
+      .badge-green { background: rgba(34,197,94,.15); color: var(--green); }
+      .badge-red { background: rgba(239,68,68,.15); color: var(--red); }
+      .badge-orange { background: rgba(249,115,22,.15); color: var(--orange); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 900px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .section-label { padding: 0 2rem; max-width: 900px; margin: 1.5rem auto 0.75rem; font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: .08em; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a>
+      <a href="/ssl/">SSL</a>
+      <a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a>
+      <a href="/proxy/">Proxy</a>
+      <a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › Tool Comparisons</div>
+  <section class="hero">
+    <h1>ConfigClarity vs Alternatives</h1>
+    <p>ConfigClarity is a fixer, not a checker. Here's how it compares to the tools developers already know — and why "shipping the fix" changes everything.</p>
+  </section>
+  <div class="grid">
+    <a href="/vs/configclarity-vs-securityheaders/" class="card" style="display:block;">
+      <div class="card-title">ConfigClarity vs securityheaders.com</div>
+      <div class="card-desc">ConfigClarity generates the exact Nginx/Cloudflare config to fix your headers. securityheaders.com only gives you a grade.</div>
+    </a>
+    <a href="/vs/configclarity-vs-ssl-labs/" class="card" style="display:block;">
+      <div class="card-title">ConfigClarity vs SSL Labs</div>
+      <div class="card-desc">ConfigClarity checks multiple domains at once with 200-day early warnings. SSL Labs tests one domain with no actionable fix output.</div>
+    </a>
+    <a href="/vs/configclarity-vs-mxtoolbox/" class="card" style="display:block;">
+      <div class="card-title">ConfigClarity vs MXToolbox</div>
+      <div class="card-desc">ConfigClarity is a fixer, not a checker. MXToolbox tells you what's wrong; ConfigClarity tells you the exact config to paste.</div>
+    </a>
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="https://domainpreflight.dev">DomainPreflight</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub</a></p>
+  </footer>
+
+</body>
+</html>

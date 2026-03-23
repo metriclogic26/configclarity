@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gatsby robots.txt — Correct Configuration — ConfigClarity</title>
+  <meta name="description" content="How to configure robots.txt in Gatsby using gatsby-plugin-robots-txt. Block draft pages, add sitemap reference, configure for Netlify and Vercel deployments.">
+  <meta name="keywords" content="gatsby robots txt, gatsby-plugin-robots-txt, gatsby robots txt configuration">
+  <link rel="canonical" href="https://configclarity.dev/fix/robots/gatsby/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle",
+    "headline":"Gatsby robots.txt — Correct Configuration","url":"https://configclarity.dev/fix/robots/gatsby/",
+    "description":"How to configure robots.txt in Gatsby using gatsby-plugin-robots-txt. Block draft pages, add sitemap reference, configure for Netlify and Vercel deployments.","author":{"@type":"Organization","name":"MetricLogic"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":'Where does robots.txt go in Gatsby without a plugin?',"acceptedAnswer":{"@type":"Answer","text":'Place a static robots.txt file in the /static/ directory. Gatsby copies all files in /static/ to the root of the build output, making static/robots.txt accessible at /robots.txt.'}},{"@type":"Question","name":'How do I block Gatsby staging from being indexed?',"acceptedAnswer":{"@type":"Answer","text":'Use environment-based configuration in gatsby-plugin-robots-txt with Disallow: / for non-production environments. Or add the X-Robots-Tag: noindex header in your staging server/CDN configuration — this is more reliable than robots.txt for preventing accidental indexing.'}},{"@type":"Question","name":'What is the correct sitemap URL for Gatsby?',"acceptedAnswer":{"@type":"Answer","text":'With gatsby-plugin-sitemap, the default output is /sitemap-index.xml (Gatsby 4+) or /sitemap.xml (Gatsby 3 and earlier). Check your gatsby-config.js sitemap plugin output option to confirm.'}}]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; }
+      h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      pre { background: #0b0d14; border: 1px solid #2a2d3d; border-radius: 6px; padding: 1rem 1.25rem; font-size: 0.78rem; overflow-x: auto; margin: 0.75rem 0 1.25rem; }
+      .fix-box { background: var(--bg2); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+      .fix-box .label { font-size: 0.7rem; color: var(--green); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 0.5rem; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .cta-box { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; text-align: center; }
+      .cta-box p { color: var(--text); margin-bottom: 0.75rem; }
+      .cta-btn { display: inline-block; background: var(--purple); color: #fff; padding: 0.45rem 1.2rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.75rem; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/robots/">robots.txt</a> › Gatsby robots.txt — Correct Configuration</div>
+  <div class="content">
+    <h1>Gatsby robots.txt — Correct Configuration</h1>
+    <p>Gatsby generates robots.txt using the <code>gatsby-plugin-robots-txt</code> plugin or by placing a static file in the <code>/static/</code> directory. The plugin supports environment-specific configuration — useful for staging vs production.</p>
+
+<h2>Method 1: gatsby-plugin-robots-txt (Recommended)</h2>
+<pre>// gatsby-config.js
+{
+  resolve: 'gatsby-plugin-robots-txt',
+  options: {
+    host: 'https://yourdomain.com',
+    sitemap: 'https://yourdomain.com/sitemap-index.xml',
+    policy: [
+      { userAgent: '*', allow: '/' },
+      { userAgent: 'GPTBot', allow: '/' },
+      { userAgent: 'ClaudeBot', allow: '/' }
+    ]
+  }
+}</pre>
+
+<h2>Environment-Specific: Block Staging</h2>
+<pre>// gatsby-config.js
+const robotsPolicy = process.env.NODE_ENV === 'production'
+  ? [{ userAgent: '*', allow: '/' }]
+  : [{ userAgent: '*', disallow: ['/'] }]
+
+{
+  resolve: 'gatsby-plugin-robots-txt',
+  options: { policy: robotsPolicy }
+}</pre>
+    <div class="cta-box">
+      <p>Validate your robots.txt live — fetch any URL and get AI bot coverage + URL tester.</p>
+      <a href="/robots/" class="cta-btn">Open robots.txt Validator →</a>
+    </div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item"><div class="faq-q">Where does robots.txt go in Gatsby without a plugin?</div><div class="faq-a">Place a static robots.txt file in the /static/ directory. Gatsby copies all files in /static/ to the root of the build output, making static/robots.txt accessible at /robots.txt.</div></div><div class="faq-item"><div class="faq-q">How do I block Gatsby staging from being indexed?</div><div class="faq-a">Use environment-based configuration in gatsby-plugin-robots-txt with Disallow: / for non-production environments. Or add the X-Robots-Tag: noindex header in your staging server/CDN configuration — this is more reliable than robots.txt for preventing accidental indexing.</div></div><div class="faq-item"><div class="faq-q">What is the correct sitemap URL for Gatsby?</div><div class="faq-a">With gatsby-plugin-sitemap, the default output is /sitemap-index.xml (Gatsby 4+) or /sitemap.xml (Gatsby 3 and earlier). Check your gatsby-config.js sitemap plugin output option to confirm.</div></div>
+  </div>
+
+  <footer>
+    <p><a href="/glossary/">Glossary</a> &nbsp;·&nbsp; <a href="/fix/">Fix Guides</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic Network</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

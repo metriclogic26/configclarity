@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Port Binding — DevOps Glossary — ConfigClarity</title>
+  <meta name="description" content="Port binding is the process of associating a network port on a host interface with a service or container, controlling which IP addresses and protocols can reach the service.">
+  <meta name="keywords" content="networking, docker, security, 0.0.0.0, firewall, linux server, devops glossary">
+  <link rel="canonical" href="https://configclarity.dev/glossary/port-binding/">
+  <meta property="og:title" content="Port Binding — ConfigClarity Glossary">
+  <meta property="og:description" content="Port binding is the process of associating a network port on a host interface with a service or container, controlling which IP addresses and protocols can reach the service.">
+  <meta property="og:url" content="https://configclarity.dev/glossary/port-binding/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": "Port Binding",
+    "url": "https://configclarity.dev/glossary/port-binding/",
+    "description": "Port binding is the process of associating a network port on a host interface with a service or container, controlling which IP addresses and protocols can reach the service.",
+    "inDefinedTermSet": {
+      "@type": "DefinedTermSet",
+      "name": "ConfigClarity DevOps Glossary",
+      "url": "https://configclarity.dev/glossary/"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{"@type":"Question","name":'What does 0.0.0.0 port binding mean?',"acceptedAnswer":{"@type":"Answer","text":"A service bound to 0.0.0.0 listens on all network interfaces — loopback, private LAN, and public internet. Any machine that can reach the server's public IP on that port can connect to the service."}},
+{"@type":"Question","name":'How do I check what ports are bound to 0.0.0.0?',"acceptedAnswer":{"@type":"Answer","text":"Run: <code>ss -tlnp</code> or <code>netstat -tlnp</code>. Look for <code>0.0.0.0:PORT</code> in the Local Address column. For Docker containers, run <code>docker ps --format 'table {{.Ports}}'</code>."}},
+{"@type":"Question","name":'Should databases ever bind to 0.0.0.0?',"acceptedAnswer":{"@type":"Answer","text":'Almost never. Databases like Redis, PostgreSQL, and MongoDB should bind to <code>127.0.0.1</code> or a private network interface. Public exposure of database ports is one of the most common causes of data breaches on VPS servers.'}}]
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Glossary","item":"https://configclarity.dev/glossary/"},
+    {"@type":"ListItem","position":3,"name":"Port Binding","item":"https://configclarity.dev/glossary/port-binding/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; }
+      .definition-box { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.95rem; }
+      h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.4rem; }
+      .related-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+      .related-links a { font-size: 0.8rem; padding: 0.3rem 0.75rem; background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 6px; color: var(--text); }
+      .related-links a:hover { border-color: var(--purple); text-decoration: none; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .tool-cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; }
+      .tool-cta p { color: var(--text); font-size: 0.85rem; margin-bottom: 0.75rem; }
+      .tool-cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+      .card { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; }
+      .card:hover { border-color: var(--purple); }
+      .card-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.35rem; }
+      .card-desc { font-size: 0.78rem; color: var(--muted); }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/glossary/">Glossary</a> › Port Binding
+  </div>
+  <div class="content">
+    <h1>Port Binding</h1>
+    <div class="definition-box">Port binding is the process of associating a network port on a host interface with a service or container, controlling which IP addresses and protocols can reach the service.</div>
+    <div><span class="tag">Networking</span><span class="tag">Docker</span><span class="tag">Security</span><span class="tag">0.0.0.0</span><span class="tag">Firewall</span></div>
+    <p>Port binding determines two things: which port number a service listens on, and which network interface (IP address) the service is accessible from. The combination of IP address and port is called a socket.</p>
+
+<p>In Docker, port binding is specified in docker-compose.yml as <code>HOST_IP:HOST_PORT:CONTAINER_PORT</code>. Omitting the HOST_IP (e.g., <code>8080:80</code>) binds to <code>0.0.0.0</code>, which means all interfaces including the public internet-facing interface. This is the most common cause of accidentally exposed services.</p>
+
+<h2>Interface Binding Options</h2>
+<p><code>0.0.0.0:8080:80</code> — all interfaces, publicly accessible. <code>127.0.0.1:8080:80</code> — loopback only, localhost access only. <code>192.168.1.x:8080:80</code> — specific private interface, LAN only.</p>
+
+<h2>Why 0.0.0.0 Is Dangerous</h2>
+<p>Services bound to 0.0.0.0 are reachable from any network interface including the public internet. Databases (Redis :6379, PostgreSQL :5432, MongoDB :27017) are frequently exposed this way via Docker without the operator realising. Combined with the Docker UFW bypass issue, these services bypass firewall protection entirely.</p>
+    <h2>Related Tools</h2>
+    <div class="related-links"><a href="/docker/">Docker Auditor →</a><a href="/firewall/">Firewall Auditor →</a></div>
+    <h2>Fix Guides</h2>
+    <div class="related-links"><a href="/fix/docker/port-exposure/">Docker port exposure fix</a></div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+        <div class="faq-q">What does 0.0.0.0 port binding mean?</div>
+        <div class="faq-a">A service bound to 0.0.0.0 listens on all network interfaces — loopback, private LAN, and public internet. Any machine that can reach the server's public IP on that port can connect to the service.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">How do I check what ports are bound to 0.0.0.0?</div>
+        <div class="faq-a">Run: <code>ss -tlnp</code> or <code>netstat -tlnp</code>. Look for <code>0.0.0.0:PORT</code> in the Local Address column. For Docker containers, run <code>docker ps --format 'table {{.Ports}}'</code>.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">Should databases ever bind to 0.0.0.0?</div>
+        <div class="faq-a">Almost never. Databases like Redis, PostgreSQL, and MongoDB should bind to <code>127.0.0.1</code> or a private network interface. Public exposure of database ports is one of the most common causes of data breaches on VPS servers.</div>
+      </div>
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>

@@ -415,6 +415,27 @@
       height: 400px;
       border: none;
     }
+    .input-tabs {
+      display: flex;
+      gap: 0.25rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 2px solid #1e2236;
+    }
+    .input-tab {
+      padding: 0.5rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.8125rem;
+      color: #8a8fb5;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      cursor: pointer;
+    }
+    .input-tab.active { color: #fff; border-bottom-color: #6c63ff; }
+    .input-tab:hover:not(.active) { color: #e2e4f0; }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
     </style>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="b6797951-5748-4b7f-9283-445ba2b86a02"></script>
 </head>
@@ -476,19 +497,42 @@
 
   <main class="main">
     <aside class="panel-left">
-      <div class="textarea-wrap">
-        <label for="domains-input">Domains (one per line)</label>
-        <p style="font-size:0.75rem;color:#8a8fb5;margin:0 0 0.35rem;">
-          One domain per line — no https:// needed.
-          Checks Certificate Transparency logs for expiry, issuer and CDN detection.
-        </p>
-        <textarea id="domains-input" placeholder="example.com&#10;api.example.com&#10;app.example.org" aria-label="Domains to check, one per line"></textarea>
-        <p class="cc-restore-notice" id="cc-restore-notice" aria-live="polite" style="display: none; color: #8a8fb5; font-size: 0.75rem; margin: 0.25rem 0 0;"></p>
-        <div class="button-row">
-          <button type="button" class="btn-visualize" id="btn-visualize" aria-label="Check SSL certificates for all domains">Check domains</button>
-          <button type="button" class="btn-share" id="btn-sample" aria-label="Load sample domains">Sample input</button>
-          <button type="button" class="btn-share" id="btn-share-url" aria-label="Copy shareable URL with domain list">Share URL</button>
-          <button type="button" class="btn-share" id="btn-clear" aria-label="Clear input and results">Clear</button>
+      <div class="input-tabs">
+        <button type="button" class="input-tab active" id="tab-domains">Domain Check</button>
+        <button type="button" class="input-tab" id="tab-paste-cert">Paste Certificate</button>
+      </div>
+
+      <div id="panel-domains" class="tab-panel active">
+        <div class="textarea-wrap">
+          <label for="domains-input">Domains (one per line)</label>
+          <p style="font-size:0.75rem;color:#8a8fb5;margin:0 0 0.35rem;">
+            One domain per line — no https:// needed.
+            Checks Certificate Transparency logs for expiry, issuer and CDN detection.
+          </p>
+          <textarea id="domains-input" placeholder="example.com&#10;api.example.com&#10;app.example.org" aria-label="Domains to check, one per line"></textarea>
+          <p class="cc-restore-notice" id="cc-restore-notice" aria-live="polite" style="display: none; color: #8a8fb5; font-size: 0.75rem; margin: 0.25rem 0 0;"></p>
+          <div class="button-row">
+            <button type="button" class="btn-visualize" id="btn-visualize" aria-label="Check SSL certificates for all domains">Check domains</button>
+            <button type="button" class="btn-share" id="btn-sample" aria-label="Load sample domains">Sample input</button>
+            <button type="button" class="btn-share" id="btn-share-url" aria-label="Copy shareable URL with domain list">Share URL</button>
+            <button type="button" class="btn-share" id="btn-clear" aria-label="Clear input and results">Clear</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="panel-paste-cert" class="tab-panel">
+        <div class="textarea-wrap">
+          <label for="cert-input">PEM Certificate</label>
+          <p style="font-size:0.75rem;color:#8a8fb5;margin:0 0 0.35rem;">
+            Paste a PEM certificate (begins with -----BEGIN CERTIFICATE-----).
+            Works for self-signed certs and private CAs — no internet required.
+          </p>
+          <textarea id="cert-input" placeholder="-----BEGIN CERTIFICATE-----&#10;MIIDXTCCAkWgAwIBAgIJAJC1Hj...&#10;-----END CERTIFICATE-----" aria-label="PEM certificate text" style="min-height:200px;font-size:0.75rem;"></textarea>
+          <div class="button-row">
+            <button type="button" class="btn-visualize" id="btn-parse-cert">Parse Certificate</button>
+            <button type="button" class="btn-share" id="btn-clear-cert">Clear</button>
+          </div>
+          <div id="cert-parse-error" style="display:none;margin-top:0.5rem;padding:0.5rem 0.75rem;background:rgba(244,63,94,0.15);border:1px solid #f43f5e;border-radius:6px;color:#f87171;font-size:0.8125rem;"></div>
         </div>
       </div>
     </aside>
@@ -1108,6 +1152,275 @@
       } else {
         initFromUrl();
       }
+
+      // Tab switching
+      var tabDomains = document.getElementById('tab-domains');
+      var tabPasteCert = document.getElementById('tab-paste-cert');
+      var panelDomains = document.getElementById('panel-domains');
+      var panelPasteCert = document.getElementById('panel-paste-cert');
+
+      tabDomains.addEventListener('click', function () {
+        tabDomains.classList.add('active');
+        tabPasteCert.classList.remove('active');
+        panelDomains.classList.add('active');
+        panelPasteCert.classList.remove('active');
+      });
+      tabPasteCert.addEventListener('click', function () {
+        tabPasteCert.classList.add('active');
+        tabDomains.classList.remove('active');
+        panelPasteCert.classList.add('active');
+        panelDomains.classList.remove('active');
+      });
+
+      // PEM parser
+      document.getElementById('btn-clear-cert').addEventListener('click', function () {
+        document.getElementById('cert-input').value = '';
+        document.getElementById('cert-parse-error').style.display = 'none';
+        listEl.innerHTML = '';
+        placeholder.style.display = 'block';
+        resultsEl.classList.remove('visible');
+        if (resultsActionsEl) resultsActionsEl.classList.remove('visible');
+      });
+
+      document.getElementById('btn-parse-cert').addEventListener('click', function () {
+        var pem = document.getElementById('cert-input').value.trim();
+        var errEl = document.getElementById('cert-parse-error');
+        errEl.style.display = 'none';
+
+        if (!pem) { errEl.textContent = 'Paste a PEM certificate first.'; errEl.style.display = 'block'; return; }
+        if (!pem.includes('BEGIN CERTIFICATE')) { errEl.textContent = 'Not a valid PEM certificate. Must start with -----BEGIN CERTIFICATE-----.'; errEl.style.display = 'block'; return; }
+
+        try {
+          // Strip PEM headers and decode base64
+          var b64 = pem.replace(/-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----|\s/g, '');
+          var binary = atob(b64);
+          var bytes = new Uint8Array(binary.length);
+          for (var i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+
+          // Parse ASN.1 using SubtleCrypto
+          crypto.subtle.importKey(
+            'spki',
+            bytes.buffer,
+            { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+            true,
+            ['verify']
+          ).catch(function () {
+            return crypto.subtle.importKey(
+              'spki',
+              bytes.buffer,
+              { name: 'ECDSA', namedCurve: 'P-256' },
+              true,
+              ['verify']
+            );
+          }).catch(function () { return null; });
+
+          // Parse certificate fields from ASN.1 DER
+          var result = parsePemCertificate(pem);
+          if (!result) {
+            errEl.textContent = 'Could not parse certificate fields. Ensure it is a valid X.509 PEM certificate.';
+            errEl.style.display = 'block';
+            return;
+          }
+
+          placeholder.style.display = 'none';
+          listEl.innerHTML = '';
+          resultsEl.classList.add('visible');
+          var card = buildCardForResult(result);
+          listEl.appendChild(card);
+          if (resultsActionsEl) resultsActionsEl.classList.add('visible');
+          lastResults = [result];
+
+        } catch (e) {
+          errEl.textContent = 'Parse error: ' + (e.message || String(e));
+          errEl.style.display = 'block';
+        }
+      });
+
+      function parsePemCertificate(pem) {
+        try {
+          var b64 = pem.replace(/-----BEGIN CERTIFICATE-----|-----END CERTIFICATE-----|\s/g, '');
+          var binary = atob(b64);
+          var bytes = [];
+          for (var i = 0; i < binary.length; i++) bytes.push(binary.charCodeAt(i));
+
+          // ASN.1 DER parser — minimal, extracts validity dates and subject CN
+          var pos = 0;
+
+          function readLength() {
+            var len = bytes[pos++];
+            if (len & 0x80) {
+              var numBytes = len & 0x7f;
+              len = 0;
+              for (var i = 0; i < numBytes; i++) len = (len << 8) | bytes[pos++];
+            }
+            return len;
+          }
+
+          function readTag() { return bytes[pos++]; }
+
+          function skipValue() {
+            var tag = readTag();
+            var len = readLength();
+            pos += len;
+          }
+
+          function readValue() {
+            var tag = readTag();
+            var len = readLength();
+            var val = bytes.slice(pos, pos + len);
+            pos += len;
+            return { tag: tag, val: val };
+          }
+
+          function readSequence() {
+            var tag = readTag();
+            var len = readLength();
+            return len;
+          }
+
+          function bytesToString(arr) {
+            return arr.map(function (b) { return String.fromCharCode(b); }).join('');
+          }
+
+          function parseUtcTime(arr) {
+            var s = bytesToString(arr);
+            // YYMMDDHHMMSSZ or YYMMDDHHMMSS+HHMM
+            var year = parseInt(s.slice(0, 2), 10);
+            year += year >= 50 ? 1900 : 2000;
+            var month = parseInt(s.slice(2, 4), 10) - 1;
+            var day = parseInt(s.slice(4, 6), 10);
+            var hour = parseInt(s.slice(6, 8), 10);
+            var min = parseInt(s.slice(8, 10), 10);
+            var sec = parseInt(s.slice(10, 12), 10);
+            return new Date(Date.UTC(year, month, day, hour, min, sec));
+          }
+
+          function parseGeneralizedTime(arr) {
+            var s = bytesToString(arr);
+            var year = parseInt(s.slice(0, 4), 10);
+            var month = parseInt(s.slice(4, 6), 10) - 1;
+            var day = parseInt(s.slice(6, 8), 10);
+            var hour = parseInt(s.slice(8, 10), 10);
+            var min = parseInt(s.slice(10, 12), 10);
+            var sec = parseInt(s.slice(12, 14), 10);
+            return new Date(Date.UTC(year, month, day, hour, min, sec));
+          }
+
+          function findDates(data, depth) {
+            // Walk ASN.1 looking for UTCTime (0x17) and GeneralizedTime (0x18) pairs
+            var dates = [];
+            var i = 0;
+            while (i < data.length) {
+              var tag = data[i];
+              if (i + 1 >= data.length) break;
+              var lenByte = data[i + 1];
+              var lenSize = 1;
+              var len;
+              if (lenByte & 0x80) {
+                lenSize = 1 + (lenByte & 0x7f);
+                len = 0;
+                for (var k = 0; k < (lenByte & 0x7f); k++) len = (len << 8) | data[i + 2 + k];
+              } else {
+                len = lenByte;
+              }
+              var valStart = i + 1 + lenSize;
+              var valEnd = valStart + len;
+              if (tag === 0x17) { // UTCTime
+                try { dates.push(parseUtcTime(data.slice(valStart, valEnd))); } catch (e) {}
+              } else if (tag === 0x18) { // GeneralizedTime
+                try { dates.push(parseGeneralizedTime(data.slice(valStart, valEnd))); } catch (e) {}
+              } else if (tag === 0x30 || tag === 0x31 || (tag & 0xa0)) { // Sequence, Set, Context
+                var nested = findDates(data.slice(valStart, valEnd), depth + 1);
+                dates = dates.concat(nested);
+              }
+              i = valEnd;
+              if (dates.length >= 2 && depth <= 5) break;
+            }
+            return dates;
+          }
+
+          function findCN(data) {
+            // Look for OID 2.5.4.3 (commonName) followed by a string
+            var cnOid = [0x55, 0x04, 0x03];
+            for (var i = 0; i < data.length - 10; i++) {
+              if (data[i] === 0x06 && data[i+1] === cnOid.length) {
+                var match = true;
+                for (var j = 0; j < cnOid.length; j++) {
+                  if (data[i + 2 + j] !== cnOid[j]) { match = false; break; }
+                }
+                if (match) {
+                  // Next TLV after OID is the value
+                  var nextPos = i + 2 + cnOid.length;
+                  var nextTag = data[nextPos];
+                  var nextLen = data[nextPos + 1];
+                  if (nextLen < 128) {
+                    return bytesToString(data.slice(nextPos + 2, nextPos + 2 + nextLen));
+                  }
+                }
+              }
+            }
+            return null;
+          }
+
+          function findIssuerCN(data) {
+            // Find issuer (second RDNSequence in TBSCertificate)
+            var cnOid = [0x55, 0x04, 0x03];
+            var found = [];
+            for (var i = 0; i < data.length - 10; i++) {
+              if (data[i] === 0x06 && data[i+1] === cnOid.length) {
+                var match = true;
+                for (var j = 0; j < cnOid.length; j++) {
+                  if (data[i + 2 + j] !== cnOid[j]) { match = false; break; }
+                }
+                if (match) {
+                  var nextPos = i + 2 + cnOid.length;
+                  var nextTag = data[nextPos];
+                  var nextLen = data[nextPos + 1];
+                  if (nextLen < 128) {
+                    found.push(bytesToString(data.slice(nextPos + 2, nextPos + 2 + nextLen)));
+                  }
+                }
+              }
+            }
+            // First CN = subject, second CN = issuer (if present)
+            return found.length >= 2 ? found[1] : (found[0] || 'Unknown');
+          }
+
+          var dates = findDates(bytes, 0);
+          var cn = findCN(bytes) || 'Unknown';
+          var issuerCn = findIssuerCN(bytes) || 'Unknown';
+
+          if (dates.length < 2) {
+            return null;
+          }
+
+          // Sort dates: notBefore < notAfter
+          dates.sort(function (a, b) { return a - b; });
+          var notBefore = dates[0];
+          var notAfter = dates[dates.length > 1 ? 1 : 0];
+
+          var now = new Date();
+          var daysRemaining = Math.floor((notAfter - now) / 86400000);
+          var totalValidityDays = Math.floor((notAfter - notBefore) / 86400000);
+
+          return {
+            domain: cn,
+            commonName: cn,
+            issuer: issuerCn,
+            notAfter: notAfter.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+            notBefore: notBefore.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }),
+            daysRemaining: daysRemaining,
+            totalValidityDays: totalValidityDays,
+            exceeds200Days: totalValidityDays > 200,
+            error: null,
+            status: daysRemaining < 0 ? 'red' : daysRemaining < 7 ? 'red' : daysRemaining < 30 ? 'orange' : 'green',
+            isPasted: true
+          };
+        } catch (e) {
+          return null;
+        }
+      }
+
     })();
 
     const feedbackBtn = document.getElementById('feedback-btn');

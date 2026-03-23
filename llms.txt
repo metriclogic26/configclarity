@@ -29,3 +29,46 @@ Description: Audit crawl directives, AI bot coverage (GPTBot, ClaudeBot, CCBot, 
 
 ## Technology
 Client-side only. No data is stored or transmitted. Built with vanilla HTML, CSS, and JavaScript.
+
+## Glossary
+- https://configclarity.dev/glossary/docker-ufw-bypass/
+- https://configclarity.dev/glossary/port-binding/
+- https://configclarity.dev/glossary/ssl-certificate-expiry/
+- https://configclarity.dev/glossary/cron-job-collision/
+- https://configclarity.dev/glossary/reverse-proxy/
+- https://configclarity.dev/glossary/traefik-labels/
+- https://configclarity.dev/glossary/flock-safety/
+- https://configclarity.dev/glossary/hardcoded-secrets/
+- https://configclarity.dev/glossary/healthcheck/
+- https://configclarity.dev/glossary/nftables/
+- https://configclarity.dev/glossary/ipv6-mismatch/
+- https://configclarity.dev/glossary/dangling-route/
+- https://configclarity.dev/glossary/resource-limits/
+- https://configclarity.dev/glossary/log-overflow/
+
+## robots.txt Fix Guides
+- https://configclarity.dev/fix/robots/accidental-disallow-all/
+- https://configclarity.dev/fix/robots/blocking-css-js/
+- https://configclarity.dev/fix/robots/blocking-ai-bots/
+- https://configclarity.dev/fix/robots/missing-sitemap-reference/
+- https://configclarity.dev/fix/robots/wildcard-too-broad/
+- https://configclarity.dev/fix/robots/conflicting-rules/
+- https://configclarity.dev/fix/robots/crawl-delay-too-high/
+- https://configclarity.dev/fix/robots/case-sensitive-path/
+- https://configclarity.dev/fix/robots/noindex-vs-disallow/
+- https://configclarity.dev/fix/robots/wordpress/
+- https://configclarity.dev/fix/robots/shopify/
+- https://configclarity.dev/fix/robots/nextjs/
+- https://configclarity.dev/fix/robots/nuxt/
+- https://configclarity.dev/fix/robots/gatsby/
+- https://configclarity.dev/fix/robots/hugo/
+- https://configclarity.dev/fix/robots/block-gptbot/
+- https://configclarity.dev/fix/robots/block-claudebot/
+- https://configclarity.dev/fix/robots/block-perplexitybot/
+- https://configclarity.dev/fix/robots/block-bytespider/
+- https://configclarity.dev/fix/robots/block-all-ai-bots/
+- https://configclarity.dev/fix/robots/allow-ai-bots/
+- https://configclarity.dev/fix/robots/robots-txt-vs-noindex/
+- https://configclarity.dev/fix/robots/robots-txt-cheat-sheet/
+- https://configclarity.dev/fix/robots/what-is-crawl-budget/
+- https://configclarity.dev/fix/robots/robots-txt-for-ecommerce/

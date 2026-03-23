@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cron Job Collision — DevOps Glossary — ConfigClarity</title>
+  <meta name="description" content="A cron job collision occurs when multiple scheduled cron jobs run simultaneously and compete for the same resources — CPU, disk I/O, database connections, or lock files — causing performance degradation or data corruption.">
+  <meta name="keywords" content="cron, scheduling, flock, linux, devops, linux server, devops glossary">
+  <link rel="canonical" href="https://configclarity.dev/glossary/cron-job-collision/">
+  <meta property="og:title" content="Cron Job Collision — ConfigClarity Glossary">
+  <meta property="og:description" content="A cron job collision occurs when multiple scheduled cron jobs run simultaneously and compete for the same resources — CPU, disk I/O, database connections, or lock files — causing performance degradation or data corruption.">
+  <meta property="og:url" content="https://configclarity.dev/glossary/cron-job-collision/">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "DefinedTerm",
+    "name": "Cron Job Collision",
+    "url": "https://configclarity.dev/glossary/cron-job-collision/",
+    "description": "A cron job collision occurs when multiple scheduled cron jobs run simultaneously and compete for the same resources — CPU, disk I/O, database connections, or lock files — causing performance degradation or data corruption.",
+    "inDefinedTermSet": {
+      "@type": "DefinedTermSet",
+      "name": "ConfigClarity DevOps Glossary",
+      "url": "https://configclarity.dev/glossary/"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [{"@type":"Question","name":'How do I detect overlapping cron jobs?',"acceptedAnswer":{"@type":"Answer","text":"Paste your <code>crontab -l</code> output into ConfigClarity's Cron Visualiser. It renders a 24-hour timeline showing every job's execution window and flags overlapping windows in red with a collision report."}},
+{"@type":"Question","name":'What is flock safety for cron jobs?',"acceptedAnswer":{"@type":"Answer","text":'flock safety means wrapping your cron command with <code>flock -n /tmp/jobname.lock command</code>. If the previous run is still executing when the next scheduled run starts, the new invocation exits immediately instead of running concurrently.'}},
+{"@type":"Question","name":'Why do all my cron jobs run at midnight?',"acceptedAnswer":{"@type":"Answer","text":"It's the most common default. When a task is set up with no specific time in mind, developers often choose <code>0 0 * * *</code>. When multiple tasks pile up at the same minute, the server CPU and I/O spike simultaneously. Spread jobs across off-peak minutes — 0:05, 0:15, 0:30, 0:45."}}]
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Glossary","item":"https://configclarity.dev/glossary/"},
+    {"@type":"ListItem","position":3,"name":"Cron Job Collision","item":"https://configclarity.dev/glossary/cron-job-collision/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root {
+        --bg: #0b0d14; --bg2: #1e2130; --purple: #6c63ff;
+        --green: #22c55e; --orange: #f97316; --red: #ef4444;
+        --text: #e2e4f0; --muted: #8a8fb5;
+      }
+      body { background: var(--bg); color: var(--text); font-family: 'JetBrains Mono', monospace; min-height: 100vh; line-height: 1.7; }
+      a { color: var(--purple); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .header { padding: 1.5rem 2rem; border-bottom: 1px solid #2a2d3d; display: flex; align-items: center; gap: 1rem; }
+      .header-logo { font-size: 1.1rem; font-weight: 700; color: var(--text); }
+      .header-logo span { color: var(--purple); }
+      .header-nav { margin-left: auto; display: flex; gap: 1rem; font-size: 0.8rem; color: var(--muted); }
+      .header-nav a { color: var(--muted); }
+      .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
+      .breadcrumb a { color: var(--muted); }
+      .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
+      h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; }
+      .definition-box { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.95rem; }
+      h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+      p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.4rem; }
+      .related-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
+      .related-links a { font-size: 0.8rem; padding: 0.3rem 0.75rem; background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 6px; color: var(--text); }
+      .related-links a:hover { border-color: var(--purple); text-decoration: none; }
+      .faq-item { margin-bottom: 1.5rem; }
+      .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
+      .faq-a { font-size: 0.85rem; color: var(--muted); }
+      .tool-cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; }
+      .tool-cta p { color: var(--text); font-size: 0.85rem; margin-bottom: 0.75rem; }
+      .tool-cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+      footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+      .card { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; }
+      .card:hover { border-color: var(--purple); }
+      .card-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.35rem; }
+      .card-desc { font-size: 0.78rem; color: var(--muted); }
+    </style>
+
+</head>
+<body>
+
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="/">ConfigClarity</a> › <a href="/glossary/">Glossary</a> › Cron Job Collision
+  </div>
+  <div class="content">
+    <h1>Cron Job Collision</h1>
+    <div class="definition-box">A cron job collision occurs when multiple scheduled cron jobs run simultaneously and compete for the same resources — CPU, disk I/O, database connections, or lock files — causing performance degradation or data corruption.</div>
+    <div><span class="tag">Cron</span><span class="tag">Scheduling</span><span class="tag">flock</span><span class="tag">Linux</span><span class="tag">DevOps</span></div>
+    <p>Cron job collisions are silent failures. The individual jobs may complete without errors, but the concurrent execution degrades performance, corrupts data, or causes cascading failures that appear unrelated. A backup job and a database dump running at the same time is a classic example — both appear to succeed but the backup captures a mid-write database state.</p>
+
+<p>The collision problem compounds on low-spec servers where scheduled tasks like log rotation, backup, cache clearing, and report generation are all set to run at midnight or hourly boundaries (0 * * * *).</p>
+
+<h2>Types of Collision</h2>
+<p><strong>Resource collision</strong> — two jobs competing for CPU/disk causes both to run slower. Common with backup jobs on I/O-limited VPS instances. <strong>Lock collision</strong> — two jobs trying to acquire the same file lock or database advisory lock. One waits, one times out. <strong>Data collision</strong> — two jobs reading and writing the same dataset. Most dangerous — can cause partial writes and corrupted state.</p>
+
+<h2>flock as the Standard Fix</h2>
+<p><code>flock</code> is the standard Linux tool for preventing concurrent cron job execution. Wrapping a cron command with <code>flock -n /tmp/job.lock</code> ensures only one instance runs at a time. If the lock cannot be acquired (a previous instance is still running), the new invocation exits immediately without error.</p>
+    <h2>Related Tools</h2>
+    <div class="related-links"><a href="/">Cron Visualiser →</a></div>
+    <h2>Fix Guides</h2>
+    <div class="related-links"><a href="/fix/cron/overlapping-jobs/">Overlapping cron jobs fix</a><a href="/fix/cron/flock-safety/">Cron flock safety fix</a><a href="/fix/cron/server-load-spike/">Server load spike fix</a></div>
+    <h2>Frequently Asked Questions</h2>
+    <div class="faq-item">
+        <div class="faq-q">How do I detect overlapping cron jobs?</div>
+        <div class="faq-a">Paste your <code>crontab -l</code> output into ConfigClarity's Cron Visualiser. It renders a 24-hour timeline showing every job's execution window and flags overlapping windows in red with a collision report.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">What is flock safety for cron jobs?</div>
+        <div class="faq-a">flock safety means wrapping your cron command with <code>flock -n /tmp/jobname.lock command</code>. If the previous run is still executing when the next scheduled run starts, the new invocation exits immediately instead of running concurrently.</div>
+      </div>
+<div class="faq-item">
+        <div class="faq-q">Why do all my cron jobs run at midnight?</div>
+        <div class="faq-a">It's the most common default. When a task is set up with no specific time in mind, developers often choose <code>0 0 * * *</code>. When multiple tasks pile up at the same minute, the server CPU and I/O spike simultaneously. Spread jobs across off-peak minutes — 0:05, 0:15, 0:30, 0:45.</div>
+      </div>
+  </div>
+
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+
+</body>
+</html>
