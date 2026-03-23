@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://configclarity.dev/</loc>
+    <loc>https://www.configclarity.dev/</loc>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://configclarity.dev/crontab</loc>
+    <loc>https://www.configclarity.dev/crontab</loc>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://configclarity.dev/ssl</loc>
+    <loc>https://www.configclarity.dev/ssl</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://configclarity.dev/docker</loc>
+    <loc>https://www.configclarity.dev/docker</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://configclarity.dev/firewall</loc>
+    <loc>https://www.configclarity.dev/firewall</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://configclarity.dev/proxy</loc>
+    <loc>https://www.configclarity.dev/proxy</loc>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://configclarity.dev/robots</loc>
+    <loc>https://www.configclarity.dev/robots</loc>
     <lastmod>2026-03-15</lastmod>
     <priority>0.8</priority>
   </url>
