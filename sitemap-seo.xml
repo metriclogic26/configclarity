@@ -470,4 +470,12 @@
   <url><loc>https://configclarity.dev/incidents/docker-ufw-bypass/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://configclarity.dev/incidents/ssl-expiry-outages/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
   <url><loc>https://configclarity.dev/incidents/docker-secrets-exposed/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.9</priority></url>
+  <url><loc>https://configclarity.dev/error/docker-ufw-bypass/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/error/nginx-502-bad-gateway/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/error/cron-not-running/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/error/ufw-inactive-still-open/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/error/permission-denied-docker-socket/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/vs/crontab-guru/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/vs/docker-bench-security/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://configclarity.dev/vs/ssl-labs/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>

@@ -78,3 +78,13 @@ Client-side only. No data is stored or transmitted. Built with vanilla HTML, CSS
 - https://configclarity.dev/blog/ssl-certificate-monitoring-guide/
 - https://configclarity.dev/blog/ollama-server-security/
 - https://configclarity.dev/blog/traefik-v2-to-v3-migration/
+
+## Incident Reports
+- https://configclarity.dev/incidents/
+- https://configclarity.dev/incidents/docker-ufw-bypass/
+- https://configclarity.dev/incidents/ssl-expiry-outages/
+- https://configclarity.dev/incidents/docker-secrets-exposed/
+
+## Blog (additional posts)
+- https://configclarity.dev/blog/ollama-server-security/
+- https://configclarity.dev/blog/openclaw-server-audit/
