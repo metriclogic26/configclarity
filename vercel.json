@@ -33,7 +33,7 @@
   ],
   "rewrites": [
     {
-      "source": "/crontab",
+      "source": "/crontab/",
       "destination": "/index.html"
     },
     {
@@ -41,7 +41,7 @@
       "destination": "/index.html"
     },
     {
-      "source": "/ssl",
+      "source": "/ssl/",
       "destination": "/ssl/index.html"
     },
     {
@@ -49,7 +49,7 @@
       "destination": "/ssl/index.html"
     },
     {
-      "source": "/docker",
+      "source": "/docker/",
       "destination": "/docker/index.html"
     },
     {
@@ -57,7 +57,7 @@
       "destination": "/docker/index.html"
     },
     {
-      "source": "/firewall",
+      "source": "/firewall/",
       "destination": "/firewall/index.html"
     },
     {
@@ -65,7 +65,7 @@
       "destination": "/firewall/index.html"
     },
     {
-      "source": "/proxy",
+      "source": "/proxy/",
       "destination": "/proxy/index.html"
     },
     {
@@ -73,7 +73,7 @@
       "destination": "/proxy/index.html"
     },
     {
-      "source": "/robots",
+      "source": "/robots/",
       "destination": "/robots/index.html"
     },
     {
@@ -81,7 +81,7 @@
       "destination": "/robots/index.html"
     },
     {
-      "source": "/home",
+      "source": "/home/",
       "destination": "/home/index.html"
     },
     {
@@ -89,7 +89,7 @@
       "destination": "/home/index.html"
     },
     {
-      "source": "/error/docker-ufw-bypass",
+      "source": "/error/docker-ufw-bypass/",
       "destination": "/error/docker-ufw-bypass/index.html"
     },
     {
@@ -97,7 +97,7 @@
       "destination": "/error/docker-ufw-bypass/index.html"
     },
     {
-      "source": "/error/nginx-502-bad-gateway",
+      "source": "/error/nginx-502-bad-gateway/",
       "destination": "/error/nginx-502-bad-gateway/index.html"
     },
     {
@@ -105,7 +105,7 @@
       "destination": "/error/nginx-502-bad-gateway/index.html"
     },
     {
-      "source": "/error/cron-not-running",
+      "source": "/error/cron-not-running/",
       "destination": "/error/cron-not-running/index.html"
     },
     {
@@ -113,7 +113,7 @@
       "destination": "/error/cron-not-running/index.html"
     },
     {
-      "source": "/error/ufw-inactive-still-open",
+      "source": "/error/ufw-inactive-still-open/",
       "destination": "/error/ufw-inactive-still-open/index.html"
     },
     {
@@ -121,7 +121,7 @@
       "destination": "/error/ufw-inactive-still-open/index.html"
     },
     {
-      "source": "/error/permission-denied-docker-socket",
+      "source": "/error/permission-denied-docker-socket/",
       "destination": "/error/permission-denied-docker-socket/index.html"
     },
     {
@@ -129,7 +129,7 @@
       "destination": "/error/permission-denied-docker-socket/index.html"
     },
     {
-      "source": "/fix/docker/port-exposure",
+      "source": "/fix/docker/port-exposure/",
       "destination": "/fix/docker/port-exposure/index.html"
     },
     {
@@ -137,7 +137,7 @@
       "destination": "/fix/docker/port-exposure/index.html"
     },
     {
-      "source": "/fix/docker/ufw-bypass",
+      "source": "/fix/docker/ufw-bypass/",
       "destination": "/fix/docker/ufw-bypass/index.html"
     },
     {
@@ -145,7 +145,7 @@
       "destination": "/fix/docker/ufw-bypass/index.html"
     },
     {
-      "source": "/fix/docker/hardcoded-secrets",
+      "source": "/fix/docker/hardcoded-secrets/",
       "destination": "/fix/docker/hardcoded-secrets/index.html"
     },
     {
@@ -153,7 +153,7 @@
       "destination": "/fix/docker/hardcoded-secrets/index.html"
     },
     {
-      "source": "/fix/docker/missing-healthcheck",
+      "source": "/fix/docker/missing-healthcheck/",
       "destination": "/fix/docker/missing-healthcheck/index.html"
     },
     {
@@ -161,7 +161,7 @@
       "destination": "/fix/docker/missing-healthcheck/index.html"
     },
     {
-      "source": "/vs/crontab-guru",
+      "source": "/vs/crontab-guru/",
       "destination": "/vs/crontab-guru/index.html"
     },
     {
@@ -169,7 +169,7 @@
       "destination": "/vs/crontab-guru/index.html"
     },
     {
-      "source": "/vs/ssl-labs",
+      "source": "/vs/ssl-labs/",
       "destination": "/vs/ssl-labs/index.html"
     },
     {
@@ -177,7 +177,7 @@
       "destination": "/vs/ssl-labs/index.html"
     },
     {
-      "source": "/vs/docker-bench-security",
+      "source": "/vs/docker-bench-security/",
       "destination": "/vs/docker-bench-security/index.html"
     },
     {
@@ -185,7 +185,7 @@
       "destination": "/vs/docker-bench-security/index.html"
     },
     {
-      "source": "/docker-compose-linter",
+      "source": "/docker-compose-linter/",
       "destination": "/docker-compose-linter/index.html"
     },
     {
@@ -193,7 +193,7 @@
       "destination": "/docker-compose-linter/index.html"
     },
     {
-      "source": "/crontab-validator",
+      "source": "/crontab-validator/",
       "destination": "/crontab-validator/index.html"
     },
     {
@@ -201,7 +201,7 @@
       "destination": "/crontab-validator/index.html"
     },
     {
-      "source": "/nginx-config-validator",
+      "source": "/nginx-config-validator/",
       "destination": "/nginx-config-validator/index.html"
     },
     {
@@ -209,7 +209,7 @@
       "destination": "/nginx-config-validator/index.html"
     },
     {
-      "source": "/providers/hetzner/docker-firewall",
+      "source": "/providers/hetzner/docker-firewall/",
       "destination": "/providers/hetzner/docker-firewall/index.html"
     },
     {
@@ -217,7 +217,7 @@
       "destination": "/providers/hetzner/docker-firewall/index.html"
     },
     {
-      "source": "/providers/hetzner/ssl-setup",
+      "source": "/providers/hetzner/ssl-setup/",
       "destination": "/providers/hetzner/ssl-setup/index.html"
     },
     {
@@ -225,7 +225,7 @@
       "destination": "/providers/hetzner/ssl-setup/index.html"
     },
     {
-      "source": "/providers/digitalocean/ufw-docker",
+      "source": "/providers/digitalocean/ufw-docker/",
       "destination": "/providers/digitalocean/ufw-docker/index.html"
     },
     {
@@ -233,7 +233,7 @@
       "destination": "/providers/digitalocean/ufw-docker/index.html"
     },
     {
-      "source": "/providers/vultr/ssl-setup",
+      "source": "/providers/vultr/ssl-setup/",
       "destination": "/providers/vultr/ssl-setup/index.html"
     },
     {
@@ -241,7 +241,7 @@
       "destination": "/providers/vultr/ssl-setup/index.html"
     },
     {
-      "source": "/providers/linode/docker-setup",
+      "source": "/providers/linode/docker-setup/",
       "destination": "/providers/linode/docker-setup/index.html"
     },
     {
@@ -249,7 +249,7 @@
       "destination": "/providers/linode/docker-setup/index.html"
     },
     {
-      "source": "/error",
+      "source": "/error/",
       "destination": "/error/index.html"
     },
     {
@@ -257,7 +257,7 @@
       "destination": "/error/index.html"
     },
     {
-      "source": "/vs",
+      "source": "/vs/",
       "destination": "/vs/index.html"
     },
     {
@@ -265,7 +265,7 @@
       "destination": "/vs/index.html"
     },
     {
-      "source": "/fix",
+      "source": "/fix/",
       "destination": "/fix/index.html"
     },
     {
@@ -273,7 +273,7 @@
       "destination": "/fix/index.html"
     },
     {
-      "source": "/providers",
+      "source": "/providers/",
       "destination": "/providers/index.html"
     },
     {
@@ -281,7 +281,7 @@
       "destination": "/providers/index.html"
     },
     {
-      "source": "/glossary",
+      "source": "/glossary/",
       "destination": "/glossary/index.html"
     },
     {
@@ -289,7 +289,7 @@
       "destination": "/glossary/index.html"
     },
     {
-      "source": "/glossary/docker-ufw-bypass",
+      "source": "/glossary/docker-ufw-bypass/",
       "destination": "/glossary/docker-ufw-bypass/index.html"
     },
     {
@@ -297,7 +297,7 @@
       "destination": "/glossary/docker-ufw-bypass/index.html"
     },
     {
-      "source": "/glossary/port-binding",
+      "source": "/glossary/port-binding/",
       "destination": "/glossary/port-binding/index.html"
     },
     {
@@ -305,7 +305,7 @@
       "destination": "/glossary/port-binding/index.html"
     },
     {
-      "source": "/glossary/ssl-certificate-expiry",
+      "source": "/glossary/ssl-certificate-expiry/",
       "destination": "/glossary/ssl-certificate-expiry/index.html"
     },
     {
@@ -313,7 +313,7 @@
       "destination": "/glossary/ssl-certificate-expiry/index.html"
     },
     {
-      "source": "/glossary/cron-job-collision",
+      "source": "/glossary/cron-job-collision/",
       "destination": "/glossary/cron-job-collision/index.html"
     },
     {
@@ -321,7 +321,7 @@
       "destination": "/glossary/cron-job-collision/index.html"
     },
     {
-      "source": "/glossary/reverse-proxy",
+      "source": "/glossary/reverse-proxy/",
       "destination": "/glossary/reverse-proxy/index.html"
     },
     {
@@ -329,7 +329,7 @@
       "destination": "/glossary/reverse-proxy/index.html"
     },
     {
-      "source": "/glossary/traefik-labels",
+      "source": "/glossary/traefik-labels/",
       "destination": "/glossary/traefik-labels/index.html"
     },
     {
@@ -337,7 +337,7 @@
       "destination": "/glossary/traefik-labels/index.html"
     },
     {
-      "source": "/glossary/flock-safety",
+      "source": "/glossary/flock-safety/",
       "destination": "/glossary/flock-safety/index.html"
     },
     {
@@ -345,7 +345,7 @@
       "destination": "/glossary/flock-safety/index.html"
     },
     {
-      "source": "/glossary/hardcoded-secrets",
+      "source": "/glossary/hardcoded-secrets/",
       "destination": "/glossary/hardcoded-secrets/index.html"
     },
     {
@@ -353,7 +353,7 @@
       "destination": "/glossary/hardcoded-secrets/index.html"
     },
     {
-      "source": "/glossary/healthcheck",
+      "source": "/glossary/healthcheck/",
       "destination": "/glossary/healthcheck/index.html"
     },
     {
@@ -361,7 +361,7 @@
       "destination": "/glossary/healthcheck/index.html"
     },
     {
-      "source": "/glossary/nftables",
+      "source": "/glossary/nftables/",
       "destination": "/glossary/nftables/index.html"
     },
     {
@@ -369,7 +369,7 @@
       "destination": "/glossary/nftables/index.html"
     },
     {
-      "source": "/glossary/ipv6-mismatch",
+      "source": "/glossary/ipv6-mismatch/",
       "destination": "/glossary/ipv6-mismatch/index.html"
     },
     {
@@ -377,7 +377,7 @@
       "destination": "/glossary/ipv6-mismatch/index.html"
     },
     {
-      "source": "/glossary/dangling-route",
+      "source": "/glossary/dangling-route/",
       "destination": "/glossary/dangling-route/index.html"
     },
     {
@@ -385,7 +385,7 @@
       "destination": "/glossary/dangling-route/index.html"
     },
     {
-      "source": "/glossary/resource-limits",
+      "source": "/glossary/resource-limits/",
       "destination": "/glossary/resource-limits/index.html"
     },
     {
@@ -393,7 +393,7 @@
       "destination": "/glossary/resource-limits/index.html"
     },
     {
-      "source": "/glossary/log-overflow",
+      "source": "/glossary/log-overflow/",
       "destination": "/glossary/log-overflow/index.html"
     },
     {
@@ -401,7 +401,7 @@
       "destination": "/glossary/log-overflow/index.html"
     },
     {
-      "source": "/fix/robots",
+      "source": "/fix/robots/",
       "destination": "/fix/robots/index.html"
     },
     {
@@ -409,7 +409,7 @@
       "destination": "/fix/robots/index.html"
     },
     {
-      "source": "/fix/robots/accidental-disallow-all",
+      "source": "/fix/robots/accidental-disallow-all/",
       "destination": "/fix/robots/accidental-disallow-all/index.html"
     },
     {
@@ -417,7 +417,7 @@
       "destination": "/fix/robots/accidental-disallow-all/index.html"
     },
     {
-      "source": "/fix/robots/blocking-css-js",
+      "source": "/fix/robots/blocking-css-js/",
       "destination": "/fix/robots/blocking-css-js/index.html"
     },
     {
@@ -425,7 +425,7 @@
       "destination": "/fix/robots/blocking-css-js/index.html"
     },
     {
-      "source": "/fix/robots/blocking-ai-bots",
+      "source": "/fix/robots/blocking-ai-bots/",
       "destination": "/fix/robots/blocking-ai-bots/index.html"
     },
     {
@@ -433,7 +433,7 @@
       "destination": "/fix/robots/blocking-ai-bots/index.html"
     },
     {
-      "source": "/fix/robots/missing-sitemap-reference",
+      "source": "/fix/robots/missing-sitemap-reference/",
       "destination": "/fix/robots/missing-sitemap-reference/index.html"
     },
     {
@@ -441,7 +441,7 @@
       "destination": "/fix/robots/missing-sitemap-reference/index.html"
     },
     {
-      "source": "/fix/robots/wildcard-too-broad",
+      "source": "/fix/robots/wildcard-too-broad/",
       "destination": "/fix/robots/wildcard-too-broad/index.html"
     },
     {
@@ -449,7 +449,7 @@
       "destination": "/fix/robots/wildcard-too-broad/index.html"
     },
     {
-      "source": "/fix/robots/conflicting-rules",
+      "source": "/fix/robots/conflicting-rules/",
       "destination": "/fix/robots/conflicting-rules/index.html"
     },
     {
@@ -457,7 +457,7 @@
       "destination": "/fix/robots/conflicting-rules/index.html"
     },
     {
-      "source": "/fix/robots/crawl-delay-too-high",
+      "source": "/fix/robots/crawl-delay-too-high/",
       "destination": "/fix/robots/crawl-delay-too-high/index.html"
     },
     {
@@ -465,7 +465,7 @@
       "destination": "/fix/robots/crawl-delay-too-high/index.html"
     },
     {
-      "source": "/fix/robots/case-sensitive-path",
+      "source": "/fix/robots/case-sensitive-path/",
       "destination": "/fix/robots/case-sensitive-path/index.html"
     },
     {
@@ -473,7 +473,7 @@
       "destination": "/fix/robots/case-sensitive-path/index.html"
     },
     {
-      "source": "/fix/robots/noindex-vs-disallow",
+      "source": "/fix/robots/noindex-vs-disallow/",
       "destination": "/fix/robots/noindex-vs-disallow/index.html"
     },
     {
@@ -481,7 +481,7 @@
       "destination": "/fix/robots/noindex-vs-disallow/index.html"
     },
     {
-      "source": "/fix/robots/wordpress",
+      "source": "/fix/robots/wordpress/",
       "destination": "/fix/robots/wordpress/index.html"
     },
     {
@@ -489,7 +489,7 @@
       "destination": "/fix/robots/wordpress/index.html"
     },
     {
-      "source": "/fix/robots/shopify",
+      "source": "/fix/robots/shopify/",
       "destination": "/fix/robots/shopify/index.html"
     },
     {
@@ -497,7 +497,7 @@
       "destination": "/fix/robots/shopify/index.html"
     },
     {
-      "source": "/fix/robots/nextjs",
+      "source": "/fix/robots/nextjs/",
       "destination": "/fix/robots/nextjs/index.html"
     },
     {
@@ -505,7 +505,7 @@
       "destination": "/fix/robots/nextjs/index.html"
     },
     {
-      "source": "/fix/robots/nuxt",
+      "source": "/fix/robots/nuxt/",
       "destination": "/fix/robots/nuxt/index.html"
     },
     {
@@ -513,7 +513,7 @@
       "destination": "/fix/robots/nuxt/index.html"
     },
     {
-      "source": "/fix/robots/gatsby",
+      "source": "/fix/robots/gatsby/",
       "destination": "/fix/robots/gatsby/index.html"
     },
     {
@@ -521,7 +521,7 @@
       "destination": "/fix/robots/gatsby/index.html"
     },
     {
-      "source": "/fix/robots/hugo",
+      "source": "/fix/robots/hugo/",
       "destination": "/fix/robots/hugo/index.html"
     },
     {
@@ -529,7 +529,7 @@
       "destination": "/fix/robots/hugo/index.html"
     },
     {
-      "source": "/fix/robots/block-gptbot",
+      "source": "/fix/robots/block-gptbot/",
       "destination": "/fix/robots/block-gptbot/index.html"
     },
     {
@@ -537,7 +537,7 @@
       "destination": "/fix/robots/block-gptbot/index.html"
     },
     {
-      "source": "/fix/robots/block-claudebot",
+      "source": "/fix/robots/block-claudebot/",
       "destination": "/fix/robots/block-claudebot/index.html"
     },
     {
@@ -545,7 +545,7 @@
       "destination": "/fix/robots/block-claudebot/index.html"
     },
     {
-      "source": "/fix/robots/block-perplexitybot",
+      "source": "/fix/robots/block-perplexitybot/",
       "destination": "/fix/robots/block-perplexitybot/index.html"
     },
     {
@@ -553,7 +553,7 @@
       "destination": "/fix/robots/block-perplexitybot/index.html"
     },
     {
-      "source": "/fix/robots/block-bytespider",
+      "source": "/fix/robots/block-bytespider/",
       "destination": "/fix/robots/block-bytespider/index.html"
     },
     {
@@ -561,7 +561,7 @@
       "destination": "/fix/robots/block-bytespider/index.html"
     },
     {
-      "source": "/fix/robots/block-all-ai-bots",
+      "source": "/fix/robots/block-all-ai-bots/",
       "destination": "/fix/robots/block-all-ai-bots/index.html"
     },
     {
@@ -569,7 +569,7 @@
       "destination": "/fix/robots/block-all-ai-bots/index.html"
     },
     {
-      "source": "/fix/robots/allow-ai-bots",
+      "source": "/fix/robots/allow-ai-bots/",
       "destination": "/fix/robots/allow-ai-bots/index.html"
     },
     {
@@ -577,7 +577,7 @@
       "destination": "/fix/robots/allow-ai-bots/index.html"
     },
     {
-      "source": "/fix/robots/robots-txt-vs-noindex",
+      "source": "/fix/robots/robots-txt-vs-noindex/",
       "destination": "/fix/robots/robots-txt-vs-noindex/index.html"
     },
     {
@@ -585,7 +585,7 @@
       "destination": "/fix/robots/robots-txt-vs-noindex/index.html"
     },
     {
-      "source": "/fix/robots/robots-txt-cheat-sheet",
+      "source": "/fix/robots/robots-txt-cheat-sheet/",
       "destination": "/fix/robots/robots-txt-cheat-sheet/index.html"
     },
     {
@@ -593,7 +593,7 @@
       "destination": "/fix/robots/robots-txt-cheat-sheet/index.html"
     },
     {
-      "source": "/fix/robots/what-is-crawl-budget",
+      "source": "/fix/robots/what-is-crawl-budget/",
       "destination": "/fix/robots/what-is-crawl-budget/index.html"
     },
     {
@@ -601,7 +601,7 @@
       "destination": "/fix/robots/what-is-crawl-budget/index.html"
     },
     {
-      "source": "/fix/robots/robots-txt-for-ecommerce",
+      "source": "/fix/robots/robots-txt-for-ecommerce/",
       "destination": "/fix/robots/robots-txt-for-ecommerce/index.html"
     },
     {
