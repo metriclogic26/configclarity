@@ -249,7 +249,7 @@ DATABASE_URL=postgres://myapp:change_this@db:5432/myapp</pre>
 
 <section class="section">
   <h2>For production — use Docker Secrets</h2>
-  <p>For production environments, Docker Secrets provides a more secure mechanism that stores secrets in memory, not on disk:</p>
+  <p>Hardcoded secrets are credentials, API keys, and passwords written directly into docker-compose.yml or .env files that get committed to version control. When your repo is public — or gets breached — every hardcoded credential is immediately exposed. The fix is to use environment variable references and keep actual values out of version-controlled files.</p>
   <div class="code-block good-code">
     <span class="good-label">✅ Docker Secrets (production)</span>
     <pre>services:
