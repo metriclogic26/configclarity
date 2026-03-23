@@ -895,6 +895,1018 @@
     {
       "source": "/cron/every-6-hours",
       "destination": "/cron/every-6-hours/index.html"
+    },
+    {
+      "source": "/fix/ufw/",
+      "destination": "/fix/ufw/index.html"
+    },
+    {
+      "source": "/fix/ufw",
+      "destination": "/fix/ufw/index.html"
+    },
+    {
+      "source": "/fix/ufw/docker-bypass/",
+      "destination": "/fix/ufw/docker-bypass/index.html"
+    },
+    {
+      "source": "/fix/ufw/docker-bypass",
+      "destination": "/fix/ufw/docker-bypass/index.html"
+    },
+    {
+      "source": "/fix/ufw/ipv6-mismatch/",
+      "destination": "/fix/ufw/ipv6-mismatch/index.html"
+    },
+    {
+      "source": "/fix/ufw/ipv6-mismatch",
+      "destination": "/fix/ufw/ipv6-mismatch/index.html"
+    },
+    {
+      "source": "/fix/ufw/default-deny-missing/",
+      "destination": "/fix/ufw/default-deny-missing/index.html"
+    },
+    {
+      "source": "/fix/ufw/default-deny-missing",
+      "destination": "/fix/ufw/default-deny-missing/index.html"
+    },
+    {
+      "source": "/fix/ufw/port-exposed-after-docker/",
+      "destination": "/fix/ufw/port-exposed-after-docker/index.html"
+    },
+    {
+      "source": "/fix/ufw/port-exposed-after-docker",
+      "destination": "/fix/ufw/port-exposed-after-docker/index.html"
+    },
+    {
+      "source": "/fix/nftables/",
+      "destination": "/fix/nftables/index.html"
+    },
+    {
+      "source": "/fix/nftables",
+      "destination": "/fix/nftables/index.html"
+    },
+    {
+      "source": "/fix/nftables/ubuntu-22/",
+      "destination": "/fix/nftables/ubuntu-22/index.html"
+    },
+    {
+      "source": "/fix/nftables/ubuntu-22",
+      "destination": "/fix/nftables/ubuntu-22/index.html"
+    },
+    {
+      "source": "/fix/nftables/docker-conflict/",
+      "destination": "/fix/nftables/docker-conflict/index.html"
+    },
+    {
+      "source": "/fix/nftables/docker-conflict",
+      "destination": "/fix/nftables/docker-conflict/index.html"
+    },
+    {
+      "source": "/fix/cron/",
+      "destination": "/fix/cron/index.html"
+    },
+    {
+      "source": "/fix/cron",
+      "destination": "/fix/cron/index.html"
+    },
+    {
+      "source": "/fix/cron/overlapping-jobs/",
+      "destination": "/fix/cron/overlapping-jobs/index.html"
+    },
+    {
+      "source": "/fix/cron/overlapping-jobs",
+      "destination": "/fix/cron/overlapping-jobs/index.html"
+    },
+    {
+      "source": "/fix/cron/silent-failure/",
+      "destination": "/fix/cron/silent-failure/index.html"
+    },
+    {
+      "source": "/fix/cron/silent-failure",
+      "destination": "/fix/cron/silent-failure/index.html"
+    },
+    {
+      "source": "/fix/cron/flock-safety/",
+      "destination": "/fix/cron/flock-safety/index.html"
+    },
+    {
+      "source": "/fix/cron/flock-safety",
+      "destination": "/fix/cron/flock-safety/index.html"
+    },
+    {
+      "source": "/fix/cron/server-load-spike/",
+      "destination": "/fix/cron/server-load-spike/index.html"
+    },
+    {
+      "source": "/fix/cron/server-load-spike",
+      "destination": "/fix/cron/server-load-spike/index.html"
+    },
+    {
+      "source": "/fix/cron/ai-agent-collision/",
+      "destination": "/fix/cron/ai-agent-collision/index.html"
+    },
+    {
+      "source": "/fix/cron/ai-agent-collision",
+      "destination": "/fix/cron/ai-agent-collision/index.html"
+    },
+    {
+      "source": "/fix/ssl/",
+      "destination": "/fix/ssl/index.html"
+    },
+    {
+      "source": "/fix/ssl",
+      "destination": "/fix/ssl/index.html"
+    },
+    {
+      "source": "/fix/ssl/expiry-monitoring/",
+      "destination": "/fix/ssl/expiry-monitoring/index.html"
+    },
+    {
+      "source": "/fix/ssl/expiry-monitoring",
+      "destination": "/fix/ssl/expiry-monitoring/index.html"
+    },
+    {
+      "source": "/fix/ssl/cdn-domain/",
+      "destination": "/fix/ssl/cdn-domain/index.html"
+    },
+    {
+      "source": "/fix/ssl/cdn-domain",
+      "destination": "/fix/ssl/cdn-domain/index.html"
+    },
+    {
+      "source": "/fix/ssl/traefik-renewal/",
+      "destination": "/fix/ssl/traefik-renewal/index.html"
+    },
+    {
+      "source": "/fix/ssl/traefik-renewal",
+      "destination": "/fix/ssl/traefik-renewal/index.html"
+    },
+    {
+      "source": "/fix/ssl/nginx-renewal/",
+      "destination": "/fix/ssl/nginx-renewal/index.html"
+    },
+    {
+      "source": "/fix/ssl/nginx-renewal",
+      "destination": "/fix/ssl/nginx-renewal/index.html"
+    },
+    {
+      "source": "/fix/ssl/200-day-warning/",
+      "destination": "/fix/ssl/200-day-warning/index.html"
+    },
+    {
+      "source": "/fix/ssl/200-day-warning",
+      "destination": "/fix/ssl/200-day-warning/index.html"
+    },
+    {
+      "source": "/fix/nginx/",
+      "destination": "/fix/nginx/index.html"
+    },
+    {
+      "source": "/fix/nginx",
+      "destination": "/fix/nginx/index.html"
+    },
+    {
+      "source": "/fix/nginx/502-bad-gateway/",
+      "destination": "/fix/nginx/502-bad-gateway/index.html"
+    },
+    {
+      "source": "/fix/nginx/502-bad-gateway",
+      "destination": "/fix/nginx/502-bad-gateway/index.html"
+    },
+    {
+      "source": "/fix/nginx/upstream-timeout/",
+      "destination": "/fix/nginx/upstream-timeout/index.html"
+    },
+    {
+      "source": "/fix/nginx/upstream-timeout",
+      "destination": "/fix/nginx/upstream-timeout/index.html"
+    },
+    {
+      "source": "/fix/nginx/ssl-redirect-missing/",
+      "destination": "/fix/nginx/ssl-redirect-missing/index.html"
+    },
+    {
+      "source": "/fix/nginx/ssl-redirect-missing",
+      "destination": "/fix/nginx/ssl-redirect-missing/index.html"
+    },
+    {
+      "source": "/providers/hetzner/",
+      "destination": "/providers/hetzner/index.html"
+    },
+    {
+      "source": "/providers/hetzner",
+      "destination": "/providers/hetzner/index.html"
+    },
+    {
+      "source": "/providers/hetzner/docker-firewall",
+      "destination": "/providers/hetzner/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/hetzner/ssl-setup",
+      "destination": "/providers/hetzner/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/hetzner/ufw-docker/",
+      "destination": "/providers/hetzner/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/hetzner/ufw-docker",
+      "destination": "/providers/hetzner/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/hetzner/docker-setup/",
+      "destination": "/providers/hetzner/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/hetzner/docker-setup",
+      "destination": "/providers/hetzner/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/hetzner/ssh-hardening/",
+      "destination": "/providers/hetzner/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/hetzner/ssh-hardening",
+      "destination": "/providers/hetzner/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/hetzner/firewall-setup/",
+      "destination": "/providers/hetzner/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/hetzner/firewall-setup",
+      "destination": "/providers/hetzner/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/digitalocean/",
+      "destination": "/providers/digitalocean/index.html"
+    },
+    {
+      "source": "/providers/digitalocean",
+      "destination": "/providers/digitalocean/index.html"
+    },
+    {
+      "source": "/providers/digitalocean/docker-firewall/",
+      "destination": "/providers/digitalocean/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/digitalocean/docker-firewall",
+      "destination": "/providers/digitalocean/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/digitalocean/ssl-setup/",
+      "destination": "/providers/digitalocean/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/digitalocean/ssl-setup",
+      "destination": "/providers/digitalocean/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/digitalocean/ufw-docker",
+      "destination": "/providers/digitalocean/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/digitalocean/docker-setup/",
+      "destination": "/providers/digitalocean/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/digitalocean/docker-setup",
+      "destination": "/providers/digitalocean/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/digitalocean/ssh-hardening/",
+      "destination": "/providers/digitalocean/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/digitalocean/ssh-hardening",
+      "destination": "/providers/digitalocean/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/digitalocean/firewall-setup/",
+      "destination": "/providers/digitalocean/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/digitalocean/firewall-setup",
+      "destination": "/providers/digitalocean/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/vultr/",
+      "destination": "/providers/vultr/index.html"
+    },
+    {
+      "source": "/providers/vultr",
+      "destination": "/providers/vultr/index.html"
+    },
+    {
+      "source": "/providers/vultr/docker-firewall/",
+      "destination": "/providers/vultr/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/vultr/docker-firewall",
+      "destination": "/providers/vultr/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/vultr/ssl-setup",
+      "destination": "/providers/vultr/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/vultr/ufw-docker/",
+      "destination": "/providers/vultr/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/vultr/ufw-docker",
+      "destination": "/providers/vultr/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/vultr/docker-setup/",
+      "destination": "/providers/vultr/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/vultr/docker-setup",
+      "destination": "/providers/vultr/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/vultr/ssh-hardening/",
+      "destination": "/providers/vultr/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/vultr/ssh-hardening",
+      "destination": "/providers/vultr/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/vultr/firewall-setup/",
+      "destination": "/providers/vultr/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/vultr/firewall-setup",
+      "destination": "/providers/vultr/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/linode/",
+      "destination": "/providers/linode/index.html"
+    },
+    {
+      "source": "/providers/linode",
+      "destination": "/providers/linode/index.html"
+    },
+    {
+      "source": "/providers/linode/docker-firewall/",
+      "destination": "/providers/linode/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/linode/docker-firewall",
+      "destination": "/providers/linode/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/linode/ssl-setup/",
+      "destination": "/providers/linode/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/linode/ssl-setup",
+      "destination": "/providers/linode/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/linode/ufw-docker/",
+      "destination": "/providers/linode/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/linode/ufw-docker",
+      "destination": "/providers/linode/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/linode/docker-setup",
+      "destination": "/providers/linode/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/linode/ssh-hardening/",
+      "destination": "/providers/linode/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/linode/ssh-hardening",
+      "destination": "/providers/linode/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/linode/firewall-setup/",
+      "destination": "/providers/linode/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/linode/firewall-setup",
+      "destination": "/providers/linode/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/contabo/",
+      "destination": "/providers/contabo/index.html"
+    },
+    {
+      "source": "/providers/contabo",
+      "destination": "/providers/contabo/index.html"
+    },
+    {
+      "source": "/providers/contabo/docker-firewall/",
+      "destination": "/providers/contabo/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/contabo/docker-firewall",
+      "destination": "/providers/contabo/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/contabo/ssl-setup/",
+      "destination": "/providers/contabo/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/contabo/ssl-setup",
+      "destination": "/providers/contabo/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/contabo/ufw-docker/",
+      "destination": "/providers/contabo/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/contabo/ufw-docker",
+      "destination": "/providers/contabo/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/contabo/docker-setup/",
+      "destination": "/providers/contabo/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/contabo/docker-setup",
+      "destination": "/providers/contabo/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/contabo/ssh-hardening/",
+      "destination": "/providers/contabo/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/contabo/ssh-hardening",
+      "destination": "/providers/contabo/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/contabo/firewall-setup/",
+      "destination": "/providers/contabo/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/contabo/firewall-setup",
+      "destination": "/providers/contabo/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/ovh/",
+      "destination": "/providers/ovh/index.html"
+    },
+    {
+      "source": "/providers/ovh",
+      "destination": "/providers/ovh/index.html"
+    },
+    {
+      "source": "/providers/ovh/docker-firewall/",
+      "destination": "/providers/ovh/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/ovh/docker-firewall",
+      "destination": "/providers/ovh/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/ovh/ssl-setup/",
+      "destination": "/providers/ovh/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/ovh/ssl-setup",
+      "destination": "/providers/ovh/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/ovh/ufw-docker/",
+      "destination": "/providers/ovh/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/ovh/ufw-docker",
+      "destination": "/providers/ovh/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/ovh/docker-setup/",
+      "destination": "/providers/ovh/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/ovh/docker-setup",
+      "destination": "/providers/ovh/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/ovh/ssh-hardening/",
+      "destination": "/providers/ovh/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/ovh/ssh-hardening",
+      "destination": "/providers/ovh/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/ovh/firewall-setup/",
+      "destination": "/providers/ovh/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/ovh/firewall-setup",
+      "destination": "/providers/ovh/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/scaleway/",
+      "destination": "/providers/scaleway/index.html"
+    },
+    {
+      "source": "/providers/scaleway",
+      "destination": "/providers/scaleway/index.html"
+    },
+    {
+      "source": "/providers/scaleway/docker-firewall/",
+      "destination": "/providers/scaleway/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/scaleway/docker-firewall",
+      "destination": "/providers/scaleway/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/scaleway/ssl-setup/",
+      "destination": "/providers/scaleway/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/scaleway/ssl-setup",
+      "destination": "/providers/scaleway/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/scaleway/ufw-docker/",
+      "destination": "/providers/scaleway/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/scaleway/ufw-docker",
+      "destination": "/providers/scaleway/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/scaleway/docker-setup/",
+      "destination": "/providers/scaleway/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/scaleway/docker-setup",
+      "destination": "/providers/scaleway/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/scaleway/ssh-hardening/",
+      "destination": "/providers/scaleway/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/scaleway/ssh-hardening",
+      "destination": "/providers/scaleway/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/scaleway/firewall-setup/",
+      "destination": "/providers/scaleway/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/scaleway/firewall-setup",
+      "destination": "/providers/scaleway/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/upcloud/",
+      "destination": "/providers/upcloud/index.html"
+    },
+    {
+      "source": "/providers/upcloud",
+      "destination": "/providers/upcloud/index.html"
+    },
+    {
+      "source": "/providers/upcloud/docker-firewall/",
+      "destination": "/providers/upcloud/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/upcloud/docker-firewall",
+      "destination": "/providers/upcloud/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/upcloud/ssl-setup/",
+      "destination": "/providers/upcloud/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/upcloud/ssl-setup",
+      "destination": "/providers/upcloud/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/upcloud/ufw-docker/",
+      "destination": "/providers/upcloud/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/upcloud/ufw-docker",
+      "destination": "/providers/upcloud/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/upcloud/docker-setup/",
+      "destination": "/providers/upcloud/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/upcloud/docker-setup",
+      "destination": "/providers/upcloud/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/upcloud/ssh-hardening/",
+      "destination": "/providers/upcloud/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/upcloud/ssh-hardening",
+      "destination": "/providers/upcloud/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/upcloud/firewall-setup/",
+      "destination": "/providers/upcloud/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/upcloud/firewall-setup",
+      "destination": "/providers/upcloud/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/ionos/",
+      "destination": "/providers/ionos/index.html"
+    },
+    {
+      "source": "/providers/ionos",
+      "destination": "/providers/ionos/index.html"
+    },
+    {
+      "source": "/providers/ionos/docker-firewall/",
+      "destination": "/providers/ionos/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/ionos/docker-firewall",
+      "destination": "/providers/ionos/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/ionos/ssl-setup/",
+      "destination": "/providers/ionos/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/ionos/ssl-setup",
+      "destination": "/providers/ionos/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/ionos/ufw-docker/",
+      "destination": "/providers/ionos/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/ionos/ufw-docker",
+      "destination": "/providers/ionos/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/ionos/docker-setup/",
+      "destination": "/providers/ionos/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/ionos/docker-setup",
+      "destination": "/providers/ionos/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/ionos/ssh-hardening/",
+      "destination": "/providers/ionos/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/ionos/ssh-hardening",
+      "destination": "/providers/ionos/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/ionos/firewall-setup/",
+      "destination": "/providers/ionos/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/ionos/firewall-setup",
+      "destination": "/providers/ionos/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/netcup/",
+      "destination": "/providers/netcup/index.html"
+    },
+    {
+      "source": "/providers/netcup",
+      "destination": "/providers/netcup/index.html"
+    },
+    {
+      "source": "/providers/netcup/docker-firewall/",
+      "destination": "/providers/netcup/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/netcup/docker-firewall",
+      "destination": "/providers/netcup/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/netcup/ssl-setup/",
+      "destination": "/providers/netcup/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/netcup/ssl-setup",
+      "destination": "/providers/netcup/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/netcup/ufw-docker/",
+      "destination": "/providers/netcup/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/netcup/ufw-docker",
+      "destination": "/providers/netcup/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/netcup/docker-setup/",
+      "destination": "/providers/netcup/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/netcup/docker-setup",
+      "destination": "/providers/netcup/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/netcup/ssh-hardening/",
+      "destination": "/providers/netcup/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/netcup/ssh-hardening",
+      "destination": "/providers/netcup/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/netcup/firewall-setup/",
+      "destination": "/providers/netcup/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/netcup/firewall-setup",
+      "destination": "/providers/netcup/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/",
+      "destination": "/providers/aws-lightsail/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail",
+      "destination": "/providers/aws-lightsail/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/docker-firewall/",
+      "destination": "/providers/aws-lightsail/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/docker-firewall",
+      "destination": "/providers/aws-lightsail/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/ssl-setup/",
+      "destination": "/providers/aws-lightsail/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/ssl-setup",
+      "destination": "/providers/aws-lightsail/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/ufw-docker/",
+      "destination": "/providers/aws-lightsail/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/ufw-docker",
+      "destination": "/providers/aws-lightsail/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/docker-setup/",
+      "destination": "/providers/aws-lightsail/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/docker-setup",
+      "destination": "/providers/aws-lightsail/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/ssh-hardening/",
+      "destination": "/providers/aws-lightsail/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/ssh-hardening",
+      "destination": "/providers/aws-lightsail/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/firewall-setup/",
+      "destination": "/providers/aws-lightsail/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/aws-lightsail/firewall-setup",
+      "destination": "/providers/aws-lightsail/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/",
+      "destination": "/providers/oracle-cloud/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud",
+      "destination": "/providers/oracle-cloud/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/docker-firewall/",
+      "destination": "/providers/oracle-cloud/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/docker-firewall",
+      "destination": "/providers/oracle-cloud/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/ssl-setup/",
+      "destination": "/providers/oracle-cloud/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/ssl-setup",
+      "destination": "/providers/oracle-cloud/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/ufw-docker/",
+      "destination": "/providers/oracle-cloud/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/ufw-docker",
+      "destination": "/providers/oracle-cloud/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/docker-setup/",
+      "destination": "/providers/oracle-cloud/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/docker-setup",
+      "destination": "/providers/oracle-cloud/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/ssh-hardening/",
+      "destination": "/providers/oracle-cloud/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/ssh-hardening",
+      "destination": "/providers/oracle-cloud/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/firewall-setup/",
+      "destination": "/providers/oracle-cloud/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/oracle-cloud/firewall-setup",
+      "destination": "/providers/oracle-cloud/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/",
+      "destination": "/providers/raspberry-pi/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi",
+      "destination": "/providers/raspberry-pi/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/docker-firewall/",
+      "destination": "/providers/raspberry-pi/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/docker-firewall",
+      "destination": "/providers/raspberry-pi/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/ssl-setup/",
+      "destination": "/providers/raspberry-pi/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/ssl-setup",
+      "destination": "/providers/raspberry-pi/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/ufw-docker/",
+      "destination": "/providers/raspberry-pi/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/ufw-docker",
+      "destination": "/providers/raspberry-pi/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/docker-setup/",
+      "destination": "/providers/raspberry-pi/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/docker-setup",
+      "destination": "/providers/raspberry-pi/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/ssh-hardening/",
+      "destination": "/providers/raspberry-pi/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/ssh-hardening",
+      "destination": "/providers/raspberry-pi/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/firewall-setup/",
+      "destination": "/providers/raspberry-pi/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/raspberry-pi/firewall-setup",
+      "destination": "/providers/raspberry-pi/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/",
+      "destination": "/providers/azure-vm/index.html"
+    },
+    {
+      "source": "/providers/azure-vm",
+      "destination": "/providers/azure-vm/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/docker-firewall/",
+      "destination": "/providers/azure-vm/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/docker-firewall",
+      "destination": "/providers/azure-vm/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/ssl-setup/",
+      "destination": "/providers/azure-vm/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/ssl-setup",
+      "destination": "/providers/azure-vm/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/ufw-docker/",
+      "destination": "/providers/azure-vm/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/ufw-docker",
+      "destination": "/providers/azure-vm/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/docker-setup/",
+      "destination": "/providers/azure-vm/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/docker-setup",
+      "destination": "/providers/azure-vm/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/ssh-hardening/",
+      "destination": "/providers/azure-vm/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/ssh-hardening",
+      "destination": "/providers/azure-vm/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/firewall-setup/",
+      "destination": "/providers/azure-vm/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/azure-vm/firewall-setup",
+      "destination": "/providers/azure-vm/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/",
+      "destination": "/providers/gcp-compute/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute",
+      "destination": "/providers/gcp-compute/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/docker-firewall/",
+      "destination": "/providers/gcp-compute/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/docker-firewall",
+      "destination": "/providers/gcp-compute/docker-firewall/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/ssl-setup/",
+      "destination": "/providers/gcp-compute/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/ssl-setup",
+      "destination": "/providers/gcp-compute/ssl-setup/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/ufw-docker/",
+      "destination": "/providers/gcp-compute/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/ufw-docker",
+      "destination": "/providers/gcp-compute/ufw-docker/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/docker-setup/",
+      "destination": "/providers/gcp-compute/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/docker-setup",
+      "destination": "/providers/gcp-compute/docker-setup/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/ssh-hardening/",
+      "destination": "/providers/gcp-compute/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/ssh-hardening",
+      "destination": "/providers/gcp-compute/ssh-hardening/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/firewall-setup/",
+      "destination": "/providers/gcp-compute/firewall-setup/index.html"
+    },
+    {
+      "source": "/providers/gcp-compute/firewall-setup",
+      "destination": "/providers/gcp-compute/firewall-setup/index.html"
     }
   ]
 }

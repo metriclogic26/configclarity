@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Fix: AI Agent Cron Job Collisions — ConfigClarity</title>
+  <meta name="description" content="AI agents running on cron schedules can spawn multiple concurrent instances. How to use flock to prevent AI agent job collisions on Linux servers.">
+  <meta name="keywords" content="ai agent cron collision, cron ai agent duplicate, ai cron job flock safety">
+  <link rel="canonical" href="https://configclarity.dev/fix/cron/ai-agent-collision/">
+  <meta property="og:title" content="Fix: AI Agent Cron Job Collisions"><meta property="og:description" content="AI agents running on cron schedules can spawn multiple concurrent instances. How to use flock to prevent AI agent job collisions on Linux servers.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Fix: AI Agent Cron Job Collisions",
+    "url":"https://configclarity.dev/fix/cron/ai-agent-collision/","description":"AI agents running on cron schedules can spawn multiple concurrent instances. How to use flock to prevent AI agent job collisions on Linux servers.",
+    "author":{"@type":"Organization","name":"MetricLogic"},"datePublished":"2026-03-22"}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":'ConfigClarity',"item":"https://configclarity.dev/"},
+    {"@type":"ListItem","position":2,"name":'Fix Guides',"item":"https://configclarity.dev/fix/"},
+    {"@type":"ListItem","position":3,"name":'CRON Fix Guides',"item":"https://configclarity.dev/fix/cron/"},
+    {"@type":"ListItem","position":4,"name":'AI Agent Cron Job Collisions',"item":"https://configclarity.dev/fix/cron/ai-agent-collision/"}
+  ]}
+  </script>
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.75; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:760px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .content { max-width:760px; margin:0 auto; padding:2rem; }
+      h1 { font-size:1.6rem; font-weight:700; margin-bottom:1rem; }
+      h2 { font-size:1.05rem; font-weight:700; margin:2rem 0 0.6rem; }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1rem; }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1rem 1.25rem; font-size:0.78rem; overflow-x:auto; margin:0.75rem 0 1.25rem; line-height:1.7; }
+      .fix-box { background:var(--bg2); border-left:3px solid var(--green); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.25rem 0; }
+      .fix-box .label { font-size:0.7rem; color:var(--green); text-transform:uppercase; letter-spacing:.06em; margin-bottom:0.4rem; }
+      .faq-item { margin-bottom:1.4rem; }
+      .faq-q { font-size:0.9rem; font-weight:600; margin-bottom:0.35rem; }
+      .faq-a { font-size:0.84rem; color:var(--muted); }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; margin:2rem 0; text-align:center; }
+      .cta p { color:var(--text); margin-bottom:0.6rem; font-size:0.875rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.45rem 1.2rem; border-radius:6px; font-size:0.82rem; font-weight:700; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; margin-top:2rem; }
+    </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+    </nav>
+  </header>
+  <div class="breadcrumb"><a href="/" style="color:var(--muted);">ConfigClarity</a> › <a href="/fix/" style="color:var(--muted);">Fix Guides</a> › <a href="/fix/cron/" style="color:var(--muted);">CRON Fix Guides</a> › AI Agent Cron Job Collisions</div>
+  <div class="content">
+    <h1>Fix: AI Agent Cron Job Collisions</h1>
+    <p>AI agents (LLM inference jobs, RAG pipelines, embedding workers) running on cron are especially collision-prone because they use significant memory and GPU time. Two concurrent instances can exhaust VRAM or cause OOM kills.</p>
+<div class="fix-box"><div class="label">flock-safe AI agent cron job</div>
+<pre># Prevent concurrent AI agent runs:
+*/10 * * * * flock -n /tmp/ai-agent.lock /usr/local/bin/run-agent.sh
+
+# With GPU memory check before running:
+*/10 * * * * flock -n /tmp/ai-agent.lock bash -c   'nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits |    awk "{if(NR==1 &amp;&amp; int($1) &lt; 2000) system("/usr/local/bin/run-agent.sh")}"'</pre></div>
+<p>For Ollama-based agents, also ensure Ollama is bound to <code>127.0.0.1</code> before exposing via cron-triggered scripts.</p>
+    <div class="cta"><p>Visualise AI agent job schedules in the Cron Visualiser.</p><a href="/">Open Tool →</a></div>
+  </div>
+  <footer>
+    <p><a href="/fix/">Fix Guides</a> &nbsp;·&nbsp; <a href="/glossary/">Glossary</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>
