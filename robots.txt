@@ -21,3 +21,4 @@ Allow: /
 
 Sitemap: https://configclarity.dev/sitemap.xml
 Sitemap: https://configclarity.dev/sitemap-seo.xml
+Disallow: /google620d02fc8cb519b6.html
