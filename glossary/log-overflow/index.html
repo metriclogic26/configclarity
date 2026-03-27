@@ -29,7 +29,7 @@
   {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":"How do I prevent Docker log files from filling my disk?","acceptedAnswer":{"@type":"Answer","text":"Set log rotation in /etc/docker/daemon.json: <code>{"log-driver": "json-file", "log-opts": {"max-size": "10m", "max-file": "3"}}</code>. This applies to all containers globally. Or set per-service in docker-compose.yml under the <code>logging:</code> key."}},
+    "mainEntity": [{"@type":"Question","name":"How do I prevent Docker log files from filling my disk?","acceptedAnswer":{"@type":"Answer","text":"Set log rotation in /etc/docker/daemon.json: <code>{\"log-driver\": \"json-file\", \"log-opts\": {\"max-size\": \"10m\", \"max-file\": \"3\"}}</code>. This applies to all containers globally. Or set per-service in docker-compose.yml under the <code>logging:</code> key."}},
 {"@type":"Question","name":"How do I clear existing Docker logs without deleting containers?","acceptedAnswer":{"@type":"Answer","text":"Truncate the log file: <code>sudo truncate -s 0 /var/lib/docker/containers/CONTAINER_ID/CONTAINER_ID-json.log</code>. Or run <code>docker system prune</code> to remove stopped containers and their logs. Running containers' logs can only be truncated, not deleted."}},
 {"@type":"Question","name":"What is the best Docker logging driver for production?","acceptedAnswer":{"@type":"Answer","text":"For self-hosted setups with disk space concerns: <code>json-file</code> with rotation limits is simplest. For centralized log collection: <code>loki</code> (with Grafana Loki) or <code>syslog</code>. For AWS deployments: <code>awslogs</code>. Avoid <code>none</code> — it discards all logs, making debugging impossible."}}]
   }

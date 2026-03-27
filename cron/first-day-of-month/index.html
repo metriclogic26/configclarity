@@ -9,26 +9,9 @@
   <meta property="og:title" content="Cron 0 0 1 * * — Run on the 1st of every month at midnight">
   <meta property="og:description" content="Cron expression 0 0 1 * * runs a job on the first day of every month at midnight. Monthly cron patterns and last-day-of-month workarounds.">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
-  <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"TechArticle",
-    "headline":"Cron Expression: 0 0 1 * * — Run on the 1st of every month at midnight",
-    "url":"https://configclarity.dev/cron/first-day-of-month/",
-    "description":"Cron expression 0 0 1 * * runs a job on the first day of every month at midnight. Monthly cron patterns and last-day-of-month workarounds.",
-    "author":{"@type":"Organization","name":"MetricLogic"},
-    "datePublished":"2026-03-22"}
-  </script>
-  <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I run a cron job on the last day of the month?","acceptedAnswer":{"@type":"Answer","text":"Cron can\"t calculate the last day natively. The standard workaround is to check if tomorrow is the 1st: 0 23 * * * [ "$(date -d tomorrow +%d)" = "01" ] && /your/script.sh. On macOS use date -v+1d +%d instead.'}},
-{"@type":"Question","name":"What happens if I use 31 in the day-of-month field?","acceptedAnswer":{"@type":"Answer","text":"The job only runs in months that have 31 days (January, March, May, July, August, October, December). It silently skips months with fewer days — no error, just no execution."}}]}
-  </script>
-  <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
-    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
-    {"@type":"ListItem","position":2,"name":"Cron Visualiser","item":"https://configclarity.dev/"},
-    {"@type":"ListItem","position":3,"name":"Cron Expressions","item":"https://configclarity.dev/cron/"},
-    {"@type":"ListItem","position":4,"name":"Run on the 1st of every month at midnight","item":"https://configclarity.dev/cron/first-day-of-month/"}
-  ]}
-  </script>
+  <script type="application/ld+json">   {"@context":"https://schema.org","@type":"TechArticle",     "headline":"Cron Expression: 0 0 1 * * — Run on the 1st of every month at midnight",     "url":"https://configclarity.dev/cron/first-day-of-month/",     "description":"Cron expression 0 0 1 * * runs a job on the first day of every month at midnight. Monthly cron patterns and last-day-of-month workarounds.",     "author":{"@type":"Organization","name":"MetricLogic"},     "datePublished":"2026-03-22"}   </script>
+  <script type="application/ld+json">   {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I run a cron job on the last day of the month?","acceptedAnswer":{"@type":"Answer","text":"Cron can\"t calculate the last day natively. The standard workaround is to check if tomorrow is the 1st: 0 23 * * * [ \"$(date -d tomorrow +%d)\" = \"01\" ] && /your/script.sh. On macOS use date -v+1d +%d instead."}}, {"@type":"Question","name":"What happens if I use 31 in the day-of-month field?","acceptedAnswer":{"@type":"Answer","text":"The job only runs in months that have 31 days (January, March, May, July, August, October, December). It silently skips months with fewer days — no error, just no execution."}}]}   </script>
+  <script type="application/ld+json">   {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[     {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},     {"@type":"ListItem","position":2,"name":"Cron Visualiser","item":"https://configclarity.dev/"},     {"@type":"ListItem","position":3,"name":"Cron Expressions","item":"https://configclarity.dev/cron/"},     {"@type":"ListItem","position":4,"name":"Run on the 1st of every month at midnight","item":"https://configclarity.dev/cron/first-day-of-month/"}   ]}   </script>
 
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -103,7 +86,7 @@
 0 0 28 * *
 
 # Or: check if tomorrow is the 1st (run on last day):
-0 23 * * * [ "$(date -d tomorrow +%d)" = "01" ] && /usr/local/bin/month-end.sh</pre>
+0 23 * * * [ \"$(date -d tomorrow +%d)\" = \"01\" ] && /usr/local/bin/month-end.sh</pre>
 
     <h2>Related Expressions</h2>
     <div class="variants"><div class="variant-card"><div class="variant-expr">0 0 1 * *</div><div class="variant-desc">1st of every month</div></div>
@@ -124,7 +107,7 @@
     </div>
 
     <h2>Frequently Asked Questions</h2>
-    <div class="faq-item"><div class="faq-q">How do I run a cron job on the last day of the month?</div><div class="faq-a">Cron can't calculate the last day natively. The standard workaround is to check if tomorrow is the 1st: 0 23 * * * [ "$(date -d tomorrow +%d)" = "01" ] && /your/script.sh. On macOS use date -v+1d +%d instead.</div></div>
+    <div class="faq-item"><div class="faq-q">How do I run a cron job on the last day of the month?</div><div class="faq-a">Cron can't calculate the last day natively. The standard workaround is to check if tomorrow is the 1st: 0 23 * * * [ \"$(date -d tomorrow +%d)\" = \"01\" ] && /your/script.sh. On macOS use date -v+1d +%d instead.</div></div>
 <div class="faq-item"><div class="faq-q">What happens if I use 31 in the day-of-month field?</div><div class="faq-a">The job only runs in months that have 31 days (January, March, May, July, August, October, December). It silently skips months with fewer days — no error, just no execution.</div></div>
   </div>
   <footer>

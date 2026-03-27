@@ -1,45 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Docker Healthcheck — DevOps Glossary — ConfigClarity</title>
-  <meta name="description" content="A Docker healthcheck is a command defined in a container's configuration that Docker runs periodically to determine if the container is functioning correctly — allowing orchestrators to restart failed containers and delay dependent services.">
-  <meta name="keywords" content="docker, healthcheck, orchestration, container, devops, linux server, devops glossary">
-  <link rel="canonical" href="https://configclarity.dev/glossary/healthcheck/">
-  <meta property="og:title" content="Docker Healthcheck — ConfigClarity Glossary">
-  <meta property="og:description" content="A Docker healthcheck is a command defined in a container's configuration that Docker runs periodically to determine if the container is functioning correctly — allowing orchestrators to restart failed containers and delay dependent services.">
-  <meta property="og:url" content="https://configclarity.dev/glossary/healthcheck/">
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hugo robots.txt — Correct Configuration — ConfigClarity</title>
+  <meta name="description" content="How to generate and configure robots.txt in Hugo using templates. Enable custom robots.txt in config.toml, add sitemap reference, configure for Hugo static site deployment.">
+  <meta name="keywords" content="hugo robots txt, hugo robots txt template, hugo config robots">
+  <link rel="canonical" href="https://configclarity.dev/fix/robots/hugo/">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "DefinedTerm",
-    "name": "Docker Healthcheck",
-    "url": "https://configclarity.dev/glossary/healthcheck/",
-    "description": "A Docker healthcheck is a command defined in a container's configuration that Docker runs periodically to determine if the container is functioning correctly — allowing orchestrators to restart failed containers and delay dependent services.",
-    "inDefinedTermSet": {
-      "@type": "DefinedTermSet",
-      "name": "ConfigClarity DevOps Glossary",
-      "url": "https://configclarity.dev/glossary/"
-    }
+  {"@context":"https://schema.org","@type":"TechArticle",
+    "headline":"Hugo robots.txt — Correct Configuration","url":"https://configclarity.dev/fix/robots/hugo/",
+    "description":"How to generate and configure robots.txt in Hugo using templates. Enable custom robots.txt in config.toml, add sitemap reference, configure for Hugo static site deployment.","author":{"@type":"Organization","name":"MetricLogic"}
   }
   </script>
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": [{"@type":"Question","name":"What happens if a container has no healthcheck?","acceptedAnswer":{"@type":"Answer","text":"Docker reports the container status as 'running' regardless of whether the application is functioning. Dependent services start immediately without waiting for the container to be ready. Orchestrators cannot detect application failures — only process crashes."}},
-{"@type":"Question","name":"What is a good healthcheck command for a web service?","acceptedAnswer":{"@type":"Answer","text":"For HTTP services: <code>["CMD", "curl", "-f", "http://localhost:PORT/health"]</code>. For services without curl: <code>["CMD-SHELL", "wget -q --spider http://localhost:PORT/health || exit 1"]</code>. For databases: use the database\"s own health tool — <code>["CMD", "pg_isready", "-U", "postgres"]</code> for PostgreSQL.'}},
-{"@type":"Question","name":"How do I check if my containers have healthchecks configured?","acceptedAnswer":{"@type":"Answer","text":"Paste your docker-compose.yml into ConfigClarity's Docker Auditor. It flags every service missing a healthcheck definition and generates a suggested healthcheck command based on the detected service type."}}]
-  }
-  </script>
-  <script type="application/ld+json">
-  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
-    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
-    {"@type":"ListItem","position":2,"name":"Glossary","item":"https://configclarity.dev/glossary/"},
-    {"@type":"ListItem","position":3,"name":"Docker Healthcheck","item":"https://configclarity.dev/glossary/healthcheck/"}
-  ]}
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I enable robots.txt generation in Hugo?","acceptedAnswer":{"@type":"Answer","text":"Set enableRobotsTXT = true in config.toml (or hugo.toml in Hugo 0.110+). Hugo will then generate /robots.txt from layouts/robots.txt if it exists, or use an internal default template that generates Allow: / for all bots."}},{"@type":"Question","name":"Where does Hugo output robots.txt?","acceptedAnswer":{"@type":"Answer","text":"Hugo outputs robots.txt to the /public/ directory root during hugo build. The file is at public/robots.txt which maps to https://yourdomain.com/robots.txt after deployment."}},{"@type":"Question","name":"How do I add a sitemap reference to Hugo's robots.txt?","acceptedAnswer":{"@type":"Answer","text":"In your layouts/robots.txt template, use: Sitemap: {{ \"sitemap.xml\" | absURL }}. Hugo\"s absURL function prepends your baseURL, so it generates the correct absolute URL. Hugo generates sitemap.xml automatically."}}]}
   </script>
 
     <style>
@@ -60,26 +35,20 @@
       .breadcrumb { padding: 1rem 2rem 0; max-width: 760px; margin: 0 auto; font-size: 0.78rem; color: var(--muted); }
       .breadcrumb a { color: var(--muted); }
       .content { max-width: 760px; margin: 0 auto; padding: 2rem; }
-      h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 1rem; }
-      .definition-box { background: var(--bg2); border-left: 3px solid var(--purple); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin-bottom: 2rem; font-size: 0.95rem; }
-      h2 { font-size: 1.1rem; font-weight: 600; margin: 2rem 0 0.75rem; color: var(--text); }
+      h1 { font-size: 1.6rem; font-weight: 700; margin-bottom: 1rem; }
+      h2 { font-size: 1.05rem; font-weight: 600; margin: 2rem 0 0.75rem; }
       p { font-size: 0.875rem; color: var(--muted); margin-bottom: 1rem; }
-      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.4rem; }
-      .related-links { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 0.5rem; }
-      .related-links a { font-size: 0.8rem; padding: 0.3rem 0.75rem; background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 6px; color: var(--text); }
-      .related-links a:hover { border-color: var(--purple); text-decoration: none; }
+      pre { background: #0b0d14; border: 1px solid #2a2d3d; border-radius: 6px; padding: 1rem 1.25rem; font-size: 0.78rem; overflow-x: auto; margin: 0.75rem 0 1.25rem; }
+      .fix-box { background: var(--bg2); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 1.25rem 1.5rem; margin: 1.5rem 0; }
+      .fix-box .label { font-size: 0.7rem; color: var(--green); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 0.5rem; }
       .faq-item { margin-bottom: 1.5rem; }
       .faq-q { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.4rem; }
       .faq-a { font-size: 0.85rem; color: var(--muted); }
-      .tool-cta { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; }
-      .tool-cta p { color: var(--text); font-size: 0.85rem; margin-bottom: 0.75rem; }
-      .tool-cta a { display: inline-block; background: var(--purple); color: #fff; padding: 0.4rem 1rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; text-decoration: none; }
+      .cta-box { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; margin: 2rem 0; text-align: center; }
+      .cta-box p { color: var(--text); margin-bottom: 0.75rem; }
+      .cta-btn { display: inline-block; background: var(--purple); color: #fff; padding: 0.45rem 1.2rem; border-radius: 6px; font-size: 0.82rem; font-weight: 700; }
+      .tag { display: inline-block; font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 4px; background: rgba(108,99,255,.15); color: var(--purple); margin-right: 0.4rem; margin-bottom: 0.75rem; }
       footer { text-align: center; padding: 2rem; font-size: 0.75rem; color: var(--muted); border-top: 1px solid #2a2d3d; margin-top: 2rem; }
-      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
-      .card { background: var(--bg2); border: 1px solid #2a2d3d; border-radius: 8px; padding: 1.25rem 1.5rem; }
-      .card:hover { border-color: var(--purple); }
-      .card-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.35rem; }
-      .card-desc { font-size: 0.78rem; color: var(--muted); }
     </style>
 
 </head>
@@ -93,48 +62,42 @@
     </nav>
   </header>
 
-  <div class="breadcrumb">
-    <a href="/">ConfigClarity</a> › <a href="/glossary/">Glossary</a> › Docker Healthcheck
-  </div>
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/robots/">robots.txt</a> › Hugo robots.txt — Correct Configuration</div>
   <div class="content">
-    <h1>Docker Healthcheck</h1>
-    <div class="definition-box">A Docker healthcheck is a command defined in a container's configuration that Docker runs periodically to determine if the container is functioning correctly — allowing orchestrators to restart failed containers and delay dependent services.</div>
-    <div><span class="tag">Docker</span><span class="tag">Healthcheck</span><span class="tag">Orchestration</span><span class="tag">Container</span><span class="tag">DevOps</span></div>
-    <p>A Docker healthcheck defines a test command that Docker runs inside the container at a regular interval. If the command exits with a non-zero status code, Docker marks the container as unhealthy. Container orchestrators (Docker Compose, Swarm, Kubernetes) can then take action — restarting the container, stopping dependent services from starting, or routing traffic away from unhealthy instances.</p>
+    <h1>Hugo robots.txt — Correct Configuration</h1>
+    <p>Hugo does not generate a robots.txt by default. To enable it, set <code>enableRobotsTXT = true</code> in <code>config.toml</code>. Hugo then uses the <code>layouts/robots.txt</code> template to generate the file, or falls back to a minimal default.</p>
 
-<p>Without a healthcheck, Docker considers a container healthy as soon as it starts. The container may be running but the application inside may not be ready to serve traffic — the web server may still be starting up, the database may be running its initial migration, or a connection pool may not yet be established.</p>
+<h2>Enable robots.txt in config.toml</h2>
+<pre># config.toml
+baseURL = "https://yourdomain.com"
+enableRobotsTXT = true</pre>
 
-<h2>Healthcheck in docker-compose.yml</h2>
-<pre style="background:#0b0d14;padding:1rem;border-radius:6px;font-size:0.78rem;overflow-x:auto;margin:0.75rem 0;">healthcheck:
-  test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
-  interval: 30s
-  timeout: 10s
-  retries: 3
-  start_period: 40s</pre>
+<h2>Custom template — layouts/robots.txt</h2>
+<pre>User-agent: *
+{{ if hugo.IsProduction }}Allow: /{{ else }}Disallow: /{{ end }}
+Disallow: /admin/
+Disallow: /draft/
 
-<p><code>start_period</code> is the grace period before health failures count against the retry limit — essential for services with slow startup like Java applications or services running database migrations on boot.</p>
-    <h2>Related Tools</h2>
-    <div class="related-links"><a href="/docker/">Docker Auditor →</a></div>
-    <h2>Fix Guides</h2>
-    <div class="related-links"><a href="/fix/docker/missing-healthcheck/">Docker missing healthcheck fix</a></div>
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+Sitemap: {{ "sitemap.xml" | absURL }}</pre>
+
+<p>The <code>hugo.IsProduction</code> check ensures staging builds disallow all crawling while production builds allow it — preventing staging content from being indexed if it's accidentally deployed publicly.</p>
+    <div class="cta-box">
+      <p>Validate your robots.txt live — fetch any URL and get AI bot coverage + URL tester.</p>
+      <a href="/robots/" class="cta-btn">Open robots.txt Validator →</a>
+    </div>
     <h2>Frequently Asked Questions</h2>
-    <div class="faq-item">
-        <div class="faq-q">What happens if a container has no healthcheck?</div>
-        <div class="faq-a">Docker reports the container status as 'running' regardless of whether the application is functioning. Dependent services start immediately without waiting for the container to be ready. Orchestrators cannot detect application failures — only process crashes.</div>
-      </div>
-<div class="faq-item">
-        <div class="faq-q">What is a good healthcheck command for a web service?</div>
-        <div class="faq-a">For HTTP services: <code>["CMD", "curl", "-f", "http://localhost:PORT/health"]</code>. For services without curl: <code>["CMD-SHELL", "wget -q --spider http://localhost:PORT/health || exit 1"]</code>. For databases: use the database's own health tool — <code>["CMD", "pg_isready", "-U", "postgres"]</code> for PostgreSQL.</div>
-      </div>
-<div class="faq-item">
-        <div class="faq-q">How do I check if my containers have healthchecks configured?</div>
-        <div class="faq-a">Paste your docker-compose.yml into ConfigClarity's Docker Auditor. It flags every service missing a healthcheck definition and generates a suggested healthcheck command based on the detected service type.</div>
-      </div>
+    <div class="faq-item"><div class="faq-q">How do I enable robots.txt generation in Hugo?</div><div class="faq-a">Set enableRobotsTXT = true in config.toml (or hugo.toml in Hugo 0.110+). Hugo will then generate /robots.txt from layouts/robots.txt if it exists, or use an internal default template that generates Allow: / for all bots.</div></div><div class="faq-item"><div class="faq-q">Where does Hugo output robots.txt?</div><div class="faq-a">Hugo outputs robots.txt to the /public/ directory root during hugo build. The file is at public/robots.txt which maps to https://yourdomain.com/robots.txt after deployment.</div></div><div class="faq-item"><div class="faq-q">How do I add a sitemap reference to Hugo's robots.txt?</div><div class="faq-a">In your layouts/robots.txt template, use: Sitemap: {{ "sitemap.xml" | absURL }}. Hugo's absURL function prepends your baseURL, so it generates the correct absolute URL. Hugo generates sitemap.xml automatically.</div></div>
   </div>
 
   <footer>
-    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
-    <a href="https://configclarity.dev">ConfigClarity</a> &nbsp;·&nbsp;
+    <p><a href="/glossary/">Glossary</a> &nbsp;·&nbsp; <a href="/fix/">Fix Guides</a> &nbsp;·&nbsp;
+    <a href="https://metriclogic.dev">MetricLogic Network</a> &nbsp;·&nbsp;
     <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
   </footer>
 
