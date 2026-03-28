@@ -478,4 +478,7 @@
   <url><loc>https://www.configclarity.dev/vs/crontab-guru/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.configclarity.dev/vs/docker-bench-security/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.configclarity.dev/vs/ssl-labs/</loc><lastmod>2026-03-22</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.configclarity.dev/blog/fail2ban-misconfigured/</loc><lastmod>2026-03-27</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.configclarity.dev/blog/docker-compose-security-checklist/</loc><lastmod>2026-03-27</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.configclarity.dev/blog/traefik-v3-what-broke-in-the-wild/</loc><lastmod>2026-03-27</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>

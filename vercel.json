@@ -1951,6 +1951,30 @@
     {
       "source": "/incidents/docker-secrets-exposed",
       "destination": "/incidents/docker-secrets-exposed/index.html"
+    },
+    {
+      "source": "/blog/fail2ban-misconfigured/",
+      "destination": "/blog/fail2ban-misconfigured/index.html"
+    },
+    {
+      "source": "/blog/fail2ban-misconfigured",
+      "destination": "/blog/fail2ban-misconfigured/index.html"
+    },
+    {
+      "source": "/blog/docker-compose-security-checklist/",
+      "destination": "/blog/docker-compose-security-checklist/index.html"
+    },
+    {
+      "source": "/blog/docker-compose-security-checklist",
+      "destination": "/blog/docker-compose-security-checklist/index.html"
+    },
+    {
+      "source": "/blog/traefik-v3-what-broke-in-the-wild/",
+      "destination": "/blog/traefik-v3-what-broke-in-the-wild/index.html"
+    },
+    {
+      "source": "/blog/traefik-v3-what-broke-in-the-wild",
+      "destination": "/blog/traefik-v3-what-broke-in-the-wild/index.html"
     }
   ]
 }
