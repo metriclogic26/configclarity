@@ -3766,6 +3766,19 @@ api-check     */30 * * * *`;
     }
   </style>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="b6797951-5748-4b7f-9283-445ba2b86a02"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to visualise cron job overlaps and fix scheduling conflicts",
+    "description": "Use ConfigClarity Cron Visualiser to detect overlapping jobs, server load spikes, and add flock safety to your crontab",
+    "estimatedCost": {"@type":"MonetaryAmount","currency":"USD","value":"0"},
+    "step": [{"@type":"HowToStep","name":"Paste your crontab","text":"Run crontab -l in your terminal and paste the output into the text area, one job per line."},
+{"@type":"HowToStep","name":"Click Visualise","text":"Click the Visualise button to render a 24-hour timeline showing every job and its execution window."},
+{"@type":"HowToStep","name":"Review the Overlap Report","text":"Check the Overlap Report section for jobs that run simultaneously. Enable flock safety toggle to generate safe versions of conflicting jobs."},
+{"@type":"HowToStep","name":"Export or Share","text":"Use Export PNG to save the timeline or Share Timeline URL to send it to your team."}]
+  }
+  </script>
 </head>
 <body>
   <section class="seo-ai-content" aria-hidden="true">

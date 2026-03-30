@@ -399,6 +399,19 @@
     }
   </style>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="b6797951-5748-4b7f-9283-445ba2b86a02"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to audit UFW firewall rules for Docker bypass and security gaps",
+    "description": "Use ConfigClarity Firewall Auditor to detect Docker UFW bypass, missing default-deny, and IPv6 mismatches in your firewall configuration",
+    "estimatedCost": {"@type":"MonetaryAmount","currency":"USD","value":"0"},
+    "step": [{"@type":"HowToStep","name":"Run ufw status verbose","text":"On your server run: sudo ufw status verbose and copy the full output."},
+{"@type":"HowToStep","name":"Paste the output","text":"Paste the ufw status output into the text area. The tool auto-detects UFW format."},
+{"@type":"HowToStep","name":"Click Audit","text":"The tool analyses your rules for Docker bypass risk, missing default-deny, high-risk open ports, and IPv4/IPv6 mismatches."},
+{"@type":"HowToStep","name":"Apply the fixes","text":"Each finding includes the exact ufw command or docker-compose.yml change to resolve the issue."}]
+  }
+  </script>
 </head>
 <body>
   <header class="header">

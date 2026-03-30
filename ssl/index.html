@@ -438,6 +438,19 @@
     .tab-panel.active { display: block; }
     </style>
   <script defer src="https://cloud.umami.is/script.js" data-website-id="b6797951-5748-4b7f-9283-445ba2b86a02"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "name": "How to check SSL certificate expiry across multiple domains",
+    "description": "Use ConfigClarity SSL Checker to monitor certificate expiry, detect CDN domain risks, and verify certificate chains",
+    "estimatedCost": {"@type":"MonetaryAmount","currency":"USD","value":"0"},
+    "step": [{"@type":"HowToStep","name":"Enter your domains","text":"Paste one domain per line into the input area. No https:// needed — just the bare domain names."},
+{"@type":"HowToStep","name":"Click Check domains","text":"The tool queries Certificate Transparency logs for each domain and retrieves expiry dates and issuer information."},
+{"@type":"HowToStep","name":"Review expiry warnings","text":"Domains expiring within 200 days are flagged with exact days remaining. CDN-fronted domains are shown in orange."},
+{"@type":"HowToStep","name":"Export results","text":"Use Export PNG to save a certificate status report for your records or team."}]
+  }
+  </script>
 </head>
 <body>
   <header class="header">
