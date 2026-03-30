@@ -3779,6 +3779,12 @@ api-check     */30 * * * *`;
 {"@type":"HowToStep","name":"Export or Share","text":"Use Export PNG to save the timeline or Share Timeline URL to send it to your team."}]
   }
   </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the Cron Visualiser check?","acceptedAnswer":{"@type":"Answer","text":"It parses your crontab and renders a 24-hour timeline showing every job's execution window. It detects overlapping jobs, server load spikes at peak minutes, missing flock safety, and @reboot jobs."}},
+{"@type":"Question","name":"Does this tool send my crontab anywhere?","acceptedAnswer":{"@type":"Answer","text":"No. All processing happens entirely in your browser using JavaScript. Your crontab output never leaves your machine."}},
+{"@type":"Question","name":"What is a cron job overlap?","acceptedAnswer":{"@type":"Answer","text":"A cron job overlap occurs when two or more jobs are scheduled to run at the same time and compete for the same server resources — CPU, disk I/O, or database connections. This can cause performance degradation or data corruption."}},
+{"@type":"Question","name":"What is flock safety for cron jobs?","acceptedAnswer":{"@type":"Answer","text":"flock safety means wrapping your cron command with flock -n /tmp/jobname.lock command. If the previous run is still executing when the next scheduled run starts, the new invocation exits immediately instead of running concurrently."}}]}
+  </script>
 </head>
 <body>
   <section class="seo-ai-content" aria-hidden="true">

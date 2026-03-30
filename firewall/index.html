@@ -412,6 +412,12 @@
 {"@type":"HowToStep","name":"Apply the fixes","text":"Each finding includes the exact ufw command or docker-compose.yml change to resolve the issue."}]
   }
   </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the Firewall Auditor check?","acceptedAnswer":{"@type":"Answer","text":"It analyses your ufw status verbose output for Docker UFW bypass risk, missing default-deny rules, high-risk open ports (Redis, PostgreSQL, Docker socket, VNC, Jupyter), IPv4 and IPv6 rule mismatches, and missing localhost bindings on container ports."}},
+{"@type":"Question","name":"Does this tool send my firewall rules anywhere?","acceptedAnswer":{"@type":"Answer","text":"No. All analysis happens in your browser. Your ufw status output is parsed locally using JavaScript and never transmitted to any server."}},
+{"@type":"Question","name":"What is the Docker UFW bypass problem?","acceptedAnswer":{"@type":"Answer","text":"Docker inserts rules into the iptables FORWARD chain which is evaluated before UFW's INPUT chain. This means container ports published with ports: PORT:PORT in docker-compose.yml are accessible from the internet even when UFW has a deny rule for that port. The fix is to bind container ports to 127.0.0.1."}},
+{"@type":"Question","name":"What are high-risk open ports?","acceptedAnswer":{"@type":"Answer","text":"High-risk ports are service ports that should never be publicly accessible — Redis (6379), PostgreSQL (5432), MongoDB (27017), MySQL (3306), Docker socket (2375), Elasticsearch (9200), and others. These services are commonly exposed accidentally via Docker and are frequent targets for automated scanners."}}]}
+  </script>
 </head>
 <body>
   <header class="header">

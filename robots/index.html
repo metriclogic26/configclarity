@@ -405,6 +405,12 @@
 {"@type":"HowToStep","name":"Test specific URLs","text":"Use the URL Tester to check whether any path is BLOCKED or ALLOWED for a specific bot."}]
   }
   </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the robots.txt Validator check?","acceptedAnswer":{"@type":"Answer","text":"It checks for syntax errors, accidental Disallow: / rules that block all crawlers, missing Sitemap directives, crawl-delay values over 10 seconds, unknown directives, and AI bot coverage — GPTBot, ClaudeBot, PerplexityBot, Bytespider, and Google-Extended."}},
+{"@type":"Question","name":"Does this tool send my robots.txt content anywhere?","acceptedAnswer":{"@type":"Answer","text":"In URL mode the tool fetches your live robots.txt from the public URL. In Paste mode all analysis happens in your browser. No data is stored or transmitted beyond the initial URL fetch."}},
+{"@type":"Question","name":"What is the AI bot coverage check?","acceptedAnswer":{"@type":"Answer","text":"The tool checks whether your robots.txt explicitly addresses major AI training crawlers — GPTBot (OpenAI), ClaudeBot (Anthropic), PerplexityBot, Bytespider (ByteDance), and Google-Extended. Explicit Allow directives improve GEO (Generative Engine Optimisation) — the likelihood your content is cited in AI search answers."}},
+{"@type":"Question","name":"What does the robots.txt health score mean?","acceptedAnswer":{"@type":"Answer","text":"The health score (0-100) summarises all checks. 100 means no issues detected. Points are deducted for missing sitemap reference, crawl-delay over 10 seconds, conflicting Allow and Disallow rules, missing AI bot directives, and syntax errors."}}]}
+  </script>
 </head>
 <body>
   <section class="seo-ai-content" aria-hidden="true">

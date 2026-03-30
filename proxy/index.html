@@ -441,6 +441,12 @@
 {"@type":"HowToStep","name":"Apply fixes","text":"Each issue includes the corrected Nginx block or Traefik label to copy-paste into your config."}]
   }
   </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the Reverse Proxy Mapper check?","acceptedAnswer":{"@type":"Answer","text":"It parses your nginx.conf or docker-compose.yml with Traefik labels to detect dangling routes pointing to stopped services, missing SSL redirects, duplicate CORS headers, and deprecated Traefik v1 label patterns that silently do nothing in v3."}},
+{"@type":"Question","name":"Does this tool send my nginx config anywhere?","acceptedAnswer":{"@type":"Answer","text":"No. All parsing happens in your browser using JavaScript. Your configuration files never leave your machine."}},
+{"@type":"Question","name":"What is a dangling reverse proxy route?","acceptedAnswer":{"@type":"Answer","text":"A dangling route is a proxy configuration entry pointing to a backend that no longer exists — a container that was stopped, a service that was removed, or a hostname that no longer resolves. Nginx returns 502 for all requests to dangling routes."}},
+{"@type":"Question","name":"What Traefik v1 labels does the tool detect?","acceptedAnswer":{"@type":"Answer","text":"The tool detects traefik.frontend.rule, traefik.backend, traefik.port, and traefik.frontend.entryPoints — v1-style labels that were deprecated in v2 and completely ignored in v3. These labels produce no routes and no errors, making them silent failures after a Traefik upgrade."}}]}
+  </script>
 </head>
 <body>
   <header class="header">

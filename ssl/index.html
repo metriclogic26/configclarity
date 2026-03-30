@@ -451,6 +451,12 @@
 {"@type":"HowToStep","name":"Export results","text":"Use Export PNG to save a certificate status report for your records or team."}]
   }
   </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does the SSL Certificate Checker do?","acceptedAnswer":{"@type":"Answer","text":"It checks multiple domains at once for certificate expiry dates, issuer information, CDN domain detection, and certificate chain validation. It flags anything expiring within 200 days — not the standard 30 — to catch broken renewal pipelines early."}},
+{"@type":"Question","name":"Does this tool send my domain list anywhere?","acceptedAnswer":{"@type":"Answer","text":"The tool queries the public Certificate Transparency log API (crt.sh) using your domain names. No data is stored. The queries are the same as any browser making a public API request."}},
+{"@type":"Question","name":"Why does ConfigClarity flag certificates at 200 days instead of 30?","acceptedAnswer":{"@type":"Answer","text":"Let's Encrypt certificates expire every 90 days and are designed to auto-renew at 60 days remaining. If renewal breaks on day 1, a 30-day alert fires at day 60 — giving you 30 days to debug a failure that has been silent for 60. The 200-day threshold catches broken renewal pipelines while you still have runway."}},
+{"@type":"Question","name":"What does the orange CDN flag mean on SSL results?","acceptedAnswer":{"@type":"Answer","text":"An orange flag indicates the domain is fronted by a CDN (Cloudflare, Fastly, Akamai). CDN-fronted domains have two certificates — the CDN edge certificate and the origin certificate. The tool flags these because most monitoring only checks the CDN cert, missing the origin cert expiry."}}]}
+  </script>
 </head>
 <body>
   <header class="header">
