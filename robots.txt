@@ -19,6 +19,6 @@ Allow: /
 User-agent: Googlebot
 Allow: /
 
-Sitemap: https://configclarity.dev/sitemap.xml
-Sitemap: https://configclarity.dev/sitemap-seo.xml
+Sitemap: https://www.configclarity.dev/sitemap.xml
+Sitemap: https://www.configclarity.dev/sitemap-seo.xml
 Disallow: /google620d02fc8cb519b6.html
