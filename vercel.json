@@ -1975,6 +1975,14 @@
     {
       "source": "/blog/traefik-v3-what-broke-in-the-wild",
       "destination": "/blog/traefik-v3-what-broke-in-the-wild/index.html"
+    },
+    {
+      "source": "/blog/certbot-timer-systemd-ubuntu/",
+      "destination": "/blog/certbot-timer-systemd-ubuntu/index.html"
+    },
+    {
+      "source": "/blog/certbot-timer-systemd-ubuntu",
+      "destination": "/blog/certbot-timer-systemd-ubuntu/index.html"
     }
   ]
 }

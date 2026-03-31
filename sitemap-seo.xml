@@ -481,4 +481,5 @@
   <url><loc>https://www.configclarity.dev/blog/fail2ban-misconfigured/</loc><lastmod>2026-03-27</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.configclarity.dev/blog/docker-compose-security-checklist/</loc><lastmod>2026-03-27</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.configclarity.dev/blog/traefik-v3-what-broke-in-the-wild/</loc><lastmod>2026-03-27</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.configclarity.dev/blog/certbot-timer-systemd-ubuntu/</loc><lastmod>2026-03-30</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>
