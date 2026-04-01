@@ -1991,6 +1991,22 @@
     {
       "source": "/blog/nginx-config-test",
       "destination": "/blog/nginx-config-test/index.html"
+    },
+    {
+      "source": "/blog/ingress-nginx-retirement-2026/",
+      "destination": "blog/ingress-nginx-retirement-2026/index.html"
+    },
+    {
+      "source": "/blog/ingress-nginx-retirement-2026",
+      "destination": "blog/ingress-nginx-retirement-2026/index.html"
+    },
+    {
+      "source": "/providers/hetzner/production-checklist/",
+      "destination": "providers/hetzner/production-checklist/index.html"
+    },
+    {
+      "source": "/providers/hetzner/production-checklist",
+      "destination": "providers/hetzner/production-checklist/index.html"
     }
   ]
 }
