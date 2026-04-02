@@ -2039,6 +2039,30 @@
     {
       "source": "/blog/ai-crawler-opt-out-robots-txt",
       "destination": "blog/ai-crawler-opt-out-robots-txt/index.html"
+    },
+    {
+      "source": "/blog/google-ignores-crawl-delay/",
+      "destination": "blog/google-ignores-crawl-delay/index.html"
+    },
+    {
+      "source": "/blog/google-ignores-crawl-delay",
+      "destination": "blog/google-ignores-crawl-delay/index.html"
+    },
+    {
+      "source": "/blog/hardcoded-secrets-docker-exposed/",
+      "destination": "blog/hardcoded-secrets-docker-exposed/index.html"
+    },
+    {
+      "source": "/blog/hardcoded-secrets-docker-exposed",
+      "destination": "blog/hardcoded-secrets-docker-exposed/index.html"
+    },
+    {
+      "source": "/blog/ssh-hardening-linux-server/",
+      "destination": "blog/ssh-hardening-linux-server/index.html"
+    },
+    {
+      "source": "/blog/ssh-hardening-linux-server",
+      "destination": "blog/ssh-hardening-linux-server/index.html"
     }
   ]
 }

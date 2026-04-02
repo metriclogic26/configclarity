@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Hardcoded Secrets in Docker: How They Get Exposed and How to Find Them — ConfigClarity</title>
+  <meta name="description" content="Hardcoded secrets in docker-compose.yml are one of the most common causes of data breaches on self-hosted servers. How they end up in your config, where they leak, and how to find them.">
+  <meta name="keywords" content="hardcoded secrets docker, docker compose secrets exposed, docker secrets detection, hardcoded passwords docker-compose, secrets in docker environment variables">
+  <link rel="canonical" href="https://configclarity.dev/blog/hardcoded-secrets-docker-exposed/">
+  <meta property="og:title" content="Hardcoded Secrets in Docker: How They Get Exposed and How to Find Them">
+  <meta property="og:description" content="Hardcoded secrets in docker-compose.yml are one of the most common causes of data breaches on self-hosted servers. How they end up in your config, where they leak, and how to find them.">
+  <meta property="og:url" content="https://configclarity.dev/blog/hardcoded-secrets-docker-exposed/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article",
+    "headline":"Hardcoded Secrets in Docker: How They Get Exposed and How to Find Them",
+    "description":"Hardcoded secrets in docker-compose.yml are one of the most common causes of data breaches on self-hosted servers. How they end up in your config, where they leak, and how to find them.",
+    "url":"https://configclarity.dev/blog/hardcoded-secrets-docker-exposed/",
+    "datePublished":"2026-03-31",
+    "dateModified":"2026-03-31",
+    "author":{"@type":"Organization","name":"MetricLogic","url":"https://metriclogic.dev"},
+    "publisher":{"@type":"Organization","name":"ConfigClarity","url":"https://configclarity.dev"},
+    "isPartOf":{"@type":"Blog","name":"ConfigClarity Blog","url":"https://configclarity.dev/blog/"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is a hardcoded secret in Docker Compose?","acceptedAnswer":{"@type":"Answer","text":"A hardcoded secret is when you write a literal credential value directly in docker-compose.yml — like POSTGRES_PASSWORD: mysecret — instead of referencing an environment variable like POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}. The problem is that the compose file gets committed to version control while the secret should only exist on the server."}},
+{"@type":"Question","name":"How do I find hardcoded secrets in my Docker Compose files?","acceptedAnswer":{"@type":"Answer","text":"Paste your docker-compose.yml into ConfigClarity's Docker Auditor — it scans all environment blocks for literal credential values. You can also search manually: grep -rn 'password|secret|api_key' --include='docker-compose*.yml' ."}},
+{"@type":"Question","name":"If I remove a secret from git history, is it safe?","acceptedAnswer":{"@type":"Answer","text":"No. If the secret was ever pushed to a remote repository, assume it is compromised. Forks, clones, and CI/CD systems may have cached the history. The correct response is to rotate the credential immediately — change the password or revoke and regenerate the API key — then clean the git history with git filter-repo."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
+    {"@type":"ListItem","position":3,"name":"Hardcoded Secrets in Docker: How They Get Exposed and How to","item":"https://configclarity.dev/blog/hardcoded-secrets-docker-exposed/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.8; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:720px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .hero { max-width:720px; margin:0 auto; padding:3rem 2rem 1.5rem; }
+      .hero-meta { font-size:0.75rem; color:var(--muted); margin-bottom:1rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+      .hero-tag { background:rgba(108,99,255,.15); color:var(--purple); padding:0.15rem 0.6rem; border-radius:4px; font-size:0.72rem; }
+      h1 { font-size:1.75rem; font-weight:700; line-height:1.35; margin-bottom:1rem; }
+      .lede { font-size:1rem; color:var(--muted); margin-bottom:2rem; line-height:1.75; }
+      .content { max-width:720px; margin:0 auto; padding:0 2rem 4rem; }
+      h2 { font-size:1.15rem; font-weight:700; margin:2.5rem 0 0.75rem; color:var(--text); }
+      h3 { font-size:0.95rem; font-weight:700; margin:1.75rem 0 0.5rem; color:var(--text); }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1.1rem; line-height:1.8; }
+      strong { color:var(--text); }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; font-size:0.78rem; overflow-x:auto; margin:1rem 0 1.5rem; line-height:1.7; color:var(--text); }
+      code { background:#1e2130; padding:0.1rem 0.4rem; border-radius:3px; font-size:0.82rem; color:var(--text); }
+      .callout { background:var(--bg2); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.5rem 0; }
+      .callout.good { border-color:var(--green); }
+      .callout.danger { border-color:var(--red); }
+      .callout p { margin-bottom:0; color:var(--text); font-size:0.875rem; }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.5rem; margin:2.5rem 0; text-align:center; }
+      .cta p { color:var(--text); font-size:0.875rem; margin-bottom:0.75rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.5rem 1.25rem; border-radius:6px; font-size:0.82rem; font-weight:700; text-decoration:none; }
+      .cta a.sec { background:transparent; border:1px solid var(--purple); color:var(--purple); margin-left:0.5rem; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › Hardcoded Secrets in Docker: How They Get Exposed and H...</div>
+  <div class="hero">
+    <div class="hero-meta"><span>2026-03-31</span> · <span class="hero-tag">Docker</span><span class="hero-tag">Security</span><span class="hero-tag">DevOps</span></div>
+    <h1>Hardcoded Secrets in Docker: How They Get Exposed and How to Find Them</h1>
+    <p class="lede">A developer sets up a new service, puts the database password directly in docker-compose.yml to get it working quickly, commits the file to Git, and moves on. Six months later the repo goes public. This is not a hypothetical — it happens constantly and the consequences range from annoying to catastrophic.</p>
+  </div>
+  <div class="content">
+<p>Hardcoded secrets are credentials, API keys, passwords, and tokens written directly into configuration files. In the Docker world, they usually show up in <code>docker-compose.yml</code> environment blocks, in <code>.env</code> files that get committed to version control, or in <code>Dockerfile</code> ARG and ENV instructions.</p>
+
+<p>The problem isn't that the value is in the file — it's that the file goes places the secret was never meant to go.</p>
+
+<h2>How they leak</h2>
+
+<p><strong>Git history.</strong> This is the most common leak vector. A developer adds a password to docker-compose.yml, commits it, then replaces it with an environment variable reference in a later commit. The password is gone from the current file but it's permanently preserved in the git history. Anyone who clones the repo — even years later — can see it with <code>git log -p</code>.</p>
+
+<pre># Find secrets in git history:
+git log --all -p | grep -i "password|secret|api_key|token" | head -20</pre>
+
+<p><strong>Accidentally public repositories.</strong> A private repo gets made public. A developer creates a public fork. A CI/CD pipeline logs environment variables. The repo gets added to a job board or portfolio. Any of these exposes the secrets to anyone who looks.</p>
+
+<p><strong>Docker image layers.</strong> If you copy a file containing secrets into a Docker image during the build process, that file is baked into the image layer permanently — even if you delete it in a later layer. Anyone who pulls the image can extract the layer and read the file.</p>
+
+<pre># Bad — secret is in the image layer even after deletion:
+COPY .env /app/.env
+RUN python setup.py
+RUN rm /app/.env  # Too late — it's already in layer 2</pre>
+
+<p><strong>Container inspection.</strong> Any user with Docker socket access can read the environment variables of running containers:</p>
+
+<pre>docker inspect container_name | grep -i "env" -A 50</pre>
+
+<p>This means anyone with <code>docker</code> group membership on your server can read every secret in every running container.</p>
+
+<h2>What hardcoded secrets look like in the wild</h2>
+
+<pre># Classic example — everything hardcoded:
+services:
+  app:
+    image: myapp:latest
+    environment:
+      DATABASE_URL: postgres://admin:SuperSecret123@db:5432/mydb
+      API_KEY: sk-abc123def456
+      REDIS_PASSWORD: redis_pass_here
+      JWT_SECRET: my-super-secret-jwt-key
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: SuperSecret123
+      POSTGRES_USER: admin</pre>
+
+<p>This is what the Docker Auditor flags as CRITICAL. Every value in those environment blocks is a literal credential that will be visible to anyone who reads the file.</p>
+
+<h2>The correct pattern</h2>
+
+<pre># docker-compose.yml — no secrets, only references:
+services:
+  app:
+    image: myapp:latest
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      API_KEY: ${API_KEY}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}</pre>
+
+<pre># .env — actual values, never committed to git:
+DATABASE_URL=postgres://admin:SuperSecret123@db:5432/mydb
+API_KEY=sk-abc123def456
+REDIS_PASSWORD=redis_pass_here
+JWT_SECRET=my-super-secret-jwt-key
+POSTGRES_PASSWORD=SuperSecret123
+POSTGRES_USER=admin</pre>
+
+<pre># .gitignore — must include .env:
+.env
+.env.local
+.env.production
+*.env</pre>
+
+<p>The <code>docker-compose.yml</code> is safe to commit. The <code>.env</code> file is not — it contains the actual values and must never leave your server.</p>
+
+<h2>Finding hardcoded secrets in your current setup</h2>
+
+<p>Check your running docker-compose files:</p>
+
+<pre># Scan for common secret patterns:
+grep -rn "password|secret|api_key|token|passwd"   --include="docker-compose*.yml"   --include=".env*" . | grep -v "^\s*#" | grep "=.\{4\}"</pre>
+
+<p>Check your git history for previously committed secrets:</p>
+
+<pre># Search across all commits:
+git log --all -p -- "*.yml" "*.env" | grep -i "password|secret|key" | grep "^+" | grep -v "^\+\+\+"</pre>
+
+<p>If you find secrets in git history — the secret is compromised regardless of whether you've removed it from the current files. Rotate the credential immediately. A removed secret in history is still a leaked secret.</p>
+
+<div class="callout danger">
+  <p><strong>If your secrets are already in a public repo's history:</strong> rotate them immediately. Removing the file or the commit doesn't help — GitHub, GitLab, and any forks already have the data. Change the password, revoke the API key, regenerate the JWT secret. Then clean the history with git filter-repo.</p>
+</div>
+
+<h2>Docker Compose secrets (production pattern)</h2>
+
+<p>For production setups, Docker has a native secrets mechanism that mounts secrets as files rather than environment variables:</p>
+
+<pre>services:
+  app:
+    image: myapp:latest
+    secrets:
+      - db_password
+    environment:
+      DB_PASSWORD_FILE: /run/secrets/db_password
+
+secrets:
+  db_password:
+    file: ./secrets/db_password.txt</pre>
+
+<p>The secret is mounted at <code>/run/secrets/db_password</code> inside the container. Your application reads it from the file. It never appears in <code>docker inspect</code> output or environment variable listings.</p>
+
+<div class="cta">
+  <p>Paste your docker-compose.yml to scan for hardcoded secrets, missing healthchecks, and exposed ports automatically.</p>
+  <a href="/docker/">Open Docker Auditor →</a>
+</div>
+
+<h2>Related guides</h2>
+<ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);line-height:2.2;">
+  <li><a href="/fix/docker/hardcoded-secrets/">Hardcoded secrets fix guide</a></li>
+  <li><a href="/glossary/hardcoded-secrets/">What are hardcoded secrets?</a></li>
+  <li><a href="/incidents/docker-secrets-exposed/">Incident: hardcoded secrets in docker-compose files</a></li>
+  <li><a href="/blog/docker-compose-security-checklist/">Docker Compose security checklist</a></li>
+</ul>
+</div>
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>

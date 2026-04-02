@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>SSH Hardening on a Fresh Linux Server: The Practical Guide — ConfigClarity</title>
+  <meta name="description" content="How to harden SSH on a new Linux server — disable password auth, disable root login, change the port, set up fail2ban, and verify everything is working without locking yourself out.">
+  <meta name="keywords" content="ssh hardening linux, ssh server hardening ubuntu, disable ssh password authentication, harden sshd config, ssh security linux vps">
+  <link rel="canonical" href="https://configclarity.dev/blog/ssh-hardening-linux-server/">
+  <meta property="og:title" content="SSH Hardening on a Fresh Linux Server: The Practical Guide">
+  <meta property="og:description" content="How to harden SSH on a new Linux server — disable password auth, disable root login, change the port, set up fail2ban, and verify everything is working without locking yourself out.">
+  <meta property="og:url" content="https://configclarity.dev/blog/ssh-hardening-linux-server/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article",
+    "headline":"SSH Hardening on a Fresh Linux Server: The Practical Guide",
+    "description":"How to harden SSH on a new Linux server — disable password auth, disable root login, change the port, set up fail2ban, and verify everything is working without locking yourself out.",
+    "url":"https://configclarity.dev/blog/ssh-hardening-linux-server/",
+    "datePublished":"2026-03-31",
+    "dateModified":"2026-03-31",
+    "author":{"@type":"Organization","name":"MetricLogic","url":"https://metriclogic.dev"},
+    "publisher":{"@type":"Organization","name":"ConfigClarity","url":"https://configclarity.dev"},
+    "isPartOf":{"@type":"Blog","name":"ConfigClarity Blog","url":"https://configclarity.dev/blog/"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the most important SSH hardening step?","acceptedAnswer":{"@type":"Answer","text":"Disabling password authentication and switching to SSH key-only authentication. This eliminates brute force attacks entirely since attackers cannot guess a private key. Always set up and verify key authentication before disabling password auth to avoid locking yourself out."}},
+{"@type":"Question","name":"How do I disable root SSH login on Ubuntu?","acceptedAnswer":{"@type":"Answer","text":"Edit /etc/ssh/sshd_config and set PermitRootLogin no. Then restart SSH with sudo systemctl restart sshd. Verify you can still connect as your regular user before closing your session."}},
+{"@type":"Question","name":"Should I change the SSH port from 22?","acceptedAnswer":{"@type":"Answer","text":"It reduces automated scanning noise significantly but is not a security measure on its own. Changing from port 22 to a high port eliminates the majority of bot traffic but determined attackers scan all ports. It works best combined with proper key authentication and fail2ban."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
+    {"@type":"ListItem","position":3,"name":"SSH Hardening on a Fresh Linux Server: The Practical Guide","item":"https://configclarity.dev/blog/ssh-hardening-linux-server/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.8; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:720px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .hero { max-width:720px; margin:0 auto; padding:3rem 2rem 1.5rem; }
+      .hero-meta { font-size:0.75rem; color:var(--muted); margin-bottom:1rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+      .hero-tag { background:rgba(108,99,255,.15); color:var(--purple); padding:0.15rem 0.6rem; border-radius:4px; font-size:0.72rem; }
+      h1 { font-size:1.75rem; font-weight:700; line-height:1.35; margin-bottom:1rem; }
+      .lede { font-size:1rem; color:var(--muted); margin-bottom:2rem; line-height:1.75; }
+      .content { max-width:720px; margin:0 auto; padding:0 2rem 4rem; }
+      h2 { font-size:1.15rem; font-weight:700; margin:2.5rem 0 0.75rem; color:var(--text); }
+      h3 { font-size:0.95rem; font-weight:700; margin:1.75rem 0 0.5rem; color:var(--text); }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1.1rem; line-height:1.8; }
+      strong { color:var(--text); }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; font-size:0.78rem; overflow-x:auto; margin:1rem 0 1.5rem; line-height:1.7; color:var(--text); }
+      code { background:#1e2130; padding:0.1rem 0.4rem; border-radius:3px; font-size:0.82rem; color:var(--text); }
+      .callout { background:var(--bg2); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.5rem 0; }
+      .callout.good { border-color:var(--green); }
+      .callout.danger { border-color:var(--red); }
+      .callout p { margin-bottom:0; color:var(--text); font-size:0.875rem; }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.5rem; margin:2.5rem 0; text-align:center; }
+      .cta p { color:var(--text); font-size:0.875rem; margin-bottom:0.75rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.5rem 1.25rem; border-radius:6px; font-size:0.82rem; font-weight:700; text-decoration:none; }
+      .cta a.sec { background:transparent; border:1px solid var(--purple); color:var(--purple); margin-left:0.5rem; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › SSH Hardening on a Fresh Linux Server: The Practical Gu...</div>
+  <div class="hero">
+    <div class="hero-meta"><span>2026-03-31</span> · <span class="hero-tag">SSH</span><span class="hero-tag">Linux</span><span class="hero-tag">Security</span><span class="hero-tag">DevOps</span></div>
+    <h1>SSH Hardening on a Fresh Linux Server: The Practical Guide</h1>
+    <p class="lede">Every new VPS comes with SSH wide open. Password authentication enabled. Root login allowed. Port 22 listening on all interfaces. Within minutes of the server coming online, bots are already trying passwords. Here's how to close those gaps in order — without accidentally locking yourself out.</p>
+  </div>
+  <div class="content">
+<p>SSH hardening is one of those tasks that feels straightforward until you lock yourself out of your own server. The order of operations matters a lot here. Do the steps wrong and you're looking at a rescue console or a full server rebuild.</p>
+
+<p>This guide does everything in the right order. Read it once before running any commands.</p>
+
+<h2>Before you start: open a second SSH session</h2>
+
+<p>This is not optional. Before making any changes to SSH configuration, open a second terminal and connect to your server. Keep it open. If your primary session disconnects, you have a working backup. If your backup also disconnects — you've locked yourself out and need the provider's console.</p>
+
+<pre># Terminal 1: your working session where you make changes
+# Terminal 2: keep this connected as a backup the entire time
+
+# Verify you can connect before starting:
+ssh user@your-server-ip "echo connected"</pre>
+
+<h2>Step 1: Set up SSH key authentication</h2>
+
+<p>Do this first, before disabling password authentication. If you disable passwords before setting up keys, you lock yourself out.</p>
+
+<pre># On your LOCAL machine — generate a key if you don't have one:
+ssh-keygen -t ed25519 -C "your-server-name"
+
+# Copy your public key to the server:
+ssh-copy-id user@your-server-ip
+
+# Verify key auth works — open a NEW terminal and connect:
+ssh user@your-server-ip
+# If this connects without asking for a password, keys are working</pre>
+
+<p>Only proceed to the next step after confirming key authentication works in a fresh terminal.</p>
+
+<h2>Step 2: Disable password authentication</h2>
+
+<pre>sudo nano /etc/ssh/sshd_config
+
+# Find and change these lines:
+PasswordAuthentication no
+PubkeyAuthentication yes
+AuthorizedKeysFile .ssh/authorized_keys</pre>
+
+<p>Don't restart SSH yet. Make all your config changes first, then restart once.</p>
+
+<h2>Step 3: Disable root login</h2>
+
+<pre># In /etc/ssh/sshd_config:
+PermitRootLogin no</pre>
+
+<p>If you need to run commands as root, use <code>sudo</code> from your regular user account. Direct root SSH login is unnecessary and increases your attack surface.</p>
+
+<h2>Step 4: Limit login attempts</h2>
+
+<pre># In /etc/ssh/sshd_config:
+MaxAuthTries 3
+MaxSessions 5
+LoginGraceTime 30</pre>
+
+<p><code>MaxAuthTries 3</code> limits how many password attempts before the connection is dropped. <code>LoginGraceTime 30</code> gives users 30 seconds to authenticate before the connection times out.</p>
+
+<h2>Step 5: Disable unused authentication methods</h2>
+
+<pre># In /etc/ssh/sshd_config:
+X11Forwarding no
+AllowAgentForwarding no
+AllowTcpForwarding no
+PrintMotd no</pre>
+
+<p>Unless you specifically need X11 forwarding or TCP tunneling, disable them. These features increase attack surface without benefit for most setups.</p>
+
+<h2>Step 6: Apply the config</h2>
+
+<pre># Test the config before restarting:
+sudo sshd -t
+
+# If no errors, restart SSH:
+sudo systemctl restart sshd
+
+# Verify SSH is running:
+sudo systemctl status sshd</pre>
+
+<div class="callout danger">
+  <p><strong>Critical:</strong> After restarting SSH, test that your key authentication still works from your backup terminal before closing your primary session. If the backup terminal can connect — you're done. If it can't connect — something went wrong and you still have your primary session to fix it.</p>
+</div>
+
+<h2>Step 7: Set up fail2ban</h2>
+
+<pre>sudo apt install fail2ban -y
+
+sudo tee /etc/fail2ban/jail.local << 'EOF'
+[DEFAULT]
+bantime  = 1h
+findtime = 10m
+maxretry = 3
+backend  = systemd
+
+[sshd]
+enabled  = true
+port     = ssh
+maxretry = 3
+bantime  = 24h
+EOF
+
+sudo systemctl enable --now fail2ban
+sudo fail2ban-client status sshd</pre>
+
+<h2>Optional: change the SSH port</h2>
+
+<p>Changing from port 22 to a high-numbered port (e.g., 2222 or 22022) eliminates the vast majority of automated scanning. It's security through obscurity — not a substitute for proper hardening — but it drastically reduces log noise.</p>
+
+<pre># In /etc/ssh/sshd_config:
+Port 2222
+
+# Update UFW to allow the new port:
+sudo ufw allow 2222/tcp
+sudo ufw delete allow 22/tcp  # Only after confirming the new port works
+
+# Restart SSH:
+sudo systemctl restart sshd
+
+# Connect on the new port to verify:
+ssh -p 2222 user@your-server-ip</pre>
+
+<div class="callout">
+  <p><strong>Important:</strong> update your firewall rules before restarting SSH on the new port. If you close port 22 in UFW before opening the new port, you lock yourself out.</p>
+</div>
+
+<h2>Verify your hardening</h2>
+
+<pre># Check current SSH config:
+sudo sshd -T | grep -E 'passwordauthentication|permitrootlogin|pubkeyauthentication|maxauthtries'
+
+# Check fail2ban is active:
+sudo fail2ban-client status sshd
+
+# Check who's been blocked:
+sudo fail2ban-client status sshd | grep "Banned IP"
+
+# Check for recent login attempts in the log:
+sudo journalctl -u sshd --since "1 hour ago" | grep -i "failed|invalid"</pre>
+
+<h2>The complete sshd_config changes summary</h2>
+
+<pre># Changes to make in /etc/ssh/sshd_config:
+PasswordAuthentication no
+PubkeyAuthentication yes
+PermitRootLogin no
+MaxAuthTries 3
+MaxSessions 5
+LoginGraceTime 30
+X11Forwarding no
+AllowAgentForwarding no
+AllowTcpForwarding no
+PrintMotd no</pre>
+
+<div class="cta">
+  <p>Audit your UFW firewall rules alongside SSH hardening — check for Docker bypass risk, missing default-deny, and open ports that shouldn't be public.</p>
+  <a href="/firewall/">Open Firewall Auditor →</a>
+</div>
+
+<h2>Related guides</h2>
+<ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);line-height:2.2;">
+  <li><a href="/providers/hetzner/ssh-hardening/">Hetzner SSH hardening guide</a></li>
+  <li><a href="/providers/hetzner/production-checklist/">Hetzner production-ready server checklist</a></li>
+  <li><a href="/blog/fail2ban-misconfigured/">fail2ban is misconfigured on most servers</a></li>
+  <li><a href="/fix/ufw/default-deny-missing/">UFW default deny missing fix</a></li>
+  <li><a href="/glossary/port-binding/">Port binding explained</a></li>
+</ul>
+</div>
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>

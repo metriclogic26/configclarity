@@ -489,4 +489,7 @@
   <url><loc>https://www.configclarity.dev/blog/reading-crontab-output/</loc><lastmod>2026-03-31</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.configclarity.dev/blog/cron-scheduling-mistakes/</loc><lastmod>2026-03-31</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.configclarity.dev/blog/ai-crawler-opt-out-robots-txt/</loc><lastmod>2026-03-31</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.configclarity.dev/blog/google-ignores-crawl-delay/</loc><lastmod>2026-03-31</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.configclarity.dev/blog/hardcoded-secrets-docker-exposed/</loc><lastmod>2026-03-31</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.configclarity.dev/blog/ssh-hardening-linux-server/</loc><lastmod>2026-03-31</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
 </urlset>
