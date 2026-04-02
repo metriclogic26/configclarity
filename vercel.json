@@ -2007,6 +2007,38 @@
     {
       "source": "/providers/hetzner/production-checklist",
       "destination": "providers/hetzner/production-checklist/index.html"
+    },
+    {
+      "source": "/blog/cron-job-overlaps-crash-server/",
+      "destination": "blog/cron-job-overlaps-crash-server/index.html"
+    },
+    {
+      "source": "/blog/cron-job-overlaps-crash-server",
+      "destination": "blog/cron-job-overlaps-crash-server/index.html"
+    },
+    {
+      "source": "/blog/reading-crontab-output/",
+      "destination": "blog/reading-crontab-output/index.html"
+    },
+    {
+      "source": "/blog/reading-crontab-output",
+      "destination": "blog/reading-crontab-output/index.html"
+    },
+    {
+      "source": "/blog/cron-scheduling-mistakes/",
+      "destination": "blog/cron-scheduling-mistakes/index.html"
+    },
+    {
+      "source": "/blog/cron-scheduling-mistakes",
+      "destination": "blog/cron-scheduling-mistakes/index.html"
+    },
+    {
+      "source": "/blog/ai-crawler-opt-out-robots-txt/",
+      "destination": "blog/ai-crawler-opt-out-robots-txt/index.html"
+    },
+    {
+      "source": "/blog/ai-crawler-opt-out-robots-txt",
+      "destination": "blog/ai-crawler-opt-out-robots-txt/index.html"
     }
   ]
 }

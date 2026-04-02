@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Common Cron Scheduling Mistakes That Cause Real Problems — ConfigClarity</title>
+  <meta name="description" content="The cron scheduling mistakes that actually cause outages — midnight pile-ups, missing flock, silent failures, wrong timezones, and jobs that grow over time.">
+  <meta name="keywords" content="cron job mistakes, cron scheduling mistakes, cron job best practices, cron job problems, crontab common errors">
+  <link rel="canonical" href="https://configclarity.dev/blog/cron-scheduling-mistakes/">
+  <meta property="og:title" content="Common Cron Scheduling Mistakes That Cause Real Problems">
+  <meta property="og:description" content="The cron scheduling mistakes that actually cause outages — midnight pile-ups, missing flock, silent failures, wrong timezones, and jobs that grow over time.">
+  <meta property="og:url" content="https://configclarity.dev/blog/cron-scheduling-mistakes/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article",
+    "headline":"Common Cron Scheduling Mistakes That Cause Real Problems",
+    "description":"The cron scheduling mistakes that actually cause outages — midnight pile-ups, missing flock, silent failures, wrong timezones, and jobs that grow over time.",
+    "url":"https://configclarity.dev/blog/cron-scheduling-mistakes/",
+    "datePublished":"2026-03-31",
+    "dateModified":"2026-03-31",
+    "author":{"@type":"Organization","name":"MetricLogic","url":"https://metriclogic.dev"},
+    "publisher":{"@type":"Organization","name":"ConfigClarity","url":"https://configclarity.dev"},
+    "isPartOf":{"@type":"Blog","name":"ConfigClarity Blog","url":"https://configclarity.dev/blog/"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is the most dangerous cron scheduling mistake?","acceptedAnswer":{"@type":"Answer","text":"Scheduling multiple heavy jobs at exactly midnight (0 0 * * *) without staggering them. This causes simultaneous execution of competing processes and is responsible for the most common pattern of overnight server load spikes."}},
+{"@type":"Question","name":"How do I prevent a cron job from running twice?","acceptedAnswer":{"@type":"Answer","text":"Use flock: wrap your command with flock -n /tmp/jobname.lock your-command. If a previous instance is still running, the new invocation exits immediately without starting a second copy."}},
+{"@type":"Question","name":"How do I know if my cron jobs are failing?","acceptedAnswer":{"@type":"Answer","text":"Add output redirection to every job: append >> /var/log/jobname.log 2>&1 to capture both stdout and stderr. Without this, all output is silently discarded and failures are invisible."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
+    {"@type":"ListItem","position":3,"name":"Common Cron Scheduling Mistakes That Cause Real Problems","item":"https://configclarity.dev/blog/cron-scheduling-mistakes/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.8; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:720px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .hero { max-width:720px; margin:0 auto; padding:3rem 2rem 1.5rem; }
+      .hero-meta { font-size:0.75rem; color:var(--muted); margin-bottom:1rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+      .hero-tag { background:rgba(108,99,255,.15); color:var(--purple); padding:0.15rem 0.6rem; border-radius:4px; font-size:0.72rem; }
+      h1 { font-size:1.75rem; font-weight:700; line-height:1.35; margin-bottom:1rem; }
+      .lede { font-size:1rem; color:var(--muted); margin-bottom:2rem; line-height:1.75; }
+      .content { max-width:720px; margin:0 auto; padding:0 2rem 4rem; }
+      h2 { font-size:1.15rem; font-weight:700; margin:2.5rem 0 0.75rem; color:var(--text); }
+      h3 { font-size:0.95rem; font-weight:700; margin:1.75rem 0 0.5rem; color:var(--text); }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1.1rem; line-height:1.8; }
+      strong { color:var(--text); }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; font-size:0.78rem; overflow-x:auto; margin:1rem 0 1.5rem; line-height:1.7; color:var(--text); }
+      code { background:#1e2130; padding:0.1rem 0.4rem; border-radius:3px; font-size:0.82rem; color:var(--text); }
+      .callout { background:var(--bg2); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.5rem 0; }
+      .callout.good { border-color:var(--green); }
+      .callout.danger { border-color:var(--red); }
+      .callout p { margin-bottom:0; color:var(--text); font-size:0.875rem; }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.5rem; margin:2.5rem 0; text-align:center; }
+      .cta p { color:var(--text); font-size:0.875rem; margin-bottom:0.75rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.5rem 1.25rem; border-radius:6px; font-size:0.82rem; font-weight:700; text-decoration:none; }
+      .cta a.sec { background:transparent; border:1px solid var(--purple); color:var(--purple); margin-left:0.5rem; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › Common Cron Scheduling Mistakes That Cause Real Problems</div>
+  <div class="hero">
+    <div class="hero-meta"><span>2026-03-31</span> · <span class="hero-tag">Cron</span><span class="hero-tag">Linux</span><span class="hero-tag">DevOps</span></div>
+    <h1>Common Cron Scheduling Mistakes That Cause Real Problems</h1>
+    <p class="lede">Most cron problems aren't syntax errors — those you catch immediately. The real problems are scheduling decisions that look fine when you set them up and only surface weeks later at 2am when everything breaks at once.</p>
+  </div>
+  <div class="content">
+<p>Cron is one of the oldest scheduling tools in Unix and one of the most reliably misused. Not because it's complicated — the five-field format is actually quite simple — but because the mistakes are invisible until they compound into something you can't ignore.</p>
+
+<h2>Mistake 1: Everything at midnight</h2>
+
+<p>This is the most common cron mistake on the planet. When you need to run something "once a day when nobody's around," you pick midnight. So does every other developer on the team. So did whoever set up the server three years ago. Before long, half your crontab fires simultaneously at 00:00 and your server resembles a traffic jam.</p>
+
+<pre># The typical result:
+0 0 * * * /usr/bin/db-backup.sh          # takes 15 minutes
+0 0 * * * /usr/bin/cleanup-old-files.sh  # hammers disk
+0 0 * * * /usr/bin/generate-reports.sh   # heavy queries
+0 0 * * * /usr/bin/send-daily-digest.sh  # lots of DB reads</pre>
+
+<p>The fix is simple: stagger your jobs. Spread them across different minutes or even different hours. The exact time usually doesn't matter — almost nothing needs to run at exactly midnight.</p>
+
+<pre>0  0 * * * /usr/bin/db-backup.sh
+15 0 * * * /usr/bin/cleanup-old-files.sh
+30 0 * * * /usr/bin/generate-reports.sh
+45 0 * * * /usr/bin/send-daily-digest.sh</pre>
+
+<h2>Mistake 2: No flock on jobs that run more than a few seconds</h2>
+
+<p>If a job runs every 5 minutes and occasionally takes 6 minutes, you now have two copies running simultaneously. Both hitting the same database. Both writing to the same files. Both consuming memory. This compounds — the extra load makes the next run take even longer.</p>
+
+<pre># Vulnerable:
+*/5 * * * * /usr/bin/process-orders.sh
+
+# Protected:
+*/5 * * * * flock -n /tmp/process-orders.lock /usr/bin/process-orders.sh</pre>
+
+<p>flock is installed on every Linux system. There's no reason not to use it on any job that does real work.</p>
+
+<h2>Mistake 3: Silently discarding output</h2>
+
+<p>Cron sends job output to the system mail. Most servers either don't have a mail daemon configured or the mail goes somewhere nobody reads. The result is that cron job failures are completely silent.</p>
+
+<pre># Silent — you'll never know if this fails:
+0 2 * * * /usr/bin/backup.sh
+
+# Auditable — errors go to a log you can check:
+0 2 * * * /usr/bin/backup.sh >> /var/log/backup.log 2>&1
+
+# Even better — log with timestamps:
+0 2 * * * echo "$(date): starting backup" >> /var/log/backup.log && /usr/bin/backup.sh >> /var/log/backup.log 2>&1</pre>
+
+<div class="callout">
+  <p><strong>Check your crontab right now:</strong> how many jobs redirect output? If the answer is "none," you have no idea whether half your cron jobs are working.</p>
+</div>
+
+<h2>Mistake 4: Wrong timezone</h2>
+
+<p>Cron uses the system timezone. Your server is probably set to UTC. Your laptop is probably set to your local timezone. When you write a cron job thinking "I want this to run at 9 AM," you need to know which 9 AM you mean.</p>
+
+<pre># Check your server timezone:
+timedatectl | grep "Time zone"
+date
+
+# If your server is UTC and you want 9am New York time:
+# New York is UTC-5 (winter) or UTC-4 (summer)
+# So 9am New York = 14:00 UTC (winter) or 13:00 UTC (summer)
+0 14 * * * /usr/bin/morning-report.sh  # winter
+0 13 * * * /usr/bin/morning-report.sh  # summer</pre>
+
+<p>The daylight saving time transition is particularly painful — a job set to "9am Eastern" in winter runs an hour off in summer if you calculated it in UTC wrong. Use UTC for everything and convert deliberately.</p>
+
+<h2>Mistake 5: Jobs that grow over time</h2>
+
+<p>A backup job that takes 3 minutes today will take 30 minutes in two years as your data grows. Nobody goes back and adjusts the schedule. Eventually it's still running when the next day's backup starts and you have two backups running simultaneously, each taking twice as long as it should.</p>
+
+<p>The fix is to monitor job duration and review it periodically — or use flock so overlapping instances are prevented regardless of how long the job takes.</p>
+
+<pre># Check how long your jobs actually take:
+time /usr/bin/backup.sh
+
+# Add to cron with timing logged:
+0 2 * * * { time /usr/bin/backup.sh; } >> /var/log/backup.log 2>&1</pre>
+
+<h2>Mistake 6: Using cron for things that should be monitored</h2>
+
+<p>Cron fires and forgets. If a job fails, nothing happens. If a job stops running entirely (because the crontab got wiped, or the server rebooted and something didn't start), nothing happens. No alert. No notification. No indication anything is wrong until someone notices the data hasn't been processed in three days.</p>
+
+<p>For anything critical, add a dead man's switch: a service like Healthchecks.io or a simple curl to a monitoring endpoint at the end of your job. If the ping doesn't arrive, you get alerted.</p>
+
+<pre># Ping a healthcheck endpoint on success:
+0 2 * * * /usr/bin/backup.sh && curl -s https://hc-ping.com/your-uuid</pre>
+
+<h2>Mistake 7: Hardcoding paths that change</h2>
+
+<pre># Will break if Python moves or a virtualenv is activated differently:
+0 * * * * python3 /app/scripts/sync.py
+
+# More robust — use absolute paths:
+0 * * * * /usr/bin/python3 /app/scripts/sync.py
+
+# Or activate virtualenv explicitly:
+0 * * * * /app/venv/bin/python /app/scripts/sync.py</pre>
+
+<h2>The quick audit</h2>
+
+<p>Run <code>crontab -l</code> and check each job against this list:</p>
+
+<ul style="font-size:0.875rem;color:var(--muted);padding-left:1.5rem;line-height:2.4;">
+  <li>Is it scheduled at exactly <code>0 0 * * *</code>? Can it be staggered?</li>
+  <li>Does it run more than once per hour? Does it have flock protection?</li>
+  <li>Does it redirect output to a log file?</li>
+  <li>Do you know how long it takes? Does that fit inside its interval?</li>
+  <li>Is the timezone correct for what you intended?</li>
+</ul>
+
+<div class="cta">
+  <p>Paste your crontab to see every job on a timeline, spot midnight pile-ups, and identify jobs that need flock protection.</p>
+  <a href="/">Open Cron Visualiser →</a>
+</div>
+
+<h2>Related guides</h2>
+<ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);line-height:2.2;">
+  <li><a href="/blog/cron-job-overlaps-crash-server/">How cron job overlaps crash your server</a></li>
+  <li><a href="/fix/cron/overlapping-jobs/">Overlapping cron jobs fix</a></li>
+  <li><a href="/fix/cron/flock-safety/">Adding flock safety</a></li>
+  <li><a href="/fix/cron/silent-failure/">Cron jobs failing silently</a></li>
+  <li><a href="/fix/cron/server-load-spike/">Server load spikes from cron</a></li>
+</ul>
+</div>
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>

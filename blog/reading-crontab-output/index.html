@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Reading crontab -l Output Like a Sysadmin — ConfigClarity</title>
+  <meta name="description" content="How to read and understand crontab -l output — the five fields, special strings, environment variables, and what the common patterns actually mean.">
+  <meta name="keywords" content="crontab -l output, read crontab, crontab explained, crontab fields explained, crontab format">
+  <link rel="canonical" href="https://configclarity.dev/blog/reading-crontab-output/">
+  <meta property="og:title" content="Reading crontab -l Output Like a Sysadmin">
+  <meta property="og:description" content="How to read and understand crontab -l output — the five fields, special strings, environment variables, and what the common patterns actually mean.">
+  <meta property="og:url" content="https://configclarity.dev/blog/reading-crontab-output/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article",
+    "headline":"Reading crontab -l Output Like a Sysadmin",
+    "description":"How to read and understand crontab -l output — the five fields, special strings, environment variables, and what the common patterns actually mean.",
+    "url":"https://configclarity.dev/blog/reading-crontab-output/",
+    "datePublished":"2026-03-31",
+    "dateModified":"2026-03-31",
+    "author":{"@type":"Organization","name":"MetricLogic","url":"https://metriclogic.dev"},
+    "publisher":{"@type":"Organization","name":"ConfigClarity","url":"https://configclarity.dev"},
+    "isPartOf":{"@type":"Blog","name":"ConfigClarity Blog","url":"https://configclarity.dev/blog/"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What do the five fields in a crontab entry mean?","acceptedAnswer":{"@type":"Answer","text":"Left to right: minute (0-59), hour (0-23), day of month (1-31), month (1-12), day of week (0-7 where 0 and 7 both mean Sunday). An asterisk means every value. So 0 2 * * * means 2:00 AM every day."}},
+{"@type":"Question","name":"Why does my cron job work manually but not in cron?","acceptedAnswer":{"@type":"Answer","text":"The most common cause is PATH. Cron has a minimal default PATH of /usr/bin:/bin. Commands installed in /usr/local/bin are not found. Fix this by using absolute paths in your script or setting PATH at the top of your crontab."}},
+{"@type":"Question","name":"What does MAILTO= mean in a crontab?","acceptedAnswer":{"@type":"Answer","text":"MAILTO controls where cron sends the output of your jobs. Setting MAILTO= (empty) silently discards all output, which is the most common reason cron jobs appear to do nothing. Set MAILTO to your email address during debugging, or redirect output to a log file with >> /var/log/job.log 2>&1."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
+    {"@type":"ListItem","position":3,"name":"Reading crontab -l Output Like a Sysadmin","item":"https://configclarity.dev/blog/reading-crontab-output/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.8; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:720px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .hero { max-width:720px; margin:0 auto; padding:3rem 2rem 1.5rem; }
+      .hero-meta { font-size:0.75rem; color:var(--muted); margin-bottom:1rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+      .hero-tag { background:rgba(108,99,255,.15); color:var(--purple); padding:0.15rem 0.6rem; border-radius:4px; font-size:0.72rem; }
+      h1 { font-size:1.75rem; font-weight:700; line-height:1.35; margin-bottom:1rem; }
+      .lede { font-size:1rem; color:var(--muted); margin-bottom:2rem; line-height:1.75; }
+      .content { max-width:720px; margin:0 auto; padding:0 2rem 4rem; }
+      h2 { font-size:1.15rem; font-weight:700; margin:2.5rem 0 0.75rem; color:var(--text); }
+      h3 { font-size:0.95rem; font-weight:700; margin:1.75rem 0 0.5rem; color:var(--text); }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1.1rem; line-height:1.8; }
+      strong { color:var(--text); }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; font-size:0.78rem; overflow-x:auto; margin:1rem 0 1.5rem; line-height:1.7; color:var(--text); }
+      code { background:#1e2130; padding:0.1rem 0.4rem; border-radius:3px; font-size:0.82rem; color:var(--text); }
+      .callout { background:var(--bg2); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.5rem 0; }
+      .callout.good { border-color:var(--green); }
+      .callout.danger { border-color:var(--red); }
+      .callout p { margin-bottom:0; color:var(--text); font-size:0.875rem; }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.5rem; margin:2.5rem 0; text-align:center; }
+      .cta p { color:var(--text); font-size:0.875rem; margin-bottom:0.75rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.5rem 1.25rem; border-radius:6px; font-size:0.82rem; font-weight:700; text-decoration:none; }
+      .cta a.sec { background:transparent; border:1px solid var(--purple); color:var(--purple); margin-left:0.5rem; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › Reading crontab -l Output Like a Sysadmin</div>
+  <div class="hero">
+    <div class="hero-meta"><span>2026-03-31</span> · <span class="hero-tag">Cron</span><span class="hero-tag">Linux</span><span class="hero-tag">Sysadmin</span></div>
+    <h1>Reading crontab -l Output Like a Sysadmin</h1>
+    <p class="lede">You run crontab -l and get a wall of asterisks, numbers, and paths. Some lines make sense. Some are completely opaque. Here's how to read every part of it.</p>
+  </div>
+  <div class="content">
+<p>The crontab format was designed in 1975 and has barely changed since. It's terse, unforgiving, and gives you zero feedback when you get it wrong. But once you understand the five-field structure, the rest falls into place quickly.</p>
+
+<h2>The five fields</h2>
+
+<pre># minute  hour  day-of-month  month  day-of-week  command
+  *       *     *             *      *            /usr/bin/mycommand</pre>
+
+<p>From left to right: minute (0-59), hour (0-23), day of month (1-31), month (1-12), day of week (0-7, where both 0 and 7 mean Sunday). Then the command.</p>
+
+<p>A <code>*</code> means "every value." So <code>* * * * *</code> means every minute of every hour of every day. <code>0 * * * *</code> means the top of every hour (minute 0, every hour). <code>0 2 * * *</code> means 2:00 AM every day.</p>
+
+<h2>Reading the common patterns</h2>
+
+<pre>*/5 * * * *     # every 5 minutes
+0 * * * *       # every hour, on the hour
+0 0 * * *       # daily at midnight
+0 2 * * *       # daily at 2am
+0 9 * * 1-5     # 9am on weekdays (Monday=1, Friday=5)
+0 0 1 * *       # first day of every month at midnight
+0 0 * * 0       # every Sunday at midnight</pre>
+
+<p>The <code>*/5</code> pattern means "every 5th value" — so in the minute field it fires at 0, 5, 10, 15... 55. In the hour field, <code>*/6</code> would fire at 0, 6, 12, 18.</p>
+
+<p>The <code>1-5</code> pattern is a range — Monday through Friday. You can also use lists: <code>1,3,5</code> means Monday, Wednesday, Friday.</p>
+
+<h2>Special strings</h2>
+
+<p>Some crontabs use special strings instead of the five fields:</p>
+
+<pre>@reboot    # runs once when cron starts (every system boot)
+@hourly    # same as 0 * * * *
+@daily     # same as 0 0 * * *
+@weekly    # same as 0 0 * * 0
+@monthly   # same as 0 0 1 * *
+@yearly    # same as 0 0 1 1 *</pre>
+
+<p><code>@reboot</code> is the one that confuses people. It runs every time the cron daemon starts, which is every system boot. It's not a one-time setup job — it runs on every reboot.</p>
+
+<h2>Environment variables at the top</h2>
+
+<p>Many crontabs have variable definitions above the jobs:</p>
+
+<pre>SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+MAILTO=admin@yourdomain.com
+
+0 2 * * * /usr/bin/backup.sh</pre>
+
+<p><code>SHELL</code> sets which shell runs the commands. <code>PATH</code> is critical — cron has a minimal PATH by default, which is why scripts that work fine when you run them manually fail silently in cron. If your script calls a command that's not in cron's default PATH, it won't be found.</p>
+
+<p><code>MAILTO</code> is where cron sends output. If you set <code>MAILTO=""</code> — all output is discarded silently. This is the most common cause of "my cron job isn't doing anything." Set <code>MAILTO</code> to your email address during debugging.</p>
+
+<h2>Why scripts fail in cron but work manually</h2>
+
+<p>Three reasons:</p>
+
+<p><strong>PATH is different.</strong> Cron's default PATH is <code>/usr/bin:/bin</code>. If your script calls <code>python3</code> or <code>node</code> or any tool installed in <code>/usr/local/bin</code>, cron won't find it. Fix: use absolute paths in your scripts (<code>/usr/bin/python3</code> not just <code>python3</code>) or set PATH at the top of your crontab.</p>
+
+<p><strong>No home directory.</strong> Cron doesn't set <code>$HOME</code> the same way your login shell does. Scripts that reference <code>~/.config/something</code> may fail.</p>
+
+<p><strong>Output is going nowhere.</strong> If your script prints errors but you're not capturing output, you'll never see them. Add <code>&gt;&gt; /var/log/myjob.log 2&gt;&amp;1</code> to the end of your cron command to capture both stdout and stderr to a log file.</p>
+
+<pre># Debug-friendly cron entry:
+0 2 * * * /usr/bin/backup.sh >> /var/log/backup.log 2>&1</pre>
+
+<h2>Reading a real-world crontab</h2>
+
+<pre>SHELL=/bin/bash
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+MAILTO=""
+
+# System maintenance
+0 0 * * *    flock -n /tmp/cleanup.lock /usr/local/bin/cleanup.sh
+15 0 * * *   /usr/local/bin/db-backup.sh >> /var/log/db-backup.log 2>&1
+0 2 * * 0    /usr/local/bin/weekly-report.sh
+
+# Application jobs
+*/5 * * * *  flock -n /tmp/queue.lock /app/bin/process-queue
+0 * * * *    /app/bin/sync-remote-data >> /var/log/sync.log 2>&1
+
+@reboot      /usr/local/bin/start-monitoring.sh</pre>
+
+<p>Reading this line by line: cleanup runs at midnight with flock protection. DB backup runs at 12:15 AM (staggered from cleanup) with output logged. Weekly report runs Sunday at 2 AM. Queue processor runs every 5 minutes with flock. Remote sync runs every hour. Monitoring script starts on every boot.</p>
+
+<p>This is a well-structured crontab: staggered schedules, flock on anything that might overlap, output captured to logs.</p>
+
+<h2>Visualise it before you change it</h2>
+
+<p>The hardest part of editing a crontab is understanding the interactions between existing jobs before adding a new one. A new job at <code>0 0 * * *</code> might look innocent but collide with three existing midnight jobs.</p>
+
+<div class="cta">
+  <p>Paste your crontab -l output to see every job on a timeline — before you make changes that cause problems at 2am.</p>
+  <a href="/">Open Cron Visualiser →</a>
+</div>
+
+<h2>Related guides</h2>
+<ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);line-height:2.2;">
+  <li><a href="/cron/every-minute/">Every minute cron expression</a></li>
+  <li><a href="/cron/every-hour/">Every hour cron expression</a></li>
+  <li><a href="/cron/every-day-midnight/">Daily at midnight cron expression</a></li>
+  <li><a href="/fix/cron/silent-failure/">Cron jobs failing silently fix</a></li>
+  <li><a href="/blog/cron-job-overlaps-crash-server/">How cron job overlaps crash your server</a></li>
+</ul>
+</div>
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>

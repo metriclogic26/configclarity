@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>AI Crawler Opt-Out: What robots.txt Can and Can't Do — ConfigClarity</title>
+  <meta name="description" content="Should you block AI crawlers in robots.txt? What GPTBot, ClaudeBot, PerplexityBot actually respect, what they ignore, and how to make an informed decision for your site.">
+  <meta name="keywords" content="block ai crawlers robots.txt, gptbot robots.txt, block chatgpt crawler, claudebot robots.txt, ai crawler opt out, robots.txt ai bots">
+  <link rel="canonical" href="https://configclarity.dev/blog/ai-crawler-opt-out-robots-txt/">
+  <meta property="og:title" content="AI Crawler Opt-Out: What robots.txt Can and Can't Do">
+  <meta property="og:description" content="Should you block AI crawlers in robots.txt? What GPTBot, ClaudeBot, PerplexityBot actually respect, what they ignore, and how to make an informed decision for your site.">
+  <meta property="og:url" content="https://configclarity.dev/blog/ai-crawler-opt-out-robots-txt/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article",
+    "headline":"AI Crawler Opt-Out: What robots.txt Can and Can't Do",
+    "description":"Should you block AI crawlers in robots.txt? What GPTBot, ClaudeBot, PerplexityBot actually respect, what they ignore, and how to make an informed decision for your site.",
+    "url":"https://configclarity.dev/blog/ai-crawler-opt-out-robots-txt/",
+    "datePublished":"2026-03-31",
+    "dateModified":"2026-03-31",
+    "author":{"@type":"Organization","name":"MetricLogic","url":"https://metriclogic.dev"},
+    "publisher":{"@type":"Organization","name":"ConfigClarity","url":"https://configclarity.dev"},
+    "isPartOf":{"@type":"Blog","name":"ConfigClarity Blog","url":"https://configclarity.dev/blog/"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"Does blocking GPTBot in robots.txt remove my content from ChatGPT?","acceptedAnswer":{"@type":"Answer","text":"No. Blocking GPTBot prevents future crawling of your site but does not remove content that was already collected before you added the block. If your site was crawled during training data collection, that data is already in the model."}},
+{"@type":"Question","name":"Does blocking Google-Extended affect my search rankings?","acceptedAnswer":{"@type":"Answer","text":"No. Google-Extended is a separate user agent from Googlebot. Blocking Google-Extended prevents your content from being used for Google AI training and AI Overviews, but does not affect standard search indexing or rankings."}},
+{"@type":"Question","name":"Which AI crawlers actually respect robots.txt?","acceptedAnswer":{"@type":"Answer","text":"GPTBot (OpenAI), ClaudeBot (Anthropic), and Google-Extended generally respect robots.txt. PerplexityBot is usually compliant. Bytespider and CCBot have more inconsistent compliance. Smaller scrapers and unofficial crawlers often ignore robots.txt entirely."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
+    {"@type":"ListItem","position":3,"name":"AI Crawler Opt-Out: What robots.txt Can and Can't Do","item":"https://configclarity.dev/blog/ai-crawler-opt-out-robots-txt/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.8; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:720px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .hero { max-width:720px; margin:0 auto; padding:3rem 2rem 1.5rem; }
+      .hero-meta { font-size:0.75rem; color:var(--muted); margin-bottom:1rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+      .hero-tag { background:rgba(108,99,255,.15); color:var(--purple); padding:0.15rem 0.6rem; border-radius:4px; font-size:0.72rem; }
+      h1 { font-size:1.75rem; font-weight:700; line-height:1.35; margin-bottom:1rem; }
+      .lede { font-size:1rem; color:var(--muted); margin-bottom:2rem; line-height:1.75; }
+      .content { max-width:720px; margin:0 auto; padding:0 2rem 4rem; }
+      h2 { font-size:1.15rem; font-weight:700; margin:2.5rem 0 0.75rem; color:var(--text); }
+      h3 { font-size:0.95rem; font-weight:700; margin:1.75rem 0 0.5rem; color:var(--text); }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1.1rem; line-height:1.8; }
+      strong { color:var(--text); }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; font-size:0.78rem; overflow-x:auto; margin:1rem 0 1.5rem; line-height:1.7; color:var(--text); }
+      code { background:#1e2130; padding:0.1rem 0.4rem; border-radius:3px; font-size:0.82rem; color:var(--text); }
+      .callout { background:var(--bg2); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.5rem 0; }
+      .callout.good { border-color:var(--green); }
+      .callout.danger { border-color:var(--red); }
+      .callout p { margin-bottom:0; color:var(--text); font-size:0.875rem; }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.5rem; margin:2.5rem 0; text-align:center; }
+      .cta p { color:var(--text); font-size:0.875rem; margin-bottom:0.75rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.5rem 1.25rem; border-radius:6px; font-size:0.82rem; font-weight:700; text-decoration:none; }
+      .cta a.sec { background:transparent; border:1px solid var(--purple); color:var(--purple); margin-left:0.5rem; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › AI Crawler Opt-Out: What robots.txt Can and Can't Do</div>
+  <div class="hero">
+    <div class="hero-meta"><span>2026-03-31</span> · <span class="hero-tag">robots.txt</span><span class="hero-tag">SEO</span><span class="hero-tag">AI</span><span class="hero-tag">Web</span></div>
+    <h1>AI Crawler Opt-Out: What robots.txt Can and Can't Do</h1>
+    <p class="lede">Every webmaster is now asking whether to block AI crawlers. The answer isn't obvious — and robots.txt is a weaker tool than most people think. Here's what actually happens when you add GPTBot to your disallow list.</p>
+  </div>
+  <div class="content">
+<p>Since OpenAI published GPTBot's user agent string in 2023, the robots.txt conversation has changed permanently. Now there are a dozen AI crawlers with named user agents, and every site owner has to decide: allow them, block them, or do nothing.</p>
+
+<p>Before you add a line to your robots.txt, it's worth understanding what that line actually does — and what it doesn't.</p>
+
+<h2>The crawlers you need to know about</h2>
+
+<p>The major AI crawlers with named user agents that respond to robots.txt:</p>
+
+<ul style="font-size:0.875rem;color:var(--muted);padding-left:1.5rem;line-height:2.4;">
+  <li><strong>GPTBot</strong> — OpenAI's training crawler. Documented since August 2023. Generally respects robots.txt.</li>
+  <li><strong>ClaudeBot</strong> — Anthropic's crawler. Documented and respects robots.txt.</li>
+  <li><strong>Google-Extended</strong> — Controls whether Google uses your content for Bard/Gemini training and AI Overviews. Separate from Googlebot — blocking Google-Extended doesn't affect your search rankings.</li>
+  <li><strong>PerplexityBot</strong> — Perplexity AI's crawler. Respects robots.txt but has been reported as inconsistent.</li>
+  <li><strong>Bytespider</strong> — ByteDance (TikTok parent company). Compliance is less consistent than the others.</li>
+  <li><strong>CCBot</strong> — Common Crawl. Used by many AI training datasets. Compliance varies widely.</li>
+</ul>
+
+<h2>What robots.txt actually does</h2>
+
+<p>robots.txt is a voluntary protocol. There is no technical enforcement. A well-behaved crawler reads your robots.txt before crawling and respects the Disallow directives. A poorly-behaved or malicious crawler ignores it entirely.</p>
+
+<p>The major named AI crawlers — GPTBot, ClaudeBot, Google-Extended — are from large companies with reputational stakes and legal teams. They generally respect robots.txt. The long tail of smaller crawlers and scrapers? Much less consistent.</p>
+
+<div class="callout">
+  <p><strong>Key point:</strong> blocking a crawler in robots.txt prevents future crawling from that crawler. It does not remove your content from training datasets that were built before you added the block. If GPTBot already crawled your site last year, that data is already in the training set.</p>
+</div>
+
+<h2>Should you block AI crawlers?</h2>
+
+<p>This is a genuine strategic decision, not a clear-cut technical one. The right answer depends on what you want:</p>
+
+<p><strong>Block if:</strong> your content is proprietary, paywalled, or you're concerned about your work being used to train commercial AI models without compensation. Publishers, news organizations, and content creators with monetized archives are the clearest cases for blocking.</p>
+
+<p><strong>Allow if:</strong> you want your content cited in AI-generated answers. When someone asks ChatGPT or Perplexity a question and your content is in the training data or can be crawled, there's a chance your site gets cited. This is called GEO — Generative Engine Optimisation — and it's the emerging counterpart to traditional SEO. Sites that block all AI crawlers are excluded from this entirely.</p>
+
+<p><strong>Selective approach:</strong> block training crawlers (GPTBot, CCBot) while allowing retrieval crawlers (PerplexityBot) and keeping Google-Extended allowed for AI Overviews. This attempts to avoid training data use while preserving citation opportunities.</p>
+
+<h2>How to block specific AI crawlers</h2>
+
+<pre># Block OpenAI training crawler:
+User-agent: GPTBot
+Disallow: /
+
+# Block Anthropic crawler:
+User-agent: ClaudeBot
+Disallow: /
+
+# Block Google's AI training (doesn't affect search rankings):
+User-agent: Google-Extended
+Disallow: /
+
+# Block ByteDance:
+User-agent: Bytespider
+Disallow: /
+
+# Block Common Crawl:
+User-agent: CCBot
+Disallow: /</pre>
+
+<h2>How to allow all AI crawlers explicitly</h2>
+
+<pre># Explicit allow for AI crawlers (GEO strategy):
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /</pre>
+
+<p>You don't technically need to add Allow directives if you're not blocking anything — crawlers are allowed by default. But explicit Allow entries signal intent and may be read by AI systems evaluating whether your content is available for citation.</p>
+
+<h2>What about the Google-Extended nuance</h2>
+
+<p>Google-Extended is worth understanding separately because it controls two different things: whether your content is used for AI model training, and whether it's included in AI Overviews (the AI-generated summaries at the top of search results).</p>
+
+<p>Blocking Google-Extended removes you from both. If you want to appear in AI Overviews (which drives traffic) but don't want your content in training data, the current robots.txt spec doesn't support that distinction — it's all or nothing with Google-Extended.</p>
+
+<h2>Check your current AI bot coverage</h2>
+
+<p>Most robots.txt files were written before AI crawlers existed and don't address them at all. The first step is knowing where you currently stand.</p>
+
+<div class="cta">
+  <p>Paste your robots.txt to see your AI bot coverage score — which crawlers are explicitly allowed, which are blocked, and which are unaddressed.</p>
+  <a href="/robots/">Open robots.txt Validator →</a>
+</div>
+
+<h2>The honest answer</h2>
+
+<p>robots.txt is a reasonable first line of defence against well-behaved AI crawlers. It's not a legal instrument, it's not technically enforced, and it doesn't reach data that's already been collected. But for the major named crawlers from large companies, it's generally respected and worth using if you have a clear preference.</p>
+
+<p>The most important thing is to make a deliberate decision rather than ignoring the question. An unaddressed robots.txt in 2026 is an implicit "I haven't thought about this" — which is a fine answer but probably not the one you intend.</p>
+
+<h2>Related guides</h2>
+<ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);line-height:2.2;">
+  <li><a href="/fix/robots/blocking-ai-bots/">Blocking AI bots in robots.txt</a></li>
+  <li><a href="/fix/robots/allow-ai-bots/">Allowing AI bots for GEO</a></li>
+  <li><a href="/fix/robots/block-gptbot/">Block GPTBot specifically</a></li>
+  <li><a href="/fix/robots/block-claudebot/">Block ClaudeBot specifically</a></li>
+  <li><a href="/fix/robots/noindex-vs-disallow/">noindex vs Disallow — what's the difference</a></li>
+</ul>
+</div>
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>

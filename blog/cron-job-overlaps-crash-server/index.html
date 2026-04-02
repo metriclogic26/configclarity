@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>How Cron Job Overlaps Crash Your Server (And How to Find Them) — ConfigClarity</title>
+  <meta name="description" content="Overlapping cron jobs are one of the most common causes of mysterious server load spikes. How they happen, why they're hard to spot, and how to find every conflict in your crontab.">
+  <meta name="keywords" content="cron job overlap, overlapping cron jobs, cron job collision, cron job server load spike, crontab overlap detection">
+  <link rel="canonical" href="https://configclarity.dev/blog/cron-job-overlaps-crash-server/">
+  <meta property="og:title" content="How Cron Job Overlaps Crash Your Server (And How to Find Them)">
+  <meta property="og:description" content="Overlapping cron jobs are one of the most common causes of mysterious server load spikes. How they happen, why they're hard to spot, and how to find every conflict in your crontab.">
+  <meta property="og:url" content="https://configclarity.dev/blog/cron-job-overlaps-crash-server/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article",
+    "headline":"How Cron Job Overlaps Crash Your Server (And How to Find Them)",
+    "description":"Overlapping cron jobs are one of the most common causes of mysterious server load spikes. How they happen, why they're hard to spot, and how to find every conflict in your crontab.",
+    "url":"https://configclarity.dev/blog/cron-job-overlaps-crash-server/",
+    "datePublished":"2026-03-31",
+    "dateModified":"2026-03-31",
+    "author":{"@type":"Organization","name":"MetricLogic","url":"https://metriclogic.dev"},
+    "publisher":{"@type":"Organization","name":"ConfigClarity","url":"https://configclarity.dev"},
+    "isPartOf":{"@type":"Blog","name":"ConfigClarity Blog","url":"https://configclarity.dev/blog/"}
+  }
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"How do I know if my cron jobs are overlapping?","acceptedAnswer":{"@type":"Answer","text":"The most reliable way is to visualize your full crontab on a timeline. Paste your crontab -l output into ConfigClarity's Cron Visualiser and it will show every job as a bar on a 24-hour timeline with overlapping windows flagged in red."}},
+{"@type":"Question","name":"What is the most common cron scheduling mistake?","acceptedAnswer":{"@type":"Answer","text":"Scheduling multiple jobs at exactly midnight (0 0 * * *). This is the default time developers choose when a job has no specific time requirement, resulting in multiple heavy jobs running simultaneously and causing server load spikes."}},
+{"@type":"Question","name":"What is flock and why should I use it with cron?","acceptedAnswer":{"@type":"Answer","text":"flock is a Linux utility that prevents a script from running if a previous instance is still executing. Using flock -n /tmp/jobname.lock command prevents concurrent cron job execution when a job runs longer than its scheduled interval."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},
+    {"@type":"ListItem","position":3,"name":"How Cron Job Overlaps Crash Your Server (And How to Find Them)","item":"https://configclarity.dev/blog/cron-job-overlaps-crash-server/"}
+  ]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.8; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:720px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .hero { max-width:720px; margin:0 auto; padding:3rem 2rem 1.5rem; }
+      .hero-meta { font-size:0.75rem; color:var(--muted); margin-bottom:1rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+      .hero-tag { background:rgba(108,99,255,.15); color:var(--purple); padding:0.15rem 0.6rem; border-radius:4px; font-size:0.72rem; }
+      h1 { font-size:1.75rem; font-weight:700; line-height:1.35; margin-bottom:1rem; }
+      .lede { font-size:1rem; color:var(--muted); margin-bottom:2rem; line-height:1.75; }
+      .content { max-width:720px; margin:0 auto; padding:0 2rem 4rem; }
+      h2 { font-size:1.15rem; font-weight:700; margin:2.5rem 0 0.75rem; color:var(--text); }
+      h3 { font-size:0.95rem; font-weight:700; margin:1.75rem 0 0.5rem; color:var(--text); }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1.1rem; line-height:1.8; }
+      strong { color:var(--text); }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; font-size:0.78rem; overflow-x:auto; margin:1rem 0 1.5rem; line-height:1.7; color:var(--text); }
+      code { background:#1e2130; padding:0.1rem 0.4rem; border-radius:3px; font-size:0.82rem; color:var(--text); }
+      .callout { background:var(--bg2); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.5rem 0; }
+      .callout.good { border-color:var(--green); }
+      .callout.danger { border-color:var(--red); }
+      .callout p { margin-bottom:0; color:var(--text); font-size:0.875rem; }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.5rem; margin:2.5rem 0; text-align:center; }
+      .cta p { color:var(--text); font-size:0.875rem; margin-bottom:0.75rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.5rem 1.25rem; border-radius:6px; font-size:0.82rem; font-weight:700; text-decoration:none; }
+      .cta a.sec { background:transparent; border:1px solid var(--purple); color:var(--purple); margin-left:0.5rem; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › How Cron Job Overlaps Crash Your Server (And How to Find The</div>
+  <div class="hero">
+    <div class="hero-meta"><span>2026-03-31</span> · <span class="hero-tag">Cron</span><span class="hero-tag">Linux</span><span class="hero-tag">DevOps</span><span class="hero-tag">Server</span></div>
+    <h1>How Cron Job Overlaps Crash Your Server (And How to Find Them)</h1>
+    <p class="lede">Your server slows down every night at midnight. You restart it, everything's fine. A week later it happens again. You've checked the logs a dozen times and can't find the cause. The culprit is probably sitting in your crontab, completely invisible unless you know where to look.</p>
+  </div>
+  <div class="content">
+<p>Cron jobs don't announce themselves. They run quietly in the background, doing their thing — backing up databases, rotating logs, sending emails, running reports. Most of the time they're fine. But when two jobs happen to run at the same time and compete for the same resources, things get ugly fast.</p>
+
+<p>The frustrating part is that the problem is invisible in the logs. You see high CPU usage, maybe some slow queries or timeouts, and then everything goes back to normal. Fifteen minutes later it's fine. Nothing in the error logs. No clear cause. Just a recurring mystery that gets worse over time as you add more jobs.</p>
+
+<h2>What actually happens when cron jobs overlap</h2>
+
+<p>Take a simple example. You have a database backup that runs every night at midnight and takes about 20 minutes. You also have a report generation job that runs at midnight. And a log cleanup script — also midnight, because that's the obvious "run it when no one's around" time.</p>
+
+<p>At 00:00 all three jobs start simultaneously. The backup is hammering disk I/O. The report generator is running heavy queries against the same database. The log cleanup is scanning the filesystem. The server CPU spikes. The database slows down. If any of your services have health checks or timeouts, they start failing. Users hitting your site at 12:01 AM get slow responses or errors.</p>
+
+<p>This is the midnight pile-up. It's the most common cron scheduling problem on the internet and it's almost entirely avoidable.</p>
+
+<h2>The hidden version: jobs that run too long</h2>
+
+<p>The midnight pile-up is obvious once you know to look for it. The harder problem is when a single job occasionally runs longer than its interval.</p>
+
+<p>You have a job scheduled every 15 minutes. Most of the time it runs in 3 minutes and exits. But occasionally — when the database is under load, or the network is slow, or there's just more data than usual — it takes 18 minutes. At minute 15, cron fires a second instance of the same job. Now you have two copies running simultaneously, both competing for the same database connections, both writing to the same output files.</p>
+
+<pre># This looks innocent:
+*/15 * * * * /usr/bin/process-queue.sh
+
+# But if process-queue.sh takes 18 minutes, you get this:
+# 00:00 — instance 1 starts
+# 00:15 — instance 2 starts (instance 1 still running)
+# 00:18 — instance 1 finishes
+# 00:30 — instance 3 starts (instance 2 still running)
+# ... and so on</pre>
+
+<p>This compounds. Under heavy load the job takes longer. A longer job means more overlap. More overlap means more load. More load means the job takes even longer. It's a death spiral that's nearly impossible to debug after the fact because by the time you look at it, the jobs have already finished.</p>
+
+<h2>Why this is hard to see in your crontab</h2>
+
+<p>Look at a typical crontab:</p>
+
+<pre>0 2 * * *    /usr/bin/db-backup.sh
+*/30 * * * * /usr/bin/sync-data.sh
+0 * * * *    /usr/bin/health-check.sh
+30 1 * * *   /usr/bin/generate-report.sh
+0 0 * * *    /usr/bin/cleanup-logs.sh
+*/5 * * * *  /usr/bin/process-queue.sh</pre>
+
+<p>Reading this and mentally computing all the overlaps is genuinely hard. The <code>*/30</code> job runs at :00 and :30 of every hour. The <code>0 * * * *</code> job runs at the top of every hour. So they overlap at :00 of every hour. The cleanup job at midnight and the health check at midnight also overlap. The report job at 1:30 runs for how long? If it takes more than 30 minutes it will still be running when the 2am backup starts.</p>
+
+<p>Six jobs and you already need a spreadsheet to track the interactions. Real crontabs have 15-30 jobs. The mental model breaks down completely.</p>
+
+<h2>How to find every overlap</h2>
+
+<p>The right approach is to visualize the schedule — render every job as a bar on a timeline and see where they overlap visually.</p>
+
+<pre># Step 1: export your crontab
+crontab -l
+
+# Step 2: paste into a visualizer and look for overlapping bars</pre>
+
+<div class="cta">
+  <p>Paste your crontab and see every job on a 24-hour timeline. Overlaps are flagged in red with exact conflict windows and severity ratings.</p>
+  <a href="/">Open Cron Visualiser →</a>
+</div>
+
+<h2>Fixing overlaps: stagger the schedule</h2>
+
+<p>The simplest fix for the midnight pile-up is to spread jobs across different minutes:</p>
+
+<pre># Before — three jobs colliding at midnight:
+0 0 * * * /usr/bin/cleanup-logs.sh
+0 0 * * * /usr/bin/generate-report.sh
+0 0 * * * /usr/bin/db-backup.sh
+
+# After — staggered by 10 minutes:
+0 0 * * *  /usr/bin/cleanup-logs.sh
+10 0 * * * /usr/bin/generate-report.sh
+20 0 * * * /usr/bin/db-backup.sh</pre>
+
+<p>This doesn't prevent overlap if jobs run longer than their stagger window — but it eliminates the simultaneous start problem.</p>
+
+<h2>Fixing concurrent runs: flock</h2>
+
+<p>For jobs that might run longer than their interval, use <code>flock</code> to prevent concurrent execution:</p>
+
+<pre># Without flock — two instances can run simultaneously:
+*/15 * * * * /usr/bin/process-queue.sh
+
+# With flock — second instance exits immediately if first is still running:
+*/15 * * * * flock -n /tmp/process-queue.lock /usr/bin/process-queue.sh</pre>
+
+<p>The <code>-n</code> flag means non-blocking — if the lock is held, exit immediately rather than waiting. The lock file is automatically released when the first process finishes, even if it crashes.</p>
+
+<h2>What to check in your crontab right now</h2>
+
+<p>Three patterns to look for:</p>
+
+<p><strong>Jobs scheduled at exactly 0 0 * * *</strong> — midnight is the most over-scheduled minute in every crontab. Count how many of your jobs run at midnight and spread them out.</p>
+
+<p><strong>Jobs with short intervals doing heavy work</strong> — anything running every 1, 5, or 15 minutes that touches a database or makes HTTP requests should have flock protection.</p>
+
+<p><strong>Jobs with no runtime estimate</strong> — if you don't know how long a job takes, find out. Run it manually with <code>time /usr/bin/yourscript.sh</code> and compare against its interval.</p>
+
+<h2>Related guides</h2>
+<ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);line-height:2.2;">
+  <li><a href="/fix/cron/overlapping-jobs/">Overlapping cron jobs fix guide</a></li>
+  <li><a href="/fix/cron/flock-safety/">Adding flock safety to cron jobs</a></li>
+  <li><a href="/fix/cron/server-load-spike/">Cron jobs causing server load spikes</a></li>
+  <li><a href="/fix/cron/silent-failure/">Cron jobs failing silently</a></li>
+  <li><a href="/glossary/cron-job-collision/">Cron job collision explained</a></li>
+</ul>
+</div>
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>
