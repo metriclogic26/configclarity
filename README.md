@@ -10,7 +10,7 @@ Browser-based DevOps audit tools. No backend. No signup. Everything runs client-
 | 🔒 SSL Certificate Checker | Check expiry, chain issues, and CDN coverage across multiple domains. 200-day early warnings. | [/ssl/](https://configclarity.dev/ssl/) |
 | 🐳 Docker Compose Auditor | Scan for hardcoded secrets, missing healthchecks, port collisions, 0.0.0.0 bindings, and NVIDIA GPU config | [/docker/](https://configclarity.dev/docker/) |
 | 🛡️ Firewall Rule Auditor | Paste `ufw status verbose` — audit for Docker bypass risk, missing default-deny, and IPv4/IPv6 mismatches | [/firewall/](https://configclarity.dev/firewall/) |
-| 🔀 Reverse Proxy Minx.conf or Traefik labels — detect dangling routes, missing SSL redirects, Traefik v2→v3 issues | [/proxy/](https://configclarity.dev/proxy/) |
+| 🔀 Reverse Proxy Mapper | Paste your Nginx or Traefik config — detect dangling routes, missing SSL redirects, Traefik v2→v3 issues | [/proxy/](https://configclarity.dev/proxy/) |
 | 🤖 robots.txt Validator | Audit crawl directives, AI bot coverage (GPTBot, ClaudeBot, PerplexityBot), sitemap health, health score 0–100 | [/robots/](https://configclarity.dev/robots/) |
 
 ## Why no backend?
