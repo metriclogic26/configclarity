@@ -90,7 +90,7 @@ PRs not accepted for:
 
 ## Part of the MetricLogic Network
 
-ConfigClarity is one suite in the [MetricLogic](https://metriclogic.dev) network of free, browser-based developer tools.
+ConfigClarity is one suite in the MetricLogic network of free developer tools. Hub page coming soon.
 
 ## Licence
 
