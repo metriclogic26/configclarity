@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>UFW and nftables on Ubuntu 22.04: What Changed and Why It Breaks Docker — ConfigClarity</title>
+  <meta name="description" content="Ubuntu 22.04 switched UFW's backend to nftables while Docker still uses iptables. Why this matters, how it affects your firewall rules, and the fix for Docker port exposure.">
+  <meta name="keywords" content="ufw nftables ubuntu 22.04, ufw backend nftables, ubuntu 22.04 firewall nftables, docker ufw nftables conflict, ufw iptables nftables ubuntu">
+  <link rel="canonical" href="https://configclarity.dev/blog/ufw-nftables-backend-ubuntu/">
+  <meta property="og:title" content="UFW and nftables on Ubuntu 22.04: What Changed and Why It Breaks Docker">
+  <meta property="og:description" content="Ubuntu 22.04 switched UFW's backend to nftables while Docker still uses iptables. Why this matters, how it affects your firewall rules, and the fix for Docker port exposure.">
+  <meta property="og:url" content="https://configclarity.dev/blog/ufw-nftables-backend-ubuntu/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"Article","headline":"UFW and nftables on Ubuntu 22.04: What Changed and Why It Breaks Docker","description":"Ubuntu 22.04 switched UFW's backend to nftables while Docker still uses iptables. Why this matters, how it affects your firewall rules, and the fix for Docker port exposure.","url":"https://configclarity.dev/blog/ufw-nftables-backend-ubuntu/","datePublished":"2026-04-01","dateModified":"2026-04-01","author":{"@type":"Organization","name":"MetricLogic","url":"https://metriclogic.dev"},"publisher":{"@type":"Organization","name":"ConfigClarity","url":"https://configclarity.dev"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What firewall backend does UFW use on Ubuntu 22.04?","acceptedAnswer":{"@type":"Answer","text":"Ubuntu 22.04 uses nftables as the default firewall backend for UFW. UFW commands (ufw allow, ufw deny, ufw status) work identically, but the rules are now implemented as nftables rules instead of iptables rules."}},
+{"@type":"Question","name":"Does the nftables backend change affect Docker on Ubuntu 22.04?","acceptedAnswer":{"@type":"Answer","text":"Yes. Docker still uses iptables for container networking on Ubuntu 22.04, while UFW uses nftables. The two systems operate independently — UFW's deny rules do not block Docker container ports. This makes the Docker UFW bypass problem persist. The fix is to bind container ports to 127.0.0.1 in docker-compose.yml."}},
+{"@type":"Question","name":"How do I check which firewall backend UFW is using?","acceptedAnswer":{"@type":"Answer","text":"Run: sudo nft list tables — if you see tables starting with 'inet ufw' then UFW is using nftables. Also check: cat /etc/default/ufw for IPTABLES_BACKEND setting. Run: sudo iptables -L DOCKER to see Docker's iptables rules, which exist separately from UFW's nftables rules."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},{"@type":"ListItem","position":2,"name":"Blog","item":"https://configclarity.dev/blog/"},{"@type":"ListItem","position":3,"name":"UFW and nftables on Ubuntu 22.04: What Changed and Why ","item":"https://configclarity.dev/blog/ufw-nftables-backend-ubuntu/"}]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.8; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:720px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .hero { max-width:720px; margin:0 auto; padding:3rem 2rem 1.5rem; }
+      .hero-meta { font-size:0.75rem; color:var(--muted); margin-bottom:1rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+      .hero-tag { background:rgba(108,99,255,.15); color:var(--purple); padding:0.15rem 0.6rem; border-radius:4px; font-size:0.72rem; }
+      h1 { font-size:1.75rem; font-weight:700; line-height:1.35; margin-bottom:1rem; }
+      .lede { font-size:1rem; color:var(--muted); margin-bottom:2rem; line-height:1.75; }
+      .content { max-width:720px; margin:0 auto; padding:0 2rem 4rem; }
+      h2 { font-size:1.15rem; font-weight:700; margin:2.5rem 0 0.75rem; color:var(--text); }
+      h3 { font-size:0.95rem; font-weight:700; margin:1.75rem 0 0.5rem; color:var(--text); }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1.1rem; line-height:1.8; }
+      strong { color:var(--text); }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; font-size:0.78rem; overflow-x:auto; margin:1rem 0 1.5rem; line-height:1.7; color:var(--text); }
+      code { background:#1e2130; padding:0.1rem 0.4rem; border-radius:3px; font-size:0.82rem; color:var(--text); }
+      .callout { background:var(--bg2); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.5rem 0; }
+      .callout.good { border-color:var(--green); }
+      .callout.danger { border-color:var(--red); }
+      .callout p { margin-bottom:0; color:var(--text); font-size:0.875rem; }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.5rem; margin:2.5rem 0; text-align:center; }
+      .cta p { color:var(--text); font-size:0.875rem; margin-bottom:0.75rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.5rem 1.25rem; border-radius:6px; font-size:0.82rem; font-weight:700; text-decoration:none; }
+      .cta a.sec { background:transparent; border:1px solid var(--purple); color:var(--purple); margin-left:0.5rem; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/blog/">Blog</a> › UFW and nftables on Ubuntu 22.04: What Changed and Why ...</div>
+  <div class="hero">
+    <div class="hero-meta"><span>2026-04-01</span> · <span class="hero-tag">UFW</span><span class="hero-tag">Ubuntu</span><span class="hero-tag">Docker</span><span class="hero-tag">Linux</span><span class="hero-tag">Firewall</span></div>
+    <h1>UFW and nftables on Ubuntu 22.04: What Changed and Why It Breaks Docker</h1>
+    <p class="lede">Ubuntu 22.04 quietly switched UFW to use nftables as its firewall backend. UFW commands still work exactly the same. But Docker still uses iptables — and now the two systems don't talk to each other at all, which makes the Docker UFW bypass problem worse, not better.</p>
+  </div>
+  <div class="content">
+<p>Ubuntu 22.04 changed UFW's default firewall backend from iptables to nftables. For most people this change is completely invisible — UFW still works the same way from the command line. But if you're running Docker, or if you're mixing UFW with other firewall tools, this change matters and can cause rules to stop working in confusing ways.</p>
+
+<h2>What changed in Ubuntu 22.04</h2>
+
+<p>Ubuntu 22.04 ships with nftables as the default kernel firewall backend. When you install UFW on Ubuntu 22.04, it uses nftables under the hood instead of iptables. The UFW commands you already know (<code>ufw allow</code>, <code>ufw deny</code>, <code>ufw status</code>) all work the same — but the rules they generate are now nftables rules, not iptables rules.</p>
+
+<pre># Check which backend UFW is using:
+sudo ufw status verbose
+cat /etc/default/ufw | grep "IPTABLES_BACKEND"
+
+# Check nftables rules directly:
+sudo nft list ruleset
+
+# Check iptables (will show nftables rules via compatibility layer):
+sudo iptables -L</pre>
+
+<h2>Why this breaks Docker</h2>
+
+<p>Docker has been using iptables for network management since the beginning. When Docker starts, it inserts rules into iptables chains — DOCKER, DOCKER-USER, DOCKER-ISOLATION-STAGE-1 — to manage container networking and port forwarding.</p>
+
+<p>On Ubuntu 22.04, Docker still uses iptables even though UFW is now using nftables. This means Docker's rules and UFW's rules are in completely separate systems that don't interact with each other. UFW doesn't know about Docker's containers. Docker doesn't know about UFW's deny rules.</p>
+
+<p>The result is the classic Docker UFW bypass: you add a UFW deny rule for a port, but the Docker container on that port is still accessible from the internet because Docker's iptables rules bypass UFW's nftables rules entirely.</p>
+
+<pre># Verify Docker is still using iptables on Ubuntu 22.04:
+sudo iptables -L DOCKER --line-numbers
+# You'll see Docker's rules here even though UFW uses nftables</pre>
+
+<h2>Check your current UFW backend</h2>
+
+<pre>cat /etc/default/ufw</pre>
+
+<p>Look for <code>IPT_SYSCTL</code> and <code>IPTABLES_BACKEND</code>. On Ubuntu 22.04 you'll typically see the backend set to <code>nftables</code> or the file may not specify it explicitly (defaulting to nftables).</p>
+
+<pre># Also check the actual active firewall:
+sudo nft list tables
+# If you see tables like "inet ufw6" — UFW is using nftables
+
+sudo iptables -L INPUT | head -5
+# If you see DOCKER chains — Docker is using iptables</pre>
+
+<h2>The fix: bind Docker ports to localhost</h2>
+
+<p>The cleanest fix for the Docker/nftables conflict is to not expose Docker ports publicly in the first place. Bind all container ports to <code>127.0.0.1</code> and use Nginx or Traefik as a reverse proxy for public access.</p>
+
+<pre># In docker-compose.yml — bind to localhost only:
+services:
+  myapp:
+    ports:
+      - "127.0.0.1:3000:3000"  # Only accessible locally
+    # NOT: "3000:3000" — this binds to 0.0.0.0 and bypasses UFW
+
+  db:
+    ports:
+      - "127.0.0.1:5432:5432"  # Database never public</pre>
+
+<p>With this setup, the container ports are only accessible via localhost. Nginx on port 80/443 (which UFW allows) proxies traffic to the container. Docker's iptables bypass becomes irrelevant because there's nothing public to bypass to.</p>
+
+<h2>Alternative: force Docker to use iptables compatibility mode</h2>
+
+<p>If you need Docker ports to be directly accessible and want UFW to control them, you can configure Docker to use iptables in a way that interacts better with nftables:</p>
+
+<pre># /etc/docker/daemon.json:
+{
+  "iptables": true,
+  "ip6tables": true
+}
+
+sudo systemctl restart docker</pre>
+
+<div class="callout">
+  <p><strong>Note:</strong> Even with this setting, Docker's iptables rules and UFW's nftables rules operate in separate subsystems. The most reliable approach remains binding containers to 127.0.0.1 rather than relying on firewall rules to block container ports.</p>
+</div>
+
+<h2>What about Ubuntu 20.04?</h2>
+
+<p>Ubuntu 20.04 uses iptables as the default backend. UFW and Docker both use iptables, so there's a different interaction — Docker's rules can actually interfere with UFW's rules in iptables. The Docker UFW bypass problem exists on both versions, just through different mechanisms.</p>
+
+<pre># On Ubuntu 20.04 — check iptables backend:
+sudo update-alternatives --display iptables
+# Should show iptables-legacy or iptables-nft</pre>
+
+<h2>Quick summary</h2>
+
+<ul style="font-size:0.875rem;color:var(--muted);padding-left:1.5rem;line-height:2.4;">
+  <li>Ubuntu 22.04: UFW uses nftables, Docker uses iptables — they don't interact</li>
+  <li>Ubuntu 20.04: UFW uses iptables, Docker uses iptables — they interact but Docker bypasses UFW</li>
+  <li>On both versions: bind container ports to 127.0.0.1 to avoid the problem entirely</li>
+  <li>UFW commands work the same on both versions — the backend change is invisible to daily use</li>
+</ul>
+
+<div class="cta">
+  <p>Audit your UFW rules for Docker bypass risk, nftables conflicts, and missing default-deny on Ubuntu 22.04.</p>
+  <a href="/firewall/">Open Firewall Auditor →</a>
+</div>
+
+<h2>Related guides</h2>
+<ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);line-height:2.2;">
+  <li><a href="/fix/ufw/docker-bypass/">Docker UFW bypass fix guide</a></li>
+  <li><a href="/fix/nftables/ubuntu-22/">nftables setup on Ubuntu 22.04</a></li>
+  <li><a href="/fix/nftables/docker-conflict/">nftables and Docker conflict</a></li>
+  <li><a href="/glossary/docker-ufw-bypass/">Docker UFW bypass explained</a></li>
+  <li><a href="/blog/docker-ufw-bypass-explained/">Docker bypasses UFW — the full story</a></li>
+</ul>
+</div>
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>

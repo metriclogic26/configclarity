@@ -2063,6 +2063,30 @@
     {
       "source": "/blog/ssh-hardening-linux-server",
       "destination": "blog/ssh-hardening-linux-server/index.html"
+    },
+    {
+      "source": "/blog/ufw-nftables-backend-ubuntu/",
+      "destination": "blog/ufw-nftables-backend-ubuntu/index.html"
+    },
+    {
+      "source": "/blog/ufw-nftables-backend-ubuntu",
+      "destination": "blog/ufw-nftables-backend-ubuntu/index.html"
+    },
+    {
+      "source": "/fix/docker/network-host/",
+      "destination": "fix/docker/network-host/index.html"
+    },
+    {
+      "source": "/fix/docker/network-host",
+      "destination": "fix/docker/network-host/index.html"
+    },
+    {
+      "source": "/fix/docker/nvidia-gpu/",
+      "destination": "fix/docker/nvidia-gpu/index.html"
+    },
+    {
+      "source": "/fix/docker/nvidia-gpu",
+      "destination": "fix/docker/nvidia-gpu/index.html"
     }
   ]
 }

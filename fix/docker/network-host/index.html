@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Fix: Docker network_mode: host — Risks and Safe Alternative — ConfigClarity</title>
+  <meta name="description" content="network_mode: host removes Docker network isolation entirely. How it works, why it breaks security and UFW rules, and the correct bridge networking alternative.">
+  <meta name="keywords" content="docker network_mode host, docker host network security, network_mode host risks, docker network isolation, docker host networking alternative">
+  <link rel="canonical" href="https://configclarity.dev/fix/docker/network-host/">
+  <meta property="og:title" content="Fix: Docker network_mode: host — Risks and Safe Alternative">
+  <meta property="og:description" content="network_mode: host removes Docker network isolation entirely. How it works, why it breaks security and UFW rules, and the correct bridge networking alternative.">
+  <meta property="og:url" content="https://configclarity.dev/fix/docker/network-host/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Fix: Docker network_mode: host — Risks and Safe Alternative","description":"network_mode: host removes Docker network isolation entirely. How it works, why it breaks security and UFW rules, and the correct bridge networking alternative.","url":"https://configclarity.dev/fix/docker/network-host/","datePublished":"2026-04-01","dateModified":"2026-04-01","author":{"@type":"Organization","name":"MetricLogic"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does network_mode: host do in Docker?","acceptedAnswer":{"@type":"Answer","text":"network_mode: host makes the container share the host machine's network stack directly instead of getting its own isolated network namespace. Any port the container listens on is immediately accessible on the host's public IP address without any port mapping."}},
+{"@type":"Question","name":"Does UFW protect Docker containers using network_mode: host?","acceptedAnswer":{"@type":"Answer","text":"Unreliably. UFW manages the host INPUT chain. Containers using host networking bypass Docker's NAT layer, which changes how traffic is classified by the kernel firewall. The behavior is inconsistent and should not be relied upon. Use bridge networking with 127.0.0.1 port binding instead."}},
+{"@type":"Question","name":"When is network_mode: host actually needed?","acceptedAnswer":{"@type":"Answer","text":"Legitimate uses include: network monitoring tools that need raw access to host interfaces, ultra-low-latency applications where Docker NAT overhead is unacceptable, and short-lived diagnostic containers. For web apps, APIs, databases, and caches, bridge networking is always the right choice."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://configclarity.dev/fix/"},{"@type":"ListItem","position":3,"name":"Docker","item":"https://configclarity.dev/fix/docker/"},{"@type":"ListItem","position":4,"name":"Fix: Docker network_mode: host — Risks and Safe Al","item":"https://configclarity.dev/fix/docker/network-host/"}]}
+  </script>
+
+    <style>
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
+      body { background:var(--bg); color:var(--text); font-family:'JetBrains Mono',monospace; min-height:100vh; line-height:1.8; }
+      a { color:var(--purple); text-decoration:none; } a:hover { text-decoration:underline; }
+      .header { padding:1.5rem 2rem; border-bottom:1px solid #2a2d3d; display:flex; align-items:center; gap:1rem; }
+      .header-logo { font-size:1.1rem; font-weight:700; color:var(--text); }
+      .header-logo span { color:var(--purple); }
+      .header-nav { margin-left:auto; display:flex; gap:1rem; font-size:0.8rem; }
+      .header-nav a { color:var(--muted); }
+      .breadcrumb { padding:1rem 2rem 0; max-width:720px; margin:0 auto; font-size:0.78rem; color:var(--muted); }
+      .breadcrumb a { color:var(--muted); }
+      .hero { max-width:720px; margin:0 auto; padding:3rem 2rem 1.5rem; }
+      .hero-meta { font-size:0.75rem; color:var(--muted); margin-bottom:1rem; display:flex; gap:1rem; flex-wrap:wrap; align-items:center; }
+      .hero-tag { background:rgba(108,99,255,.15); color:var(--purple); padding:0.15rem 0.6rem; border-radius:4px; font-size:0.72rem; }
+      h1 { font-size:1.75rem; font-weight:700; line-height:1.35; margin-bottom:1rem; }
+      .lede { font-size:1rem; color:var(--muted); margin-bottom:2rem; line-height:1.75; }
+      .content { max-width:720px; margin:0 auto; padding:0 2rem 4rem; }
+      h2 { font-size:1.15rem; font-weight:700; margin:2.5rem 0 0.75rem; color:var(--text); }
+      h3 { font-size:0.95rem; font-weight:700; margin:1.75rem 0 0.5rem; color:var(--text); }
+      p { font-size:0.875rem; color:var(--muted); margin-bottom:1.1rem; line-height:1.8; }
+      strong { color:var(--text); }
+      pre { background:#0d0f1a; border:1px solid #2a2d3d; border-radius:8px; padding:1.25rem 1.5rem; font-size:0.78rem; overflow-x:auto; margin:1rem 0 1.5rem; line-height:1.7; color:var(--text); }
+      code { background:#1e2130; padding:0.1rem 0.4rem; border-radius:3px; font-size:0.82rem; color:var(--text); }
+      .callout { background:var(--bg2); border-left:3px solid var(--orange); border-radius:0 8px 8px 0; padding:1.1rem 1.4rem; margin:1.5rem 0; }
+      .callout.good { border-color:var(--green); }
+      .callout.danger { border-color:var(--red); }
+      .callout p { margin-bottom:0; color:var(--text); font-size:0.875rem; }
+      .cta { background:var(--bg2); border:1px solid #2a2d3d; border-radius:8px; padding:1.5rem; margin:2.5rem 0; text-align:center; }
+      .cta p { color:var(--text); font-size:0.875rem; margin-bottom:0.75rem; }
+      .cta a { display:inline-block; background:var(--purple); color:#fff; padding:0.5rem 1.25rem; border-radius:6px; font-size:0.82rem; font-weight:700; text-decoration:none; }
+      .cta a.sec { background:transparent; border:1px solid var(--purple); color:var(--purple); margin-left:0.5rem; }
+      footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; }
+    </style>
+
+</head>
+<body>
+  <header class="header">
+    <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
+    <nav class="header-nav">
+      <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
+      <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
+      <a href="/blog/" style="color:var(--purple);">Blog</a>
+    </nav>
+  </header>
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/docker/">Docker</a> › network_mode: host</div>
+  <div class="hero">
+    <div class="hero-meta"><span>2026-04-01</span> · <span class="hero-tag">Docker</span><span class="hero-tag">Networking</span><span class="hero-tag">Security</span></div>
+    <h1>Fix: Docker network_mode: host — Risks and Safe Alternative</h1>
+    <p class="lede">network_mode: host makes your Docker container share the host's network stack directly. Every port the container opens is immediately accessible on the host's public IP, bypassing all Docker network isolation and making UFW rules unreliable.</p>
+  </div>
+  <div class="content">
+<p><code>network_mode: host</code> makes Docker containers share the host machine's network stack directly. Instead of the container getting its own network namespace with its own IP address, it uses the host's IP and all the host's network interfaces. Any port the container listens on is immediately accessible on the host's public IP.</p>
+
+<p>This removes Docker's network isolation entirely. It's the most aggressive network setting in Docker and is almost never the right choice for a web service.</p>
+
+<h2>What it looks like</h2>
+
+<pre># docker-compose.yml with network_mode: host:
+services:
+  myapp:
+    image: myapp:latest
+    network_mode: host
+    # No ports: section needed — container shares host network directly
+    environment:
+      PORT: 3000</pre>
+
+<p>With this config, your application listening on port 3000 inside the container is immediately listening on port 3000 on the host's public IP. No port mapping. No Docker NAT. No UFW protection. Anyone who can reach your server can reach port 3000.</p>
+
+<h2>Why it breaks security</h2>
+
+<p><strong>Bypasses all Docker network isolation.</strong> Docker's default bridge network gives each container its own IP in a private subnet (172.17.0.0/16). Containers can't directly access each other or the host without explicit port mappings. <code>network_mode: host</code> eliminates this completely.</p>
+
+<p><strong>UFW rules don't protect host-mode containers.</strong> UFW manages the host's INPUT chain. When a container uses host networking, its traffic flows through the host network stack directly. A UFW <code>deny 3000</code> rule may or may not apply depending on how the traffic arrives — the behavior is inconsistent and unreliable for host-mode containers.</p>
+
+<p><strong>Container can see all host network traffic.</strong> A container in host mode can bind to any port on the host, including ports already in use by other services. It can also sniff traffic on the host's network interfaces if given sufficient privileges.</p>
+
+<h2>The fix: use bridge networking with explicit port mapping</h2>
+
+<pre># Remove network_mode: host entirely.
+# Use explicit port mapping instead:
+services:
+  myapp:
+    image: myapp:latest
+    # network_mode: host  <-- remove this line
+    ports:
+      - "127.0.0.1:3000:3000"  # Bind to localhost only
+    networks:
+      - app-net
+
+networks:
+  app-net:
+    driver: bridge</pre>
+
+<p>Binding to <code>127.0.0.1:3000:3000</code> means the container's port 3000 is only accessible on the host's loopback interface. Nginx or Traefik running on the host can proxy to it. Nothing external can reach it directly.</p>
+
+<h2>When network_mode: host is legitimate</h2>
+
+<p>There are genuine use cases, though they're rare:</p>
+
+<ul style="font-size:0.875rem;color:var(--muted);padding-left:1.5rem;line-height:2.4;">
+  <li><strong>Network monitoring tools</strong> — tools that need to see all host network traffic (like a packet analyzer) legitimately need host networking</li>
+  <li><strong>High-frequency trading / ultra-low latency</strong> — Docker's NAT layer adds microseconds of latency that matters in HFT contexts</li>
+  <li><strong>Host network diagnostics</strong> — short-lived debug containers that need to see the full host network state</li>
+</ul>
+
+<p>For a web app, API server, database, cache, or message queue — none of these apply. Use bridge networking.</p>
+
+<h2>Multi-container setups: use Docker networks instead</h2>
+
+<p>The most common reason developers reach for <code>network_mode: host</code> is that they can't get two containers to talk to each other. The correct solution is a shared Docker network, not host networking:</p>
+
+<pre>services:
+  app:
+    image: myapp:latest
+    networks:
+      - app-net
+    ports:
+      - "127.0.0.1:3000:3000"
+
+  db:
+    image: postgres:15
+    networks:
+      - app-net
+    # No ports exposed — only accessible within app-net
+
+networks:
+  app-net:
+    driver: bridge</pre>
+
+<p>Containers on the same Docker network can reach each other by service name. <code>app</code> can connect to the database at <code>db:5432</code> without any port exposure.</p>
+
+<div class="cta">
+  <p>Paste your docker-compose.yml to detect network_mode: host, exposed ports, and other security issues automatically.</p>
+  <a href="/docker/">Open Docker Auditor →</a>
+</div>
+
+<h2>Related guides</h2>
+<ul style="font-size:0.85rem;padding-left:1.5rem;color:var(--muted);line-height:2.2;">
+  <li><a href="/fix/ufw/docker-bypass/">Docker UFW bypass fix</a></li>
+  <li><a href="/fix/docker/hardcoded-secrets/">Hardcoded secrets in Docker</a></li>
+  <li><a href="/blog/docker-compose-security-checklist/">Docker Compose security checklist</a></li>
+  <li><a href="/glossary/port-binding/">Port binding explained</a></li>
+  <li><a href="/glossary/docker-ufw-bypass/">Docker UFW bypass explained</a></li>
+</ul>
+</div>
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
+</body>
+</html>
