@@ -1,15 +1,33 @@
-#!/usr/bin/env python3
-"""
-Script 29: Build /fix/docker/userland-proxy/ fix page.
-Targets: "docker userland-proxy", "docker ufw published ports bypass"
-Run from: ~/Projects/CronSight/
-"""
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Fix: Docker userland-proxy — What It Is and How It Affects UFW — ConfigClarity</title>
+  <meta name="description" content="Docker's userland-proxy starts a docker-proxy process for each published port. How it works, how it relates to the UFW bypass problem, and whether disabling it helps.">
+  <meta name="keywords" content="docker userland-proxy, docker-proxy process, docker ufw bypass userland proxy, disable docker userland proxy, docker published ports bypass ufw">
+  <link rel="canonical" href="https://configclarity.dev/fix/docker/userland-proxy/">
+  <meta property="og:title" content="Fix: Docker userland-proxy — What It Is and How It Affects UFW">
+  <meta property="og:description" content="Docker's userland-proxy starts a docker-proxy process for each published port. How it works, how it relates to the UFW bypass problem, and whether disabling it helps.">
+  <meta property="og:url" content="https://configclarity.dev/fix/docker/userland-proxy/">
+  <meta property="og:type" content="article">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"TechArticle","headline":"Fix: Docker userland-proxy — What It Is and How It Affects UFW","description":"Docker's userland-proxy starts a docker-proxy process for each published port. How it works, how it relates to the UFW bypass problem, and whether disabling it helps.","url":"https://configclarity.dev/fix/docker/userland-proxy/","datePublished":"2026-04-02","dateModified":"2026-04-02","author":{"@type":"Organization","name":"MetricLogic"}}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Docker's userland proxy?","acceptedAnswer":{"@type":"Answer","text":"The userland proxy is a Go process (docker-proxy) that Docker starts for each published container port. It listens on the host port and forwards traffic to the container. It's a fallback for cases where kernel-level NAT (iptables DNAT) isn't available."}},
+{"@type":"Question","name":"Does disabling the userland proxy fix the Docker UFW bypass?","acceptedAnswer":{"@type":"Answer","text":"No. The Docker UFW bypass happens because Docker inserts rules into the iptables FORWARD chain, which UFW doesn't manage. This bypass occurs whether or not the userland proxy is enabled. The correct fix is to bind container ports to 127.0.0.1 in docker-compose.yml."}},
+{"@type":"Question","name":"How do I disable the Docker userland proxy?","acceptedAnswer":{"@type":"Answer","text":"Add to /etc/docker/daemon.json with userland-proxy set to false, then restart Docker with sudo systemctl restart docker. Test that containers still receive traffic before relying on this in production — some network configurations require the userland proxy."}}]}
+  </script>
+  <script type="application/ld+json">
+  {"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
+    {"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"},
+    {"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://configclarity.dev/fix/"},
+    {"@type":"ListItem","position":3,"name":"Docker","item":"https://configclarity.dev/fix/docker/"},
+    {"@type":"ListItem","position":4,"name":"userland-proxy","item":"https://configclarity.dev/fix/docker/userland-proxy/"}
+  ]}
+  </script>
 
-import os, json, re
-
-FONT = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap">'
-
-CSS = """
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       :root { --bg:#0b0d14; --bg2:#1e2130; --purple:#6c63ff; --green:#22c55e; --orange:#f97316; --red:#ef4444; --text:#e2e4f0; --muted:#8a8fb5; }
@@ -44,24 +62,24 @@ CSS = """
       .cta a.sec { background:transparent; border:1px solid var(--purple); color:var(--purple); margin-left:0.5rem; }
       footer { text-align:center; padding:2rem; font-size:0.75rem; color:var(--muted); border-top:1px solid #2a2d3d; }
     </style>
-"""
 
-HEADER = """  <header class="header">
+</head>
+<body>
+  <header class="header">
     <div class="header-logo"><a href="/" style="color:var(--text);text-decoration:none;">Config<span>Clarity</span></a></div>
     <nav class="header-nav">
       <a href="/">Cron</a><a href="/ssl/">SSL</a><a href="/docker/">Docker</a>
       <a href="/firewall/">Firewall</a><a href="/proxy/">Proxy</a><a href="/robots/">robots.txt</a>
       <a href="/blog/" style="color:var(--purple);">Blog</a>
     </nav>
-  </header>"""
-
-FOOTER = """  <footer>
-    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
-    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
-    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
-  </footer>"""
-
-BODY = """
+  </header>
+  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/docker/">Docker</a> › userland-proxy</div>
+  <div class="hero">
+    <div class="hero-meta"><span>2026-04-02</span> · <span class="hero-tag">Docker</span><span class="hero-tag">UFW</span><span class="hero-tag">Networking</span><span class="hero-tag">Linux</span></div>
+    <h1>Fix: Docker userland-proxy — What It Is and How It Affects UFW</h1>
+    <p class="lede">Every Docker published port spawns a docker-proxy process on your server. Most people never notice it. But when you're trying to understand why UFW rules don't protect your containers, the userland proxy is part of the story.</p>
+  </div>
+  <div class="content">
 <p>Docker's userland proxy is a Go process that Docker starts for each published port on your server. When you run <code>ports: "8080:80"</code> in docker-compose.yml, Docker starts a <code>docker-proxy</code> process listening on host port 8080 that forwards traffic to the container's port 80.</p>
 
 <p>This proxy is part of why UFW rules don't protect Docker container ports — and disabling it changes how Docker handles port forwarding in ways that matter for security.</p>
@@ -154,130 +172,11 @@ ps aux | grep docker-proxy
   <li><a href="/glossary/docker-ufw-bypass/">Docker UFW bypass explained</a></li>
   <li><a href="/blog/docker-ufw-bypass-explained/">Docker bypasses UFW — the full story</a></li>
 </ul>
-"""
-
-SLUG = "userland-proxy"
-PATH = "fix/docker/userland-proxy"
-URL = "/fix/docker/userland-proxy/"
-TITLE = "Fix: Docker userland-proxy — What It Is and How It Affects UFW"
-META_DESC = "Docker's userland-proxy starts a docker-proxy process for each published port. How it works, how it relates to the UFW bypass problem, and whether disabling it helps."
-KEYWORDS = "docker userland-proxy, docker-proxy process, docker ufw bypass userland proxy, disable docker userland proxy, docker published ports bypass ufw"
-DATE = "2026-04-02"
-TAGS = ["Docker", "UFW", "Networking", "Linux"]
-LEDE = "Every Docker published port spawns a docker-proxy process on your server. Most people never notice it. But when you're trying to understand why UFW rules don't protect your containers, the userland proxy is part of the story."
-
-FAQS = [
-    ("What is Docker's userland proxy?",
-     "The userland proxy is a Go process (docker-proxy) that Docker starts for each published container port. It listens on the host port and forwards traffic to the container. It's a fallback for cases where kernel-level NAT (iptables DNAT) isn't available."),
-    ("Does disabling the userland proxy fix the Docker UFW bypass?",
-     "No. The Docker UFW bypass happens because Docker inserts rules into the iptables FORWARD chain, which UFW doesn't manage. This bypass occurs whether or not the userland proxy is enabled. The correct fix is to bind container ports to 127.0.0.1 in docker-compose.yml."),
-    ("How do I disable the Docker userland proxy?",
-     "Add to /etc/docker/daemon.json with userland-proxy set to false, then restart Docker with sudo systemctl restart docker. Test that containers still receive traffic before relying on this in production — some network configurations require the userland proxy."),
-]
-
-
-def make_faq_schema(faqs):
-    items = ",\n".join([
-        f'{{"@type":"Question","name":"{q}","acceptedAnswer":{{"@type":"Answer","text":"{a}"}}}}'
-        for q, a in faqs
-    ])
-    return f'{{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{items}]}}'
-
-
-if __name__ == "__main__":
-    tag_html = "".join([f'<span class="hero-tag">{t}</span>' for t in TAGS])
-    faq_schema = make_faq_schema(FAQS)
-    canonical = f"https://configclarity.dev{URL}"
-
-    html = f"""<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>{TITLE} — ConfigClarity</title>
-  <meta name="description" content="{META_DESC}">
-  <meta name="keywords" content="{KEYWORDS}">
-  <link rel="canonical" href="{canonical}">
-  <meta property="og:title" content="{TITLE}">
-  <meta property="og:description" content="{META_DESC}">
-  <meta property="og:url" content="{canonical}">
-  <meta property="og:type" content="article">
-  {FONT}
-  <script type="application/ld+json">
-  {{"@context":"https://schema.org","@type":"TechArticle","headline":"{TITLE}","description":"{META_DESC}","url":"{canonical}","datePublished":"{DATE}","dateModified":"{DATE}","author":{{"@type":"Organization","name":"MetricLogic"}}}}
-  </script>
-  <script type="application/ld+json">
-  {faq_schema}
-  </script>
-  <script type="application/ld+json">
-  {{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[
-    {{"@type":"ListItem","position":1,"name":"ConfigClarity","item":"https://configclarity.dev"}},
-    {{"@type":"ListItem","position":2,"name":"Fix Guides","item":"https://configclarity.dev/fix/"}},
-    {{"@type":"ListItem","position":3,"name":"Docker","item":"https://configclarity.dev/fix/docker/"}},
-    {{"@type":"ListItem","position":4,"name":"userland-proxy","item":"{canonical}"}}
-  ]}}
-  </script>
-{CSS}
-</head>
-<body>
-{HEADER}
-  <div class="breadcrumb"><a href="/">ConfigClarity</a> › <a href="/fix/">Fix Guides</a> › <a href="/fix/docker/">Docker</a> › userland-proxy</div>
-  <div class="hero">
-    <div class="hero-meta"><span>{DATE}</span> · {tag_html}</div>
-    <h1>{TITLE}</h1>
-    <p class="lede">{LEDE}</p>
-  </div>
-  <div class="content">{BODY}</div>
-{FOOTER}
+</div>
+  <footer>
+    <p>Part of the <a href="https://metriclogic.dev">MetricLogic</a> network &nbsp;·&nbsp;
+    <a href="/blog/">More articles</a> &nbsp;·&nbsp;
+    <a href="https://github.com/metriclogic26/configclarity">GitHub (MIT)</a></p>
+  </footer>
 </body>
-</html>"""
-
-    # Validate JSON-LD
-    blocks = re.findall(r'<script type="application/ld\+json">(.*?)</script>', html, re.DOTALL)
-    all_ok = True
-    for i, b in enumerate(blocks):
-        try:
-            json.loads(b)
-            print(f"  JSON block {i}: OK")
-        except Exception as e:
-            print(f"  JSON block {i}: ERROR — {e}")
-            all_ok = False
-
-    if not all_ok:
-        print("Fix JSON errors before proceeding.")
-        exit(1)
-
-    # Write file
-    os.makedirs(PATH, exist_ok=True)
-    with open(f"{PATH}/index.html", "w") as f:
-        f.write(html)
-    print(f"  OK  {PATH}/index.html ({len(html):,} bytes)")
-
-    # Update vercel.json
-    with open("vercel.json", "r") as f:
-        config = json.load(f)
-    added = 0
-    for rule in [
-        {"source": URL, "destination": f"{PATH}/index.html"},
-        {"source": URL.rstrip("/"), "destination": f"{PATH}/index.html"},
-    ]:
-        if rule not in config["rewrites"]:
-            config["rewrites"].append(rule)
-            added += 1
-    with open("vercel.json", "w") as f:
-        json.dump(config, f, indent=2)
-    print(f"  OK  vercel.json — {added} rewrites added")
-
-    # Update sitemap
-    with open("sitemap-seo.xml", "r") as f:
-        sitemap = f.read()
-    if URL not in sitemap:
-        entry = f"  <url><loc>https://www.configclarity.dev{URL}</loc><lastmod>{DATE}</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>"
-        sitemap = sitemap.replace("</urlset>", entry + "\n</urlset>")
-        with open("sitemap-seo.xml", "w") as f:
-            f.write(sitemap)
-        print(f"  OK  sitemap-seo.xml — URL added")
-
-    print(f"\nDone.")
-    print("\nRun:")
-    print(f"  git add -A && git commit -m 'feat: docker userland-proxy fix page' && git push origin main && npx vercel --prod --force")
-    print(f"\nGSC submit: https://configclarity.dev{URL}")
+</html>

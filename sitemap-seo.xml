@@ -495,4 +495,5 @@
   <url><loc>https://www.configclarity.dev/blog/ufw-nftables-backend-ubuntu/</loc><lastmod>2026-04-01</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.configclarity.dev/fix/docker/network-host/</loc><lastmod>2026-04-01</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
   <url><loc>https://www.configclarity.dev/fix/docker/nvidia-gpu/</loc><lastmod>2026-04-01</lastmod><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>https://www.configclarity.dev/fix/docker/userland-proxy/</loc><lastmod>2026-04-02</lastmod><changefreq>monthly</changefreq><priority>0.7</priority></url>
 </urlset>

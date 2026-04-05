@@ -2087,6 +2087,14 @@
     {
       "source": "/fix/docker/nvidia-gpu",
       "destination": "fix/docker/nvidia-gpu/index.html"
+    },
+    {
+      "source": "/fix/docker/userland-proxy/",
+      "destination": "fix/docker/userland-proxy/index.html"
+    },
+    {
+      "source": "/fix/docker/userland-proxy",
+      "destination": "fix/docker/userland-proxy/index.html"
     }
   ]
 }
