@@ -2424,8 +2424,22 @@ api-check     */30 * * * *`;
     }
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', initFromUrl);
+      document.addEventListener('DOMContentLoaded', function() {
+        // Auto-load sample data on first visit if no URL params
+        const params = new URLSearchParams(location.search);
+        if (!params.has('jobs') && !params.has('j')) {
+          const sampleBtn = document.getElementById('btn-sample');
+          if (sampleBtn) sampleBtn.click();
+        }
+      });
     } else {
       initFromUrl();
+      // Auto-load sample data if no URL params
+      const params = new URLSearchParams(location.search);
+      if (!params.has('jobs') && !params.has('j')) {
+        const sampleBtn = document.getElementById('btn-sample');
+        if (sampleBtn) sampleBtn.click();
+      }
     }
   </script>
   <style>
