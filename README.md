@@ -1,3 +1,10 @@
+> **⚠️ This project is no longer actively maintained.**
+> The live site has been taken offline.
+> The code remains available under the MIT license
+> for anyone who wishes to fork and self-host.
+
+---
+
 # ConfigClarity
 
 Browser-based DevOps audit tools. No backend. No signup. Everything runs client-side. → **[configclarity.dev](https://configclarity.dev)**
@@ -9,7 +16,7 @@ Browser-based DevOps audit tools. No backend. No signup. Everything runs client-
 | 🕐 Cron Builder & Visualiser | Build cron expressions, visualise overlaps on a 24h timeline, detect conflicts, export PNG/Markdown | [/](https://configclarity.dev/) |
 | 🔒 SSL Certificate Checker | Check expiry, chain issues, and CDN coverage across multiple domains. 200-day early warnings. | [/ssl/](https://configclarity.dev/ssl/) |
 | 🐳 Docker Compose Auditor | Scan for hardcoded secrets, missing healthchecks, port collisions, 0.0.0.0 bindings, and NVIDIA GPU config | [/docker/](https://configclarity.dev/docker/) |
-| 🛡️ Firewall Rule Auditor | Paste `ufw status verbose` — audit for Docker bypass risk, missing default-deny, and IPv4/IPv6 mismatches | [/firewall/](https://configclarity.dev/firewall/) |
+| 🛡️ Firor | Paste `ufw status verbose` — audit for Docker bypass risk, missing default-deny, and IPv4/IPv6 mismatches | [/firewall/](https://configclarity.dev/firewall/) |
 | 🔀 Reverse Proxy Mapper | Paste your Nginx or Traefik config — detect dangling routes, missing SSL redirects, Traefik v2→v3 issues | [/proxy/](https://configclarity.dev/proxy/) |
 | 🤖 robots.txt Validator | Audit crawl directives, AI bot coverage (GPTBot, ClaudeBot, PerplexityBot), sitemap health, health score 0–100 | [/robots/](https://configclarity.dev/robots/) |
 
@@ -19,10 +26,10 @@ You shouldn't have to trust a SaaS tool with your production configs. ConfigClar
 
 - SSL checks use the public crt.sh API, with 800ms sequential delays between domains to respect rate limits
 - Docker, Firewall, Proxy, and robots.txt audits are pure client-side parsers — your config never leaves the tab
-- Cron visualisation is computed locally using cronstrue for human-readable descriptions
+- Cron visualisation lly using cronstrue for human-readable descriptions
 - No analytics, no tracking, no CDN fingerprinting — the only external resource is JetBrains Mono from Google Fonts
 
-You can verify thiew-source on any tool page. Everything is in one HTML file.
+You can verify this yourself: view-source on any tool page. Everything is in one HTML file.
 
 ## Stack
 
@@ -34,6 +41,7 @@ You can verify thiew-source on any tool page. Everything is in one HTML file.
 ## Design tokens
 
 All tools share a consistent visual language:
+
 ```css
 --bg:     #0b0d14   /* page background */
 --bg2:    #10131f   /* card background */
@@ -51,10 +59,10 @@ Font: JetBrains Mono
 
 ## Architecture decisions (frozen)
 
-These were made deliberately and are not up for debate in PRs:
+These were made deliberately and art up for debate in PRs:
 
 - **crt.sh for SSL data** — not cert.ist. crt.sh has broader coverage and a stable API
-- **Sequential SSL checks, not parallel** — parallel requests at 5+ domains reliabgger rate limiting
+- **Sequential SSL checks, not parallel** — parallel requests at 5+ domains reliably trigger rate limiting
 - **800ms delay between domains** — not negotiable, this is what keeps the tool working reliably
 - **No `&limit=` on wildcard queries** — oldest-first ordering makes limits produce wrong results
 - **Orange for CDN domains (not red)** — CDN-issued certs are valid; the colour signals "check manually with openssl" not "this is broken"
@@ -62,17 +70,25 @@ These were made deliberately and are not up for debate in PRs:
 - **Suite capped at 6 tools** — identity is locked as a DevOps config audit suite. New tools belong in other MetricLogic suites.
 
 ## Repo structure
-```
-/index.html         → Cron Builder & Visualiser (home tool)
-/ssl/index.html     → SSL Certificate Checker
-/docker/index.html  → Docker Compose Auditor
+/index.html          → Cron Builder & Visualiser (home tool)
+
+/ssl/index.html      → SSL Certificate Checker
+
+/docker/index.html   → Docker Compose Auditor
+
 /firewall/index.html → Firewall Rule Auditor
-/proxy/index.html   → Reverse Proxy Mapper
-/robots/index.html  → robots.txt Validator
-/vercel.json        → Vercel routing config
-/sitemap.xml        → Sitemap (tool pages)
-/robots.txt         → Craw/llms.txt           → GEO / AI crawler context file
-```
+
+/proxyse Proxy Mapper
+
+/robots/index.html   → robots.txt Validator
+
+/vercel.json         → Vercel routing config
+
+/sitemap.xml         → Sitemap (tool pages)
+
+/robots.txt          → Crawl directives + AI bot rules
+
+/llms.txt            → GEO / AI crawler context file
 
 ## Contributing
 
