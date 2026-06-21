@@ -84,12 +84,6 @@ These were made deliberately and art up for debate in PRs:
 
 /vercel.json         → Vercel routing config
 
-/sitemap.xml         → Sitemap (tool pages)
-
-/robots.txt          → Crawl directives + AI bot rules
-
-/llms.txt            → GEO / AI crawler context file
-
 ## Contributing
 
 Bug reports and edge case reports are the most valuable contributions. If a tool gives a wrong result, wrong severity, or misses something obvious — open an issue with the input that caused it.
@@ -103,10 +97,6 @@ PRs not accepted for:
 - New tools — the suite is intentionally scoped to 6
 - Backend additions — client-side only is a hard constraint
 - Framework migrations — vanilla JS is intentional
-
-## Part of the MetricLogic Network
-
-ConfigClarity is one suite in the MetricLogic network of free developer tools. Hub page coming soon.
 
 ## Licence
 
